@@ -38,8 +38,8 @@ public class ArcadeDrive extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-	  ratio = Math.abs(throttel);
     throttel = OI.joyStickOne.getRawAxis(1);  
+    ratio = Math.abs(throttel);
     if(Math.abs(OI.joyStickOne.getRawAxis(4))>deadZone) {	
     	turn = OI.joyStickOne.getRawAxis(4);
     }
