@@ -7,15 +7,13 @@
 
 package frc.robot;
 
-
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.autonomouscommands.AutoSuite;
-import frc.robot.teleopcommands.TeleopSuite;
-
+import frc.robot.commands.ExampleCommand;
+import frc.robot.subsystems.ExampleSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -25,9 +23,8 @@ import frc.robot.teleopcommands.TeleopSuite;
  * project.
  */
 public class Robot extends TimedRobot {
+  public static ExampleSubsystem m_subsystem = new ExampleSubsystem();
   public static OI m_oi;
-  private TeleopSuite teleopSuite = new TeleopSuite();
-  private AutoSuite autoSuite = new AutoSuite();
 
   Command m_autonomousCommand;
   SendableChooser<Command> m_chooser = new SendableChooser<>();
@@ -39,7 +36,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     m_oi = new OI();
-   // m_chooser.addDefault("Default Auto", new ExampleCommand());
+    m_chooser.addDefault("Default Auto", new ExampleCommand());
     // chooser.addObject("My Auto", new MyAutoCommand());
     SmartDashboard.putData("Auto mode", m_chooser);
   }
@@ -63,8 +60,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledInit() {
-    teleopSuite.endTeleopCommands();
-    autoSuite.endAutoCommands();
   }
 
   @Override
@@ -86,7 +81,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_autonomousCommand = m_chooser.getSelected();
-    autoSuite.startAutoCommands();
+
     /*
      * String autoSelected = SmartDashboard.getString("Auto Selector",
      * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
@@ -110,8 +105,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-   
-    teleopSuite.startTeleopCommands();
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
