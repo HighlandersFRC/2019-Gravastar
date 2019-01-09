@@ -45,9 +45,13 @@ class TapeDetect:
             if len(approx) == 4:
                 areas = [cv2.contourArea(c) for c in countours]
                 max_index = np.argmax(areas)
-                cnt=countours[max_index]
+                cnt = countours[max_index]
                 x,y,w,h = cv2.boundingRect(cnt)
-                cv2.rectangle(inimg,(x,y),(x+w,y+h),(0,255,0),1)
+				second_largest_cont = sorted(countours, key = cv2.contourArea, reverse = True)[1:2]
+				cnt = countours[second_largest_cont]
+                x2,y2,w2, h2 = cv2.boundingRect(cnt)
+				cv2.rectangle(inimg,(x,y),(x+w,y+h),(0,255,0),1)
+				
                 
         areas = float(cv2.contourArea(cnt))
         distance = math.log(areas/2710, 0.9719)
