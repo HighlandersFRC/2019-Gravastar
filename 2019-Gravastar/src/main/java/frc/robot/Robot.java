@@ -24,8 +24,9 @@ import frc.robot.teleopcommands.TeleopSuite;
  */
 public class Robot extends TimedRobot {
   public static OI m_oi;
-  public static TeleopSuite teleopSuite;
-  public static AutoSuite autoSuite;
+  public static TeleopSuite teleopSuite = new TeleopSuite();
+  public static AutoSuite autoSuite = new AutoSuite();
+  public static RobotConfig robotConfig = new RobotConfig();
   Command m_autonomousCommand;
   SendableChooser<Command> m_chooser = new SendableChooser<>();
 
@@ -37,6 +38,8 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     m_oi = new OI();   // chooser.addOption("My Auto", new MyAutoCommand());
     SmartDashboard.putData("Auto mode", m_chooser);
+    autoSuite.endAutoCommands();
+    teleopSuite.endTeleopCommands();
   }
 
   /**
