@@ -71,8 +71,11 @@ class TapeDetect:
 		Angle = Angle * 180
 		Angle = Angle/math.pi
 		
+		Dist_and_Angle = '{"Distance" : distance, "Angle" : angle}'
 		
 		#jevois.sendSerial(str(distance).format + str(Angle).format)
+		
+		jevois.sendSerial(str(Dist_and_Angle))
 		
 		fps = self.timer.stop()
 		height = outimg.shape[0]
