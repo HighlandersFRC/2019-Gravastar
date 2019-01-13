@@ -33,17 +33,13 @@ public class RobotMap {
 		public static int leftDriveLeadID = 0;
 		
 		public static int rightDriveFollowerOneID = 0; 
-		public static int rightDriveFollowerTwoID = 0;
 		public static int leftDriveFollowerOneID = 0;//might be there might not
-		public static int leftDriveFollowerTwoID = 0;//might be there might not
 		//Initialize all TalonsSRX
 		public static TalonSRX rightDriveLead = new TalonSRX(rightDriveLeadID);
 		public static TalonSRX leftDriveLead = new TalonSRX(leftDriveLeadID);
 		
 		public static TalonSRX rightDriveFollowerOne = new TalonSRX(rightDriveFollowerOneID);
-	    public static TalonSRX rightDriveFollowerTwo = new TalonSRX(rightDriveFollowerTwoID);
 		public static TalonSRX leftDriveFollowerOne = new TalonSRX(leftDriveFollowerOneID);
-        public static TalonSRX leftDriveFollowerTwo = new TalonSRX(leftDriveFollowerTwoID);
     		
 		public static AHRS navx = new AHRS(I2C.Port.kMXP);
 		public static Navx mainNavx = new Navx(navx);	    
@@ -60,9 +56,7 @@ public class RobotMap {
 				RobotMap.leftDriveLead,
 				RobotMap.rightDriveLead,
 				RobotMap.leftDriveFollowerOne,
-				RobotMap.leftDriveFollowerTwo,
 				RobotMap.rightDriveFollowerOne,
-       			RobotMap.rightDriveFollowerTwo
         };
 		public static DriveBase drive = new DriveBase();
 	

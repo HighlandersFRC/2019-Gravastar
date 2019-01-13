@@ -1,6 +1,8 @@
 package frc.robot.autonomouscommands;
 
+import java.io.File;
 import java.util.ArrayList;
+
 
 import frc.robot.RobotConfig;
 
@@ -25,6 +27,12 @@ public class PathSetup {
         rightFollower = generateRightPathFollower();
         leftFollower = generateLeftPathFollower();
         velocitiesArrayList.clear();      
+        isReversed = reverse;
+    }
+    public PathSetup(File file, boolean reverse){
+        mainPath = Pathfinder.readFromCSV(file);
+        rightFollower = generateRightPathFollower();
+        leftFollower = generateLeftPathFollower();
         isReversed = reverse;
     }
     public Trajectory generateMainPath() {
