@@ -44,12 +44,12 @@ public class TankDrive extends Command {
     else {
       RobotMap.rightDriveLead.set(ControlMode.PercentOutput, 0);
     }	
-    if(OI.pilotController.getBumper(Hand.kRight)) {
+    /*if(OI.pilotController.getBumper(Hand.kRight)) {
       RobotMap.drive.setHighGear();
     }
     else if(OI.pilotController.getBumper(Hand.kLeft)) {
       RobotMap.drive.setLowGear();
-    }
+    }*/
   }
 
   

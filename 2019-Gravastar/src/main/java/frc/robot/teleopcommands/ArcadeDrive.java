@@ -74,13 +74,13 @@ public class ArcadeDrive extends Command {
   	else if(OI.pilotController.getBumperPressed(Hand.kRight)) {
       RobotMap.drive.setHighGear();
   	}
-  	if(RobotMap.shifters.get() == RobotMap.highGear) {
+  	/*if(RobotMap.shifters.get() == RobotMap.highGear) {
         sensitivity =1.75;
 
   	}
   	else if(RobotMap.shifters.get() == RobotMap.lowGear) {
         sensitivity =1.25;
-  	}
+  	}*/
    }
   
 

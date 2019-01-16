@@ -6,30 +6,29 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 public class RobotConfig {
 	public static double gearRatio = 0;
-    public static double encoderTicsPerShaftRotation = 0;
+    public static double encoderTicsPerShaftRotation = 4096;
     public static double encoderTicsPerWheelRotation = gearRatio*encoderTicsPerShaftRotation;
-    public static double wheelDiam = 0.0;
+    public static double wheelDiam = 7.75;
 	public static double wheelCircum = Math.PI * wheelDiam;
 	public static double robotBaseDist;
     public static double openLoopRampRate = 0.0;
-	public static double voltageControlMax = 0.0;
+	public static double voltageControlMax = 11.0;
 	public static double robotMaxAcceleration = 0.0;
 	public static double robotMaxVelocity = 0.0;
-	public static int driveMotorContinuousCurrentHighGear = 0;
-	public static int driveMotorContinuousCurrentLowGear = 0;
-	public static int driveMotorContinuousCurrentLowGearAuto = 0;
-	public static int driveMotorContinuousCurrentHighGearAuto = 0;
-	public static int driveMotorPeakCurrentLowGear = 0;
-	public static int driveMotorPeakCurrentHighGear= 0;		
-	public static int driveMotorPeakCurrentHighGearAuto = 0;
-	public static int driveMotorPeakCurrentLowGearAuto = 0;
-	public static int driveMotorPeakCurrentDurationLowGear = 0;
+	public static int driveMotorContinuousCurrentHighGear = 20;
+	public static int driveMotorContinuousCurrentLowGear = 40;
+	public static int driveMotorContinuousCurrentHighGearAuto = 20;
+	public static int driveMotorContinuousCurrentLowGearAuto = 40;
+	public static int driveMotorPeakCurrentHighGear= 20;		
+	public static int driveMotorPeakCurrentLowGear = 60;
+	public static int driveMotorPeakCurrentHighGearAuto = 20;
+	public static int driveMotorPeakCurrentLowGearAuto = 60;
+	public static int driveMotorPeakCurrentDurationLowGear = 100;
 	public static int driveMotorPeakCurrentDurationHighGear = 0;
 	public static int driveMotorPeakCurrentDurationLowGearAuto = 0;
 	public static int driveMotorPeakCurrentDurationHighGearAuto = 0;
 	public static char robotStartPosition;
-	public static double driverDeadZone = 0.15;
-	public static int timeOut = 4;//Milliseconds
+	public static int timeOut = 0;//Milliseconds
 	public RobotConfig() {
 		setStartingConfig();
 	}
@@ -80,7 +79,7 @@ public class RobotConfig {
 		RobotMap.navx.resetDisplacement();
 	}
 	public void teleopConfig() {
-		RobotMap.shifters.set(RobotMap.highGear);
+		//RobotMap.shifters.set(RobotMap.highGear);
 		for(TalonSRX talon:RobotMap.driveMotors){
 			talon.enableVoltageCompensation(false);
 		}
