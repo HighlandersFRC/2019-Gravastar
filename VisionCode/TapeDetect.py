@@ -9,11 +9,12 @@ class TapeDetect:
     ## Constructor
     
     
-    def __init__(self):
+	def __init__(self):
         # Instantiate a JeVois Timer to measure our processing framerate:
-        self.timer = jevois.Timer("processing timer", 100, jevois.LOG_INFO)
+		self.timer = jevois.Timer("processing timer", 100, jevois.LOG_INFO)
         
-
+    # ###################################################################################################
+    ## Process function with USB output
 	def process(self, inframe, outframe):
 		jevois.sendSerial("Hello World Process")
         
@@ -85,4 +86,3 @@ class TapeDetect:
 		
 		#jevois.sendSerial("Hello Simon")
 		pass
-	
