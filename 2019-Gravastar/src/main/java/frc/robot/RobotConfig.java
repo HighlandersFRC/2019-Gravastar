@@ -34,21 +34,22 @@ public class RobotConfig {
 		setStartingConfig();
 	}
 	public void setStartingConfig() {
-		 RobotMap.navx.zeroYaw();
-		for(TalonSRX talon:RobotMap.driveMotors) {
-    		talon.configFactoryDefault();
+		for(TalonSRX talon:RobotMap.allMotors){
+			talon.configFactoryDefault();
 		}
-	
+
+	 	RobotMap.navx.zeroYaw();
+	 	
 	 	RobotMap.rightDriveFollowerOne.set(ControlMode.Follower, RobotMap.rightDriveLeadID);
     	RobotMap.leftDriveFollowerOne.set(ControlMode.Follower, RobotMap.leftDriveLeadID);
     	
     	//Invert the right hand side of the drive train
     	RobotMap.rightDriveLead.setInverted(true);
-    	RobotMap.rightDriveFollowerOne.setInverted(InvertType.FollowMaster);
-    	
+		RobotMap.rightDriveLead.setInverted(InvertType.FollowMaster);
+
     	RobotMap.leftDriveLead.setInverted(false);
         RobotMap.leftDriveFollowerOne.setInverted(InvertType.FollowMaster);
-    	
+		
     	RobotMap.leftDriveLead.setSelectedSensorPosition(0, 0, 0);
 		RobotMap.rightDriveLead.setSelectedSensorPosition(0, 0, 0);
 		 

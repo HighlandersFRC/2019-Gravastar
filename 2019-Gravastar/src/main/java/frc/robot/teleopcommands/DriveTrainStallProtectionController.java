@@ -15,54 +15,54 @@ import frc.robot.RobotConfig;
 import frc.robot.RobotMap;
 
 public class DriveTrainStallProtectionController extends Command {
-  public DriveTrainStallProtectionController() {
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
-  }
+	public DriveTrainStallProtectionController() {
+		// Use requires() here to declare subsystem dependencies
+		// eg. requires(chassis);
+	}
 
-  // Called just before this Command runs the first time
-  @Override
-  protected void initialize() {
-  }
+	// Called just before this Command runs the first time
+	@Override
+	protected void initialize() {
+	}
 
-  // Called repeatedly when this Command is scheduled to run
-  @Override
-  protected void execute() {
-    /*if(RobotMap.shifters.get() == RobotMap.highGear) {
-  		for(TalonSRX talon:RobotMap.driveMotors) {
-  	    talon.configContinuousCurrentLimit(RobotConfig.driveMotorContinuousCurrentHighGear, RobotConfig.timeOut);
-  	    talon.configPeakCurrentLimit(RobotConfig.driveMotorPeakCurrentHighGear, 0);  
-  	    talon.configPeakCurrentDuration(RobotConfig.driveMotorPeakCurrentDurationHighGear, 0);
-  	    talon.enableCurrentLimit(true);
-  	  }
-  	}
-  	else if(RobotMap.shifters.get() == RobotMap.lowGear) {
-  		for(TalonSRX talon:RobotMap.driveMotors) {	
-  			talon.configContinuousCurrentLimit(RobotConfig.driveMotorContinuousCurrentLowGear, RobotConfig.timeOut);
-  	    talon.configPeakCurrentLimit(RobotConfig.driveMotorPeakCurrentLowGear, 0);  
-  	    talon.configPeakCurrentDuration(RobotConfig.driveMotorPeakCurrentDurationLowGear, 0);
-  	    talon.enableCurrentLimit(true);
-  	  }
-  	}*/
-  }
+	// Called repeatedly when this Command is scheduled to run
+	@Override
+	protected void execute() {
+		/*if(RobotMap.shifters.get() == RobotMap.highGear) {
+			for(TalonSRX talon:RobotMap.driveMotors) {
+				talon.configContinuousCurrentLimit(RobotConfig.driveMotorContinuousCurrentHighGear, RobotConfig.timeOut);
+				talon.configPeakCurrentLimit(RobotConfig.driveMotorPeakCurrentHighGear, 0);  
+				talon.configPeakCurrentDuration(RobotConfig.driveMotorPeakCurrentDurationHighGear, 0);
+				talon.enableCurrentLimit(true);
+			}
+		}
+		else if(RobotMap.shifters.get() == RobotMap.lowGear) {
+			for(TalonSRX talon:RobotMap.driveMotors) {	
+				talon.configContinuousCurrentLimit(RobotConfig.driveMotorContinuousCurrentLowGear, RobotConfig.timeOut);
+				talon.configPeakCurrentLimit(RobotConfig.driveMotorPeakCurrentLowGear, 0);  
+				talon.configPeakCurrentDuration(RobotConfig.driveMotorPeakCurrentDurationLowGear, 0);
+				talon.enableCurrentLimit(true);
+			}
+		}*/
+	}
 
-  // Make this return true when this Command no longer needs to run execute()
-  @Override
-  protected boolean isFinished() {
-    if(!RobotState.isOperatorControl()){
-      return true;
-    }
-    return false;
-  }
+	// Make this return true when this Command no longer needs to run execute()
+	@Override
+	protected boolean isFinished() {
+		if(!RobotState.isOperatorControl()){
+			return true;
+		}
+		return false;
+	}
 
-  // Called once after isFinished returns true
-  @Override
-  protected void end() {
-  }
+	// Called once after isFinished returns true
+	@Override
+	protected void end() {
+	}
 
-  // Called when another command which requires one or more of the same
-  // subsystems is scheduled to run
-  @Override
-  protected void interrupted() {
-  }
+	// Called when another command which requires one or more of the same
+	// subsystems is scheduled to run
+	@Override
+	protected void interrupted() {
+	}
 }
