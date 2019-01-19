@@ -9,11 +9,12 @@ class TapeDetect:
     ## Constructor
     
     
-    def __init__(self):
+	def __init__(self):
         # Instantiate a JeVois Timer to measure our processing framerate:
-        self.timer = jevois.Timer("processing timer", 100, jevois.LOG_INFO)
+		self.timer = jevois.Timer("processing timer", 100, jevois.LOG_INFO)
         
-
+    # ###################################################################################################
+    ## Process function with USB output
 	def process(self, inframe, outframe):
 		jevois.sendSerial("Hello World Process")
         
@@ -26,8 +27,8 @@ class TapeDetect:
 		hsv = cv2.cvtColor(inimg, cv2.COLOR_BGR2HSV)
 		outimg = hsv
 		
-		lowerThreshold = np.array([65, 0, 0])
-		upperThreshold = np.array([70, 255, 255])
+		lowerThreshold = np.array([60, 0, 0])
+		upperThreshold = np.array([75, 255, 255])
 		mask = cv2.inRange(hsv, lowerThreshold, upperThreshold)
 		blur = cv2.GaussianBlur(mask,(5,5),0)
 		
@@ -58,23 +59,44 @@ class TapeDetect:
 		centerY2 = y2 + h2/2
 		x = x - 160
 		y = y - 120
-		distance = -0.0033508576 * y**3
-		distance = distance + 0.8429538777 * y**2
-		distance = distance - 68.64070128 * x
-		distance = distance + 1882.753427
-		distance = distance/y
-		centerXinches = 2 * distance * math.tan((65/2)*(math.pi/180))
-		centerXinches = centerXinches/320
-		centerXinches = centerXinches * x
-		Angle = math.atan(centerXinches/distance)
-		Angle = Angle * 180
-		Angle = Angle/math.pi
+		#distance = -0.0033508576 * y**3
+		#distance = distance + 0.8429538777 * y**2
+		#distance = distance - 68.64070128 * x
+		#distance = distance + 1882.753427
+		#distance = distance/y
+		#centerXinches = 2 * distance * math.tan((65/2)*(math.pi/180))
+		#centerXinches = centerXinches/320
+		#centerXinches = centerXinches * x
+		#Angle = math.atan(centerXinches/distance)
+		#Angle = Angle * 180
+		#Angle = Angle/math.pi
+
+		yUpPointsDist = y - y2		
+		twoPointsDist = x - x2
+		twoPointsDist = twoPointsDist ** 2
+		yUpPointsDist = yUpPointsDist ** 2
+		twoPointsDist = twoPointsDist + yUpPointsDist
+		twoPointsDist = math.sqrt(twoPointsDist)
 		
-		X_Y = '{"X" : centerX, "Y" : centerY, "X2" : centerX2, "Y2" : centerY2}'
+		centerX = str(centerX)
+		centerY = str(centerY)
+		centerY2 = str(centerY2)
+		centerX2 = str(centerX2)
+		twoPointsDist = str(twoPointsDist)
+		yUpPointsDist = str(yUpPointsDist)
+		
+		X_Y = {"X" : centerX, "Y" : centerY, "X2" : centerX2, "Y2" : centerY2}
 		
 		#jevois.sendSerial(str(distance).format + str(Angle).format)
 		
-		jevois.sendSerial(X_Y)
+		#jevois.sendSerial(str(X_Y).format)
+		
+		jevois.sendSerial(centerX)
+		jevois.sendSerial(centerY)
+		jevois.sendSerial(centerX2)
+		jevois.sendSerial(centerY2)
+		jevois.sendSerial(yUpPointsDist)
+		jevois.sendSerial(twoPointsDist)
 		
 		fps = self.timer.stop()
 		height = outimg.shape[0]
@@ -85,4 +107,3 @@ class TapeDetect:
 		
 		#jevois.sendSerial("Hello Simon")
 		pass
-	
