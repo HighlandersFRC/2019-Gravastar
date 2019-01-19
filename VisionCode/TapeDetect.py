@@ -52,70 +52,74 @@ class TapeDetect:
 				areas = [cv2.contourArea(c) for c in countours]
 				max_index = np.argmax(areas)
 				cnt=countours[max_index]
-				x,y,w,h = cv2.boundingRect(cnt)
-				cv2.rectangle(inimg,(x,y),(x+w,y+h),(0,255,0),1)
+				rotatedRect = cv2.minAreaRect(cnt)
+				box = cv2.boxPoints(rotatedRect)
+				box = np.int0(box)
+				angleOne = rotatedRect[2]
+				lowestCoordinate = box[0]
+				
+				#cv2.rectangle(inimg,(x,y),(x+w,y+h),(0,255,0),1)
 				areas = [cv2.contourArea(c) for c in countours]
 				index2 = np.argmax(areas)
 				cnt2 = countours[index2 - 1]
-				x2, y2, w2, h2 = cv2.boundingRect(cnt2)
-				cv2.rectangle(inimg, (x, y), (x+w, y+h), (0,255,0), 1)
+				rotatedRect2 = cv2.minAreaRect(cnt2)
+				box2 = cv2.boxPoints(rotatedRect2)
+				box = np.int0(box)
+				angleTwo = rotatedRect2[2]
+				#cv2.rectangle(inimg, (x, y), (x+w, y+h), (0,255,0), 1)
 			
 			
+			yesNo = " "
 		
 		#areas = float(cv2.contourArea(cnt))
 		#find center (x,y) of contours
-		centerX = x + w/2
-		centerY = y + h/2
-		centerX2 = x2 + w2/2
-		centerY2 = y2 + h2/2
-		x = x - 160
-		y = y - 120
-		#distance = -0.0033508576 * y**3
-		#distance = distance + 0.8429538777 * y**2
-		#distance = distance - 68.64070128 * x
-		#distance = distance + 1882.753427
-		#distance = distance/y
-		#centerXinches = 2 * distance * math.tan((65/2)*(math.pi/180))
-		#centerXinches = centerXinches/320
-		#centerXinches = centerXinches * x
-		#Angle = math.atan(centerXinches/distance)
-		#Angle = Angle * 180
-		#Angle = Angle/math.pi
+		#centerX = x + w/2
+		#centerY = y + h/2
+		#centerX2 = x2 + w2/2
+		#centerY2 = y2 + h2/2
+		#x = x - 160
+		#y = y - 120
 		
 		#determine whether we are detecting the correct contour based on if the points at the top of the contours are closer than the points at the bottoms of the contours
-		yUpPointsDist = y - y2		
-		twoPointsDist = x - x2
-		twoPointsDist = twoPointsDist ** 2
-		yUpPointsDist = yUpPointsDist ** 2
-		twoPointsDist = twoPointsDist + yUpPointsDist
-		twoPointsDist = math.sqrt(twoPointsDist)
+		if angleOne == angleTwo:
+			yesNo = "yes"
+		else:
+			yesNo = "no"
 		
 		#bottomPointOne = 
 		
 		#bottomPointsDist = 
 		
 		#change vals to strings to send over serial
-		centerX = str(centerX)
-		centerY = str(centerY)
-		centerY2 = str(centerY2)
-		centerX2 = str(centerX2)
-		twoPointsDist = str(twoPointsDist)
-		yUpPointsDist = str(yUpPointsDist)
+		#centerX = str(centerX)
+		#centerY = str(centerY)
+		#centerY2 = str(centerY2)
+		#centerX2 = str(centerX2)
+		#twoPointsDist = str(twoPointsDist)
+		#yUpPointsDist = str(yUpPointsDist)
+		angleOne = str(angleOne)
+		angleTwo = str(angleTwo)
+		lowestCoordinate = str(lowestCoordinate)
 		
 		#JSON not fully working yet
-		X_Y = {"X" : centerX, "Y" : centerY, "X2" : centerX2, "Y2" : centerY2}
+		#X_Y = {"X" : centerX, "Y" : centerY, "X2" : centerX2, "Y2" : centerY2}
 		
 		#jevois.sendSerial(str(distance).format + str(Angle).format)
 		
 		#jevois.sendSerial(str(X_Y).format)
 		
 		#send vals through serial
-		jevois.sendSerial(centerX)
-		jevois.sendSerial(centerY)
-		jevois.sendSerial(centerX2)
-		jevois.sendSerial(centerY2)
-		jevois.sendSerial(yUpPointsDist)
-		jevois.sendSerial(twoPointsDist)
+		#jevois.sendSerial(centerX)
+		#jevois.sendSerial(centerY)
+		#jevois.sendSerial(centerX2)
+		#jevois.sendSerial(centerY2)
+		#jevois.sendSerial(yUpPointsDist)
+		#jevois.sendSerial(twoPointsDist)
+		jevois.sendSerial(angleOne + " " + angleTwo + " " + yesNo)
+		#jevois.sendSerial(lowestCoordinate)
+		
+		
+		#jevois.sendSerial(centerX, centerY, centerX2, centerY2, yUpPointsDist, twoPointsDist)
 		
 		fps = self.timer.stop()
 		height = outimg.shape[0]
