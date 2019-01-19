@@ -57,7 +57,13 @@ public class RobotMap {
 				RobotMap.rightDriveLead,
 				RobotMap.leftDriveFollowerOne,
 				RobotMap.rightDriveFollowerOne,
-        };
+		};
+		public static TalonSRX allMotors[] = {
+			RobotMap.leftDriveLead,
+			RobotMap.rightDriveLead,
+			RobotMap.leftDriveFollowerOne,
+			RobotMap.rightDriveFollowerOne,
+		};
 		public static DriveBase drive = new DriveBase();
 	
 	// For example to map the left and right motors, you could define the

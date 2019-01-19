@@ -6,29 +6,29 @@ public class Vector {
    private double xVec;
    private double yVec;
    public Vector() {
-      xVec =0;
-      yVec = 0.0;
+	  xVec =0;
+	  yVec = 0.0;
    }
    public Vector( double x, double y ) {
-      xVec = x;
-      yVec= y;
+	  xVec = x;
+	  yVec= y;
    }
    public double dot( Vector v1 ) {
-      return xVec*v1.getxVec() + yVec*v1.getyVec();
+	  return xVec*v1.getxVec() + yVec*v1.getyVec();
    }
    public double length() {
-      return Math.sqrt ( xVec*xVec + yVec*yVec );
+	  return Math.sqrt ( xVec*xVec + yVec*yVec );
    }
    public double getxVec(){
-      return xVec;
+	  return xVec;
    }
    public double getyVec(){
-      return yVec;
+	  return yVec;
    }
    public void setX(double x){
-      xVec = x;
+	  xVec = x;
    }
    public void setY(double y){
-      yVec = y;
+	  yVec = y;
    }
 } 
