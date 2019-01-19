@@ -20,21 +20,31 @@ class TapeDetect:
         
 	def processNoUSB(self, inframe):
 		runcount = 0
+		#get image
 		inimg = inframe.getCvBGR()
 		
 		self.timer.start()
 		
+		#change to hsv
 		hsv = cv2.cvtColor(inimg, cv2.COLOR_BGR2HSV)
 		outimg = hsv
 		
+		
+		#threshold colors to detect
 		lowerThreshold = np.array([60, 0, 0])
 		upperThreshold = np.array([75, 255, 255])
+		
+		#check if color in range
 		mask = cv2.inRange(hsv, lowerThreshold, upperThreshold)
+		
+		#create blur on image to reduce noise
 		blur = cv2.GaussianBlur(mask,(5,5),0)
 		
+		#find contours
 		ret,thresh = cv2.threshold(blur,127,255,0)
 		countours, _ = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
 		
+		#sift through contours to find two biggest 4 sided contours
 		for countour in countours:
 			peri = cv2.arcLength(countour, True)
 			approx = cv2.approxPolyDP(countour, 0.04 * peri, True)
@@ -53,6 +63,7 @@ class TapeDetect:
 			
 		
 		#areas = float(cv2.contourArea(cnt))
+		#find center (x,y) of contours
 		centerX = x + w/2
 		centerY = y + h/2
 		centerX2 = x2 + w2/2
@@ -70,7 +81,8 @@ class TapeDetect:
 		#Angle = math.atan(centerXinches/distance)
 		#Angle = Angle * 180
 		#Angle = Angle/math.pi
-
+		
+		#determine whether we are detecting the correct contour based on if the points at the top of the contours are closer than the points at the bottoms of the contours
 		yUpPointsDist = y - y2		
 		twoPointsDist = x - x2
 		twoPointsDist = twoPointsDist ** 2
@@ -78,6 +90,11 @@ class TapeDetect:
 		twoPointsDist = twoPointsDist + yUpPointsDist
 		twoPointsDist = math.sqrt(twoPointsDist)
 		
+		#bottomPointOne = 
+		
+		#bottomPointsDist = 
+		
+		#change vals to strings to send over serial
 		centerX = str(centerX)
 		centerY = str(centerY)
 		centerY2 = str(centerY2)
@@ -85,12 +102,14 @@ class TapeDetect:
 		twoPointsDist = str(twoPointsDist)
 		yUpPointsDist = str(yUpPointsDist)
 		
+		#JSON not fully working yet
 		X_Y = {"X" : centerX, "Y" : centerY, "X2" : centerX2, "Y2" : centerY2}
 		
 		#jevois.sendSerial(str(distance).format + str(Angle).format)
 		
 		#jevois.sendSerial(str(X_Y).format)
 		
+		#send vals through serial
 		jevois.sendSerial(centerX)
 		jevois.sendSerial(centerY)
 		jevois.sendSerial(centerX2)
