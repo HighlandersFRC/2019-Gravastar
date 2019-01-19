@@ -19,9 +19,9 @@ public class DriveBase extends Subsystem {
       
     }
     public void setLowGear(){
-        //RobotMap.shifters.set(RobotMap.lowGear);
+       // RobotMap.shifters.set(RobotMap.lowGear);
     }
     public void setHighGear(){
-        //RobotMap.shifters.set(RobotMap.highGear);
+       // RobotMap.shifters.set(RobotMap.highGear);
     }
 }

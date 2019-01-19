@@ -1,6 +1,7 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
@@ -33,17 +34,20 @@ public class RobotConfig {
 		setStartingConfig();
 	}
 	public void setStartingConfig() {
-	 	RobotMap.navx.zeroYaw();
-	 	
+		 RobotMap.navx.zeroYaw();
+		for(TalonSRX talon:RobotMap.driveMotors) {
+    		talon.configFactoryDefault();
+		}
+	
 	 	RobotMap.rightDriveFollowerOne.set(ControlMode.Follower, RobotMap.rightDriveLeadID);
     	RobotMap.leftDriveFollowerOne.set(ControlMode.Follower, RobotMap.leftDriveLeadID);
     	
     	//Invert the right hand side of the drive train
     	RobotMap.rightDriveLead.setInverted(true);
-    	RobotMap.rightDriveFollowerOne.setInverted(true);
+    	RobotMap.rightDriveFollowerOne.setInverted(InvertType.FollowMaster);
     	
     	RobotMap.leftDriveLead.setInverted(false);
-        RobotMap.leftDriveFollowerOne.setInverted(false);
+        RobotMap.leftDriveFollowerOne.setInverted(InvertType.FollowMaster);
     	
     	RobotMap.leftDriveLead.setSelectedSensorPosition(0, 0, 0);
 		RobotMap.rightDriveLead.setSelectedSensorPosition(0, 0, 0);

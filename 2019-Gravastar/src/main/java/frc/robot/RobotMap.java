@@ -45,8 +45,8 @@ public class RobotMap {
 		public static Navx mainNavx = new Navx(navx);	    
 		//Initialize all pneumatic Actuators, predefine actuation directions
 		//public static DoubleSolenoid shifters = new DoubleSolenoid(0,1);
-		//public static DoubleSolenoid.Value lowGear = DoubleSolenoid.Value.kOff;//TODO directions must be assigned
-		//public static DoubleSolenoid.Value highGear = DoubleSolenoid.Value.kOff;//TODO directions mut be assinged
+		//public static DoubleSolenoid.Value lowGear = DoubleSolenoid.Value.kForward;//TODO directions must be assigned
+		//public static DoubleSolenoid.Value highGear = DoubleSolenoid.Value.kReverse;//TODO directions mut be assinged
 		
 		public static DriveEncoder leftMainDrive = new DriveEncoder(leftDriveLead,RobotMap.leftDriveLead.getSelectedSensorPosition(0));
 		public static DriveEncoder rightMaindrive = new DriveEncoder(rightDriveLead,RobotMap.rightDriveLead.getSelectedSensorPosition(0));		
