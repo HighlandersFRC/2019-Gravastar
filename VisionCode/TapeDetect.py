@@ -70,11 +70,20 @@ class TapeDetect:
 		#Angle = math.atan(centerXinches/distance)
 		#Angle = Angle * 180
 		#Angle = Angle/math.pi
+
+		yUpPointsDist = y - y2		
+		twoPointsDist = x - x2
+		twoPointsDist = twoPointsDist ** 2
+		yUpPointsDist = yUpPointsDist ** 2
+		twoPointsDist = twoPointsDist + yUpPointsDist
+		twoPointsDist = math.sqrt(twoPointsDist)
 		
 		centerX = str(centerX)
 		centerY = str(centerY)
 		centerY2 = str(centerY2)
 		centerX2 = str(centerX2)
+		twoPointsDist = str(twoPointsDist)
+		yUpPointsDist = str(yUpPointsDist)
 		
 		X_Y = {"X" : centerX, "Y" : centerY, "X2" : centerX2, "Y2" : centerY2}
 		
@@ -86,7 +95,8 @@ class TapeDetect:
 		jevois.sendSerial(centerY)
 		jevois.sendSerial(centerX2)
 		jevois.sendSerial(centerY2)
-		
+		jevois.sendSerial(yUpPointsDist)
+		jevois.sendSerial(twoPointsDist)
 		
 		fps = self.timer.stop()
 		height = outimg.shape[0]
