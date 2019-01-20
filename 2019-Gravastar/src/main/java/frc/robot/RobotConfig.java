@@ -6,23 +6,24 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 public class RobotConfig {
-	public static double gearRatio = 0;
+	public static double gearRatio = 7.5;
     public static double encoderTicsPerShaftRotation = 4096;
     public static double encoderTicsPerWheelRotation = gearRatio*encoderTicsPerShaftRotation;
     public static double wheelDiam = 7.75;
 	public static double wheelCircum = Math.PI * wheelDiam;
-	public static double robotBaseDist;
+	public static double robotBaseDist = 2.0;
     public static double openLoopRampRate = 0.0;
-	public static double voltageControlMax = 11.0;
-	public static double robotMaxAcceleration = 0.0;
-	public static double robotMaxVelocity = 0.0;
-	public static int driveMotorContinuousCurrentHighGear = 20;
+	public static double voltageControlMaxAuto = 11.0;
+	public static double voltageControlMaxTeleop = 11.0;
+	public static double robotMaxAcceleration = 10.0;
+	public static double robotMaxVelocity = 14.5;
+	public static int driveMotorContinuousCurrentHighGear = 30;
 	public static int driveMotorContinuousCurrentLowGear = 40;
-	public static int driveMotorContinuousCurrentHighGearAuto = 20;
+	public static int driveMotorContinuousCurrentHighGearAuto = 30;
 	public static int driveMotorContinuousCurrentLowGearAuto = 40;
-	public static int driveMotorPeakCurrentHighGear= 20;		
+	public static int driveMotorPeakCurrentHighGear= 30;		
 	public static int driveMotorPeakCurrentLowGear = 60;
-	public static int driveMotorPeakCurrentHighGearAuto = 20;
+	public static int driveMotorPeakCurrentHighGearAuto = 30;
 	public static int driveMotorPeakCurrentLowGearAuto = 60;
 	public static int driveMotorPeakCurrentDurationLowGear = 100;
 	public static int driveMotorPeakCurrentDurationHighGear = 0;
@@ -44,15 +45,19 @@ public class RobotConfig {
     	RobotMap.leftDriveFollowerOne.set(ControlMode.Follower, RobotMap.leftDriveLeadID);
     	
     	//Invert the right hand side of the drive train
-    	RobotMap.rightDriveLead.setInverted(true);
-		RobotMap.rightDriveLead.setInverted(InvertType.FollowMaster);
+    	RobotMap.rightDriveLead.setInverted(false);
+		RobotMap.rightDriveFollowerOne.setInverted(InvertType.FollowMaster);
 
-    	RobotMap.leftDriveLead.setInverted(false);
+    	RobotMap.leftDriveLead.setInverted(true);
         RobotMap.leftDriveFollowerOne.setInverted(InvertType.FollowMaster);
 		
+
     	RobotMap.leftDriveLead.setSelectedSensorPosition(0, 0, 0);
 		RobotMap.rightDriveLead.setSelectedSensorPosition(0, 0, 0);
-		 
+		
+		RobotMap.leftDriveLead.setSensorPhase(false);
+		RobotMap.rightDriveLead.setSensorPhase(false);
+
     	for(TalonSRX talon:RobotMap.driveMotors) {
     		talon.configContinuousCurrentLimit(RobotConfig.driveMotorContinuousCurrentLowGear, RobotConfig.timeOut);
     		talon.configPeakCurrentLimit(RobotConfig.driveMotorPeakCurrentLowGear, RobotConfig.timeOut);
@@ -60,16 +65,17 @@ public class RobotConfig {
     		talon.enableCurrentLimit(true);
 		}
 		for(TalonSRX talon:RobotMap.driveMotors){
-			talon.configVoltageCompSaturation(RobotConfig.voltageControlMax, 10);
+			talon.configVoltageCompSaturation(RobotConfig.voltageControlMaxAuto, 10);
 			talon.enableVoltageCompensation(false); 
 			talon.configVoltageMeasurementFilter(32, 10);
 		}
+	
     	
 
 	}
 	public void autoConfig() {
 		for(TalonSRX talon:RobotMap.driveMotors){
-			talon.enableVoltageCompensation(true);
+			talon.enableVoltageCompensation(true); 
 		}
 		for(TalonSRX talon:RobotMap.driveMotors){
 			talon.configOpenloopRamp(0, 0);
@@ -84,9 +90,11 @@ public class RobotConfig {
 		RobotMap.navx.resetDisplacement();
 	}
 	public void teleopConfig() {
-		//RobotMap.shifters.set(RobotMap.highGear);
+		RobotMap.shifters.set(RobotMap.highGear);
 		for(TalonSRX talon:RobotMap.driveMotors){
-			talon.enableVoltageCompensation(false);
+			talon.configVoltageCompSaturation(RobotConfig.voltageControlMaxTeleop, 10);
+			talon.enableVoltageCompensation(false); 
+			talon.configVoltageMeasurementFilter(32, 10);
 		}
 		for(TalonSRX talon:RobotMap.driveMotors){
 			talon.configOpenloopRamp(openLoopRampRate, RobotConfig.timeOut);

@@ -17,11 +17,11 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class ArcadeDrive extends Command {
-	private double deadZone = 0.1;
+	private double deadZone = 0.05;
 	private double turn =0;
 	private double throttel = 0;
 	private double ratio = 0;
-	private double sensitivity = 0.75;
+	private double sensitivity;
 	private double leftPower;
 	private double rightPower;
 	public ArcadeDrive() {
@@ -38,10 +38,10 @@ public class ArcadeDrive extends Command {
 	// Called repeatedly when this Command is scheduled to run
 	@Override
 	protected void execute() {
+		throttel = -OI.pilotController.getRawAxis(1); 
 		ratio = Math.abs(throttel);
-		throttel = OI.pilotController.getRawAxis(1); 
 		if(Math.abs(OI.pilotController.getRawAxis(4))>deadZone) {	
-			turn = OI.pilotController.getRawAxis(4);
+			turn = -OI.pilotController.getRawAxis(4);
 		}
 		else {
 			turn = 0;
@@ -74,13 +74,13 @@ public class ArcadeDrive extends Command {
 		else if(OI.pilotController.getBumperPressed(Hand.kRight)) {
 			RobotMap.drive.setHighGear();
 		}
-		/*if(RobotMap.shifters.get() == RobotMap.highGear) {
-				sensitivity =1.75;
+		if(RobotMap.shifters.get() == RobotMap.highGear) {
+				sensitivity =1.0;
 
 		}
 		else if(RobotMap.shifters.get() == RobotMap.lowGear) {
-				sensitivity =1.25;
-		}*/
+				sensitivity =0.5;
+		}
 	 }
 	
 

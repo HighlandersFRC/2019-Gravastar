@@ -8,13 +8,21 @@
 package frc.robot;
 
 
+import java.beans.Encoder;
+
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.autonomouscommands.AutoSuite;
+import frc.robot.autonomouscommands.FeedForwardCalculator;
+import frc.robot.sensors.DriveEncoder;
 import frc.robot.teleopcommands.TeleopSuite;
+import frc.robot.tools.DriveTrainVelocityPID;
 import frc.robot.universalcommands.StopAllMotors;
 //import org.json.simple.parser.JSONParser;
 /**
@@ -30,6 +38,8 @@ public class Robot extends TimedRobot {
 	private AutoSuite autoSuite  = new AutoSuite();
 	private RobotConfig robotConfig = new RobotConfig();
 	private StopAllMotors stopAllMotors = new StopAllMotors();
+	private UsbCamera camera;
+	
 
 	//private VisionCamera visionCamera = new VisionCamera(RobotMap.jevois1);
 	Command m_autonomousCommand;
@@ -47,6 +57,12 @@ public class Robot extends TimedRobot {
 		robotConfig.setStartingConfig();
 		// chooser.addOption("My Auto", new MyAutoCommand());
 		SmartDashboard.putData("Auto mode", m_chooser);
+		//camera = CameraServer.getInstance().startAutomaticCapture(0);
+		//camera.setResolution(640,480);
+		//camera.setFPS(15);
+		//Shuffleboard.update();
+		
+
 	}
 
 	/**
@@ -59,6 +75,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void robotPeriodic() {
+		SmartDashboard.putBoolean("hasNavx", RobotMap.navx.isConnected());
 	}
 
 	/**
@@ -75,6 +92,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void disabledPeriodic() {
+		
 		Scheduler.getInstance().run();
 	}
 
@@ -112,6 +130,8 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
+		
+
 		Scheduler.getInstance().run();
 	}
 
@@ -134,7 +154,8 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-
+		
+		SmartDashboard.putNumber("navxValue", RobotMap.mainNavx.currentYaw());
 
 		Scheduler.getInstance().run();
 	}

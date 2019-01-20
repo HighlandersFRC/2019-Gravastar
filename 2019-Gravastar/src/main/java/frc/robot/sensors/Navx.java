@@ -2,21 +2,32 @@ package frc.robot.sensors;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import frc.robot.RobotMap;
 import jaci.pathfinder.Pathfinder;
 
 
 public class Navx {
 	private double originalAngle;
 	private double originalYaw;
+	private double originalRoll;
+	private double originalPitch;
 	private AHRS imu;
 
-	public Navx( AHRS navx) {
+	public Navx(AHRS navx) {
 		imu = navx;
-		originalAngle = navx.getAngle();
-		originalYaw = navx.getYaw();
+		originalAngle = imu.getAngle();
+		originalYaw = imu.getYaw();
+		originalPitch = imu.getPitch();
+		originalRoll = imu.getRoll();
 	}
 	public double currentAngle() {
 		return imu.getAngle()-originalAngle;	
+	}
+	public double currentPitch(){
+		return imu.getPitch();
+	}
+	public double currentRoll(){
+		return imu.getRoll();
 	}
 	public double currentYaw(){
 		return ((imu.getYaw())-originalYaw);
@@ -40,11 +51,11 @@ public class Navx {
 	public boolean isMagInerference(){
 		return imu.isMagneticDisturbance();
 	}
-	public void softResetAngle(double angle){
-		originalAngle = angle;
+	public void softResetAngle(){
+		originalAngle = RobotMap.navx.getAngle();
 
 	}
-	public void softResetYaw(double yaw){
-		originalYaw = yaw;
+	public void softResetYaw(){
+		originalYaw = RobotMap.navx.getYaw();
 	}
 }

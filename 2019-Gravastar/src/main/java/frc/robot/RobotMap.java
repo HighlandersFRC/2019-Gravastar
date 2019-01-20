@@ -13,7 +13,8 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.I2C;
-
+import edu.wpi.first.wpilibj.SPI.Port;
+import frc.robot.autonomouscommands.PathList;
 import frc.robot.sensors.DriveEncoder;
 import frc.robot.sensors.Navx;
 import frc.robot.subsystems.DriveBase;
@@ -29,11 +30,11 @@ public class RobotMap {
     //all 0s are placeholder values
 		//Name all Talon ID's for Easy Acess
 		//TODO must set all Talon IDs
-		public static int rightDriveLeadID = 1;
-		public static int leftDriveLeadID = 3;
+		public static int rightDriveLeadID = 3;
+		public static int leftDriveLeadID = 1;
 		
-		public static int rightDriveFollowerOneID = 2; 
-		public static int leftDriveFollowerOneID = 4;//might be there might not
+		public static int rightDriveFollowerOneID = 4; 
+		public static int leftDriveFollowerOneID = 2;//might be there might not
 		//Initialize all TalonsSRX
 		public static TalonSRX rightDriveLead = new TalonSRX(rightDriveLeadID);
 		public static TalonSRX leftDriveLead = new TalonSRX(leftDriveLeadID);
@@ -41,12 +42,12 @@ public class RobotMap {
 		public static TalonSRX rightDriveFollowerOne = new TalonSRX(rightDriveFollowerOneID);
 		public static TalonSRX leftDriveFollowerOne = new TalonSRX(leftDriveFollowerOneID);
     		
-		public static AHRS navx = new AHRS(I2C.Port.kMXP);
+		public static AHRS navx = new AHRS(Port.kMXP);
 		public static Navx mainNavx = new Navx(navx);	    
 		//Initialize all pneumatic Actuators, predefine actuation directions
-		//public static DoubleSolenoid shifters = new DoubleSolenoid(0,1);
-		//public static DoubleSolenoid.Value lowGear = DoubleSolenoid.Value.kOff;//TODO directions must be assigned
-		//public static DoubleSolenoid.Value highGear = DoubleSolenoid.Value.kOff;//TODO directions mut be assinged
+		public static DoubleSolenoid shifters = new DoubleSolenoid(0,1);
+		public static DoubleSolenoid.Value lowGear = DoubleSolenoid.Value.kForward;//TODO directions must be assigned
+		public static DoubleSolenoid.Value highGear = DoubleSolenoid.Value.kReverse;//TODO directions mut be assinged
 		
 		public static DriveEncoder leftMainDrive = new DriveEncoder(leftDriveLead,RobotMap.leftDriveLead.getSelectedSensorPosition(0));
 		public static DriveEncoder rightMaindrive = new DriveEncoder(rightDriveLead,RobotMap.rightDriveLead.getSelectedSensorPosition(0));		
@@ -65,7 +66,7 @@ public class RobotMap {
 			RobotMap.rightDriveFollowerOne,
 		};
 		public static DriveBase drive = new DriveBase();
-	
+		public static PathList universalPathList = new PathList();
 	// For example to map the left and right motors, you could define the
 	// following variables to use with your drivetrain subsystem.
 	// public static int leftMotor = 1;

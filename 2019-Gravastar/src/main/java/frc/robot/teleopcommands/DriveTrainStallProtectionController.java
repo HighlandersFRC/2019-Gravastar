@@ -28,7 +28,7 @@ public class DriveTrainStallProtectionController extends Command {
 	// Called repeatedly when this Command is scheduled to run
 	@Override
 	protected void execute() {
-		/*if(RobotMap.shifters.get() == RobotMap.highGear) {
+		if(RobotMap.shifters.get() == RobotMap.highGear) {
 			for(TalonSRX talon:RobotMap.driveMotors) {
 				talon.configContinuousCurrentLimit(RobotConfig.driveMotorContinuousCurrentHighGear, RobotConfig.timeOut);
 				talon.configPeakCurrentLimit(RobotConfig.driveMotorPeakCurrentHighGear, 0);  
@@ -43,7 +43,7 @@ public class DriveTrainStallProtectionController extends Command {
 				talon.configPeakCurrentDuration(RobotConfig.driveMotorPeakCurrentDurationLowGear, 0);
 				talon.enableCurrentLimit(true);
 			}
-		}*/
+		}
 	}
 
 	// Make this return true when this Command no longer needs to run execute()
