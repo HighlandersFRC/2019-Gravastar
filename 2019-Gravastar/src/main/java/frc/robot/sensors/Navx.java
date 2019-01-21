@@ -38,7 +38,15 @@ public class Navx {
 	public boolean isMoving() {
 		return imu.isMoving();
 	}
-
+	public double currentAccelerometerX(){
+		return imu.getWorldLinearAccelX();
+	}
+	public double currentAccelerometerY(){
+		return imu.getWorldLinearAccelY();
+	}
+	public double currentAccelerometerZ(){
+		return imu.getWorldLinearAccelZ();
+	}
 	public boolean isOn(){
 		return imu.isConnected();
 	}

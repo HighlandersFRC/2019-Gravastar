@@ -42,6 +42,7 @@ public class DriveTrainStallProtectionController extends Command {
 				talon.configPeakCurrentLimit(RobotConfig.driveMotorPeakCurrentLowGear, 0);  
 				talon.configPeakCurrentDuration(RobotConfig.driveMotorPeakCurrentDurationLowGear, 0);
 				talon.enableCurrentLimit(true);
+			
 			}
 		}
 	}

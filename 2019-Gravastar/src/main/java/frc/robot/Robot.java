@@ -10,6 +10,8 @@ package frc.robot;
 
 import java.beans.Encoder;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -19,8 +21,9 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.autonomouscommands.AutoSuite;
-import frc.robot.autonomouscommands.FeedForwardCalculator;
+import frc.robot.autonomouscommands.CascadingDriveStraightPID;
 import frc.robot.sensors.DriveEncoder;
+import frc.robot.sensors.Navx;
 import frc.robot.teleopcommands.TeleopSuite;
 import frc.robot.tools.DriveTrainVelocityPID;
 import frc.robot.universalcommands.StopAllMotors;
@@ -39,6 +42,9 @@ public class Robot extends TimedRobot {
 	private RobotConfig robotConfig = new RobotConfig();
 	private StopAllMotors stopAllMotors = new StopAllMotors();
 	private UsbCamera camera;
+	private CascadingDriveStraightPID straight = new CascadingDriveStraightPID( 0, 1);
+	private Navx testNavx = new Navx(RobotMap.navx);
+	
 	
 
 	//private VisionCamera visionCamera = new VisionCamera(RobotMap.jevois1);
@@ -55,14 +61,10 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 		robotConfig.setStartingConfig();
+		straight.start();
 		// chooser.addOption("My Auto", new MyAutoCommand());
 		SmartDashboard.putData("Auto mode", m_chooser);
 		//camera = CameraServer.getInstance().startAutomaticCapture(0);
-		//camera.setResolution(640,480);
-		//camera.setFPS(15);
-		//Shuffleboard.update();
-		
-
 	}
 
 	/**
@@ -75,6 +77,8 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void robotPeriodic() {
+		SmartDashboard.putNumber("roll", testNavx.currentRoll());
+		SmartDashboard.putNumber("zAccel",testNavx.currentAccelerometerZ());
 		SmartDashboard.putBoolean("hasNavx", RobotMap.navx.isConnected());
 	}
 
@@ -85,13 +89,14 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void disabledInit() {
-			teleopSuite.endTeleopCommands();
-			autoSuite.endAutoCommands();
-			stopAllMotors.start();
+		teleopSuite.endTeleopCommands();
+		autoSuite.endAutoCommands();
+		stopAllMotors.start();
 	}
 
 	@Override
 	public void disabledPeriodic() {
+	
 		
 		Scheduler.getInstance().run();
 	}
@@ -112,6 +117,8 @@ public class Robot extends TimedRobot {
 		m_autonomousCommand = m_chooser.getSelected();
 		autoSuite.startAutoCommands();
 		robotConfig.autoConfig();
+	
+	
 		/*
 		 * String autoSelected = SmartDashboard.getString("Auto Selector",
 		 * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand

@@ -19,14 +19,12 @@ public class PathSetup {
 	private boolean isReversed;
 	private Trajectory mainPath;
 	private Waypoint[] points;
-	private ArrayList<Double> velocitiesArrayList;
 	public PathSetup(Waypoint[] pathpoints, double pathspeed, boolean reverse){
 		points = pathpoints;
 		velocity = pathspeed;
 		mainPath = generateMainPath();
 		rightFollower = generateRightPathFollower();
 		leftFollower = generateLeftPathFollower();
-		velocitiesArrayList.clear();      
 		isReversed = reverse;
 	}
 	public PathSetup(File file, boolean reverse){

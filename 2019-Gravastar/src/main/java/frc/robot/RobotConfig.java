@@ -21,9 +21,9 @@ public class RobotConfig {
 	public static int driveMotorContinuousCurrentLowGear = 40;
 	public static int driveMotorContinuousCurrentHighGearAuto = 30;
 	public static int driveMotorContinuousCurrentLowGearAuto = 40;
-	public static int driveMotorPeakCurrentHighGear= 30;		
+	public static int driveMotorPeakCurrentHighGear= 20;		
 	public static int driveMotorPeakCurrentLowGear = 60;
-	public static int driveMotorPeakCurrentHighGearAuto = 30;
+	public static int driveMotorPeakCurrentHighGearAuto = 20;
 	public static int driveMotorPeakCurrentLowGearAuto = 60;
 	public static int driveMotorPeakCurrentDurationLowGear = 100;
 	public static int driveMotorPeakCurrentDurationHighGear = 0;
@@ -75,6 +75,8 @@ public class RobotConfig {
 	}
 	public void autoConfig() {
 		for(TalonSRX talon:RobotMap.driveMotors){
+			talon.configVoltageCompSaturation(RobotConfig.voltageControlMaxAuto, 10);
+			talon.configVoltageMeasurementFilter(32, 10);
 			talon.enableVoltageCompensation(true); 
 		}
 		for(TalonSRX talon:RobotMap.driveMotors){
