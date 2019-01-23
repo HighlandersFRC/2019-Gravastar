@@ -188,7 +188,7 @@ public class PurePursuitController extends Command {
     }
     distToEndVector.setX(chosenPath.getMainPath().get(chosenPath.getMainPath().length()-1).x-odometry.getX());
     distToEndVector.setY(chosenPath.getMainPath().get(chosenPath.getMainPath().length()-1).y-odometry.getY());
-    SmartDashboard.putNumber("distoend", distToEndVector.length());
+    SmartDashboard.putNumber("distoend", distToEndVector.length()*12);
     SmartDashboard.putNumber("x", odometry.getX());
     SmartDashboard.putNumber("y",odometry.getY());
     SmartDashboard.putNumber("theta", odometry.gettheta());

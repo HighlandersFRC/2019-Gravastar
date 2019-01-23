@@ -52,7 +52,7 @@ public class RobotConfig {
         RobotMap.leftDriveFollowerOne.setInverted(InvertType.FollowMaster);
 		
 
-    	RobotMap.leftDriveLead.setSelectedSensorPosition(0, 0, 0);
+    	RobotMap.leftDriveLead.setSelectedSensorPosition(0, 0,0);
 		RobotMap.rightDriveLead.setSelectedSensorPosition(0, 0, 0);
 		
 		RobotMap.leftDriveLead.setSensorPhase(false);
@@ -65,9 +65,9 @@ public class RobotConfig {
     		talon.enableCurrentLimit(true);
 		}
 		for(TalonSRX talon:RobotMap.driveMotors){
-			talon.configVoltageCompSaturation(RobotConfig.voltageControlMaxAuto, 10);
+			talon.configVoltageCompSaturation(RobotConfig.voltageControlMaxAuto);
 			talon.enableVoltageCompensation(false); 
-			talon.configVoltageMeasurementFilter(32, 10);
+			talon.configVoltageMeasurementFilter(32);
 		}
 	
     	
@@ -75,8 +75,8 @@ public class RobotConfig {
 	}
 	public void autoConfig() {
 		for(TalonSRX talon:RobotMap.driveMotors){
-			talon.configVoltageCompSaturation(RobotConfig.voltageControlMaxAuto, 10);
-			talon.configVoltageMeasurementFilter(32, 10);
+			talon.configVoltageCompSaturation(RobotConfig.voltageControlMaxAuto);
+			talon.configVoltageMeasurementFilter(32);
 			talon.enableVoltageCompensation(true); 
 		}
 		for(TalonSRX talon:RobotMap.driveMotors){
@@ -94,9 +94,9 @@ public class RobotConfig {
 	public void teleopConfig() {
 		RobotMap.shifters.set(RobotMap.highGear);
 		for(TalonSRX talon:RobotMap.driveMotors){
-			talon.configVoltageCompSaturation(RobotConfig.voltageControlMaxTeleop, 10);
+			talon.configVoltageCompSaturation(RobotConfig.voltageControlMaxTeleop);
 			talon.enableVoltageCompensation(false); 
-			talon.configVoltageMeasurementFilter(32, 10);
+			talon.configVoltageMeasurementFilter(32);
 		}
 		for(TalonSRX talon:RobotMap.driveMotors){
 			talon.configOpenloopRamp(openLoopRampRate, RobotConfig.timeOut);

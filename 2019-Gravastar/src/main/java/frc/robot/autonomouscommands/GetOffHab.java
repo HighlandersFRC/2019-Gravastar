@@ -8,12 +8,14 @@
 package frc.robot.autonomouscommands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import frc.robot.RobotMap;
 
 public class GetOffHab extends CommandGroup {
   /**
    * Add your docs here.
    */
   public GetOffHab() {
+    addSequential(new PurePursuitController(RobotMap.universalPathList.driveOffHab, 1.9, 2.25, 0.05));
     // Add Commands here:
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());
