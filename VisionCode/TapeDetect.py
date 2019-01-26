@@ -12,19 +12,28 @@ class TapeDetect:
 	def __init__(self):
         # Instantiate a JeVois Timer to measure our processing framerate:
 		self.timer = jevois.Timer("processing timer", 100, jevois.LOG_INFO)
+		
+		self.draw = True
         
     # ###################################################################################################
     ## Process function with USB output
 	def process(self, inframe, outframe):
-		jevois.sendSerial("Hello World")
-        
+		out = self.UniversalProcess(inframe)
+		outframe.sendCv(out)
+		
+
 	def processNoUSB(self, inframe):
+		out = self.UniversalProcess(inframe)
+		
+		
+	def UniversalProcess(self, inframe):
+		#jevois.sendSerial("Hello World")
 		#jevois.sendSerial("Hello World")
 		runcount = 0
 		#get image
 		inimg = inframe.getCvBGR()
+		outimg = inimg
 		
-		self.timer.start()
 		
 		#change to hsv
 		hsv = cv2.cvtColor(inimg, cv2.COLOR_BGR2HSV)
@@ -33,7 +42,7 @@ class TapeDetect:
 		errPass = " "
 		
 		#threshold colors to detect
-		lowerThreshold = np.array([60, 0, 0])
+		lowerThreshold = np.array([65, 0, 0])
 		upperThreshold = np.array([75, 255, 255])
 		
 		#check if color in range
@@ -46,111 +55,61 @@ class TapeDetect:
 		ret,thresh = cv2.threshold(blur,127,255,0)
 		countours, _ = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
 		
-		#sift through contours to find two biggest 4 sided contours
+		#sift through contours to find the two biggest 4 sided contours
+		
+		##### change logic to have loop that identifies only four sided contours and copy them to another array
+		##### outside loop, sort array to find the biggest two contours
+		
+		#areas = [cv2.contourArea(c) for c in countours]
+		#areas = np.sort(areas)
+		cntArray = []
+		
+		
 		for countour in countours:
 			peri = cv2.arcLength(countour, True)
 			approx = cv2.approxPolyDP(countour, 0.04 * peri, True)
 			if len(approx) == 4:
-				areas = [cv2.contourArea(c) for c in countours]
-				areas = np.sort(areas)
-				max_index = np.argmax(areas)
+				cntArray.append(countour)
+				#max_index = np.argmax(areas)
+			
+		
+		sortedArray = sorted(cntArray, key=cv2.contourArea)
+		#areas = [cv2.contourArea(c) for c in cntArray]
+		
+		
+		#sortedArray = areas.sort()
+		
+		
+		max_index = len(sortedArray)
+		if max_index > 0:
+			cnt = sortedArray[max_index - 1]
+			rotatedRect = cv2.minAreaRect(cnt)
+			box = cv2.boxPoints(rotatedRect)
+			box_A = np.int0(box)
+		
+			cv2.drawContours(outimg,[box_A],0,(0, 0, 255),2)
+		#angleOne = box_A.angle
+		#lowestCoordinate = box[0]
+		
+		#cv2.rectangle(inimg, lowestCoordinate,(lowestCoordinate[0] + box_A[2][0],lowestCoordinate[1] + box_A[2][1]),(0,255,0),1)
+		
+		#cnt2 = sortedArray[max_index - 2]
+		#rotatedRect2 = cv2.minAreaRect(cnt2)
+		#box2 = cv2.boxPoints(rotatedRect2)
+		#box2_B = np.int0(box2)
+		#angleTwo = rotatedRect2.angle
+		#lowestCoordinate2 = box2[0]
+		
+		#cv2.rectangle(inimg, (x, y), (x+w, y+h), (0,255,0), 1)
 				
-				cnt= countours[max_index]
-				rotatedRect = cv2.minAreaRect(cnt)
-				box = cv2.boxPoints(rotatedRect)
-				box = np.int0(box)
-				angleOne = rotatedRect[2]
-				lowestCoordinate = box[0]
-				
-				#cv2.rectangle(inimg,(x,y),(x+w,y+h),(0,255,0),1)
-				
-				cnt2 = countours[max_index - 1]
-				rotatedRect2 = cv2.minAreaRect(cnt2)
-				box2 = cv2.boxPoints(rotatedRect2)
-				box2 = np.int0(box2)
-				angleTwo = rotatedRect2[2]
-				lowestCoordinate2 = box2[0]
-				#cv2.rectangle(inimg, (x, y), (x+w, y+h), (0,255,0), 1)
-			
-			
-			yesNo = " "
-		
-		#areas = float(cv2.contourArea(cnt))
-		#find center (x,y) of contours
-		#centerX = x + w/2
-		#centerY = y + h/2
-		#centerX2 = x2 + w2/2
-		#centerY2 = y2 + h2/2
-		#x = x - 160
-		#y = y - 120
-		
-		#determine whether we are detecting the correct contour based on if the points at the top of the contours are closer than the points at the bottoms of the contours
-		#if angleOne == angleTwo:
-		#	yesNo = "yes"
-		#else:
-		#	yesNo = "no"
-		
-	
-		
-		x = lowestCoordinate[0]
-		y = lowestCoordinate[1]
-		x2 = lowestCoordinate2[0]
-		y2 = lowestCoordinate2[1]
-		centerX = x/2
-		centerY = y/2
-		
-		if x < x2:
-			leftCoordinate = lowestCoordinate
-			rightCoordinate = lowestCoordinate2
-			leftAngle = angleOne
-			rightAngle = angleTwo
-		else:
-			leftCoordinate = lowestCoordinate2
-			rightCoordinate = lowestCoordinate
-			leftAngle = angleTwo
-			rightAngle = angleTwo
-			
-		
-		distance = -0.0033508576 * y**3
-		distance = distance + 0.8429538777 * y**2
-		distance = distance - 68.64070128 * x
-		distance = distance + 1882.753427
-		distance = distance/y
-		
-		leftCoordinateY = leftCoordinate[1]
-		leftCoordinateX = leftCoordinate[0]
-		rightCoordinateY = rightCoordinate[1]
-		rightCoordinateX = rightCoordinate[0]
-		
-		
-		#change vals to strings to send over serial
-		angleOne = str(angleOne)
-		#angleTwo = str(angleTwo)
-		lowestCoordinate = str(lowestCoordinate)
-		x = str(x)
-		distance = str(distance)
-		centerY = str(centerY)
-		leftCoordinateY = str(leftCoordinateY)	
-			
-		#JSON not fully working yet
-		#X_Y = {"X" : centerX, "Y" : centerY, "X2" : centerX2, "Y2" : centerY2}
-		
-		
-		
-		#send vals through serial
-
-		jevois.sendSerial(leftCoordinateY +  " " + yesNo)
-
-		
-		
-		#jevois.sendSerial(centerX, centerY, centerX2, centerY2, yUpPointsDist, twoPointsDist)
-		
-		fps = self.timer.stop()
-		height = outimg.shape[0]
-		width = outimg.shape[1]
-		#jevois.sendSerial(X_Y)
-		
-		#outframe.sendCv(outimg)
-		
-		#jevois.sendSerial("Hello Simon")
-		pass
+		outimg = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
+		#lowestCoordinate = str(lowestCoordinate)
+		#jevois.sendSerial(lowestCoordinate)
+		#max_index = str(max_index)
+		#box = str(box)
+		#angleOne = str(angleOne)
+		#jevois.sendSerial(angleOne)
+		#cntArray = str(cntArray)
+		#jevois.sendSerial(max_index)
+		#jevois.sendSerial(box)
+		return outimg
