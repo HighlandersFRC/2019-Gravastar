@@ -17,7 +17,7 @@ public class RobotConfig {
 	public static double voltageControlMaxTeleop = 11.0;
 	public static double robotMaxAcceleration = 10.0;
 	public static double robotMaxVelocity = 14.5;
-	public static int driveMotorContinuousCurrentHighGear = 30;
+	public static int driveMotorContinuousCurrentHighGear = 20;
 	public static int driveMotorContinuousCurrentLowGear = 40;
 	public static int driveMotorContinuousCurrentHighGearAuto = 30;
 	public static int driveMotorContinuousCurrentLowGearAuto = 40;

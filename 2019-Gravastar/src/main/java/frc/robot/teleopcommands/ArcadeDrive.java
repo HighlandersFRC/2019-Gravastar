@@ -17,11 +17,12 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class ArcadeDrive extends Command {
-	private double deadZone = 0.05;
+	private double deadZone = 0.01;
 	private double turn =0;
 	private double throttel = 0;
 	private double ratio = 0;
 	private double sensitivity;
+	private double turnSenstivity = 0.6;
 	private double leftPower;
 	private double rightPower;
 	public ArcadeDrive() {
@@ -51,12 +52,12 @@ public class ArcadeDrive extends Command {
 			rightPower = (throttel + (sensitivity*turn*ratio));
 		}
 		else{
-			leftPower = (-turn);
-			rightPower = (turn); 
+			leftPower = (-turn*turnSenstivity);
+			rightPower = (turn*turnSenstivity); 
 		}
 		if(OI.pilotController.getRawAxis(3)>0.5) {
-			leftPower = (-turn);
-			rightPower= (turn);
+			leftPower = (-turn*turnSenstivity);
+			rightPower= (turn*turnSenstivity);
 		}
 		if(Math.abs(leftPower)>1) {
 			leftPower = (leftPower/Math.abs(leftPower));

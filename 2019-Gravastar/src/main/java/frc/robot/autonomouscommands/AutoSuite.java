@@ -15,8 +15,8 @@ public class AutoSuite {
     public AutoSuite() {
     }
     public void startAutoCommands() {
-        quickPathGeneration = new QuickPathGeneration(4, 2, Pathfinder.d2r(30));
-        smallPath = new PurePursuitController(quickPathGeneration.GeneratePath(), 0.5, 1, 0.05);
+        quickPathGeneration = new QuickPathGeneration(3, Pathfinder.d2r(0), Pathfinder.d2r(0));
+        smallPath = new PurePursuitController(quickPathGeneration.GeneratePath(), 0.2, 1, 0.05);
         //straight.start();
         //leftSideHatchOne.start();
         //frontLeftHatchCenter.start();

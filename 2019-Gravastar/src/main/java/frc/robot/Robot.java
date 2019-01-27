@@ -44,6 +44,7 @@ public class Robot extends TimedRobot {
 	private UsbCamera camera;
 	private CascadingDriveStraightPID straight = new CascadingDriveStraightPID( 0, 1);
 	private Navx testNavx = new Navx(RobotMap.navx);
+	private DriveEncoder testEncoder = new DriveEncoder(RobotMap.leftDriveLead, 0);
 	
 	
 
@@ -64,7 +65,8 @@ public class Robot extends TimedRobot {
 		straight.start();
 		// chooser.addOption("My Auto", new MyAutoCommand());
 		SmartDashboard.putData("Auto mode", m_chooser);
-		//camera = CameraServer.getInstance().startAutomaticCapture(0);
+	UsbCamera camera = CameraServer.getInstance().startAutomaticCapture(0);
+		UsbCamera camera2 = CameraServer.getInstance().startAutomaticCapture(1);
 	}
 
 	/**
@@ -163,6 +165,7 @@ public class Robot extends TimedRobot {
 	public void teleopPeriodic() {
 		
 		SmartDashboard.putNumber("navxValue", RobotMap.mainNavx.currentYaw());
+		SmartDashboard.putNumber("speed", this.testEncoder.getVelocity());
 
 		Scheduler.getInstance().run();
 	}
