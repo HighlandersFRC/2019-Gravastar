@@ -5,17 +5,20 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.autonomouscommands;
+package frc.robot.autoRoutines;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import frc.robot.Robot;
 import frc.robot.RobotMap;
+import frc.robot.autonomouscommands.PurePursuitController;
 
-public class GetOffHab extends CommandGroup {
+public class OffHabToLeftSideHatchOne extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public GetOffHab() {
-    addSequential(new PurePursuitController(RobotMap.universalPathList.driveOffHab, 1.9, 2.25, 0.05));
+  public OffHabToLeftSideHatchOne() {
+    addSequential( new PurePursuitController(RobotMap.universalPathList.driveOffHabLeft, 1.9, 2.25, 0.1));
+    addSequential( new PurePursuitController(RobotMap.universalPathList.LeftSideHatchOne, 1.9, 2.25, 0.1,Robot.autoOdometry.gettheta()));
     // Add Commands here:
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());

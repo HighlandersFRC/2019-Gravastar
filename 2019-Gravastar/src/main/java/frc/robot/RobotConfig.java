@@ -42,7 +42,9 @@ public class RobotConfig {
 	 	RobotMap.navx.zeroYaw();
 	 	
 	 	RobotMap.rightDriveFollowerOne.set(ControlMode.Follower, RobotMap.rightDriveLeadID);
-    	RobotMap.leftDriveFollowerOne.set(ControlMode.Follower, RobotMap.leftDriveLeadID);
+		RobotMap.leftDriveFollowerOne.set(ControlMode.Follower, RobotMap.leftDriveLeadID);
+		
+		RobotMap.armFollower.set(ControlMode.Follower, RobotMap.armMasterID);
     	
     	//Invert the right hand side of the drive train
     	RobotMap.rightDriveLead.setInverted(false);
@@ -51,6 +53,8 @@ public class RobotConfig {
     	RobotMap.leftDriveLead.setInverted(true);
         RobotMap.leftDriveFollowerOne.setInverted(InvertType.FollowMaster);
 		
+		RobotMap.armMaster.setInverted(false);
+		RobotMap.armFollower.setInverted(InvertType.FollowMaster);
 
     	RobotMap.leftDriveLead.setSelectedSensorPosition(0, 0,0);
 		RobotMap.rightDriveLead.setSelectedSensorPosition(0, 0, 0);
