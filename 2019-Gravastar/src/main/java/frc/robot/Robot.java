@@ -24,8 +24,10 @@ import frc.robot.autonomouscommands.AutoSuite;
 import frc.robot.autonomouscommands.CascadingDriveStraightPID;
 import frc.robot.sensors.DriveEncoder;
 import frc.robot.sensors.Navx;
+import frc.robot.sensors.VisionCamera;
 import frc.robot.teleopcommands.TeleopSuite;
 import frc.robot.tools.DriveTrainVelocityPID;
+import frc.robot.tools.Odometry;
 import frc.robot.universalcommands.StopAllMotors;
 //import org.json.simple.parser.JSONParser;
 /**
@@ -41,13 +43,13 @@ public class Robot extends TimedRobot {
 	private AutoSuite autoSuite  = new AutoSuite();
 	private RobotConfig robotConfig = new RobotConfig();
 	private StopAllMotors stopAllMotors = new StopAllMotors();
+	//private VisionCamera visionCamera = new VisionCamera(RobotMap.jevois1);
+	
 	private UsbCamera camera;
-	private CascadingDriveStraightPID straight = new CascadingDriveStraightPID( 0, 1);
-	private Navx testNavx = new Navx(RobotMap.navx);
-	private DriveEncoder testEncoder = new DriveEncoder(RobotMap.leftDriveLead, 0);
+	private UsbCamera camera2;
 	
-	
-
+	//this odometry is used to provide reference data for the start of paths, it should only be used in autonomous
+	public static Odometry autoOdometry = new Odometry(false);
 	//private VisionCamera visionCamera = new VisionCamera(RobotMap.jevois1);
 	Command m_autonomousCommand;
 	Command autCommand;  
@@ -62,11 +64,10 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 		robotConfig.setStartingConfig();
-		straight.start();
 		// chooser.addOption("My Auto", new MyAutoCommand());
 		SmartDashboard.putData("Auto mode", m_chooser);
-	UsbCamera camera = CameraServer.getInstance().startAutomaticCapture(0);
-		UsbCamera camera2 = CameraServer.getInstance().startAutomaticCapture(1);
+		//camera = CameraServer.getInstance().startAutomaticCapture(0);
+		//camera2 = CameraServer.getInstance().startAutomaticCapture(1);
 	}
 
 	/**
@@ -79,9 +80,10 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void robotPeriodic() {
-		SmartDashboard.putNumber("roll", testNavx.currentRoll());
-		SmartDashboard.putNumber("zAccel",testNavx.currentAccelerometerZ());
+		double pressure = ((250*RobotMap.preassureSensor.getAverageVoltage())/4.53)-25;
+		SmartDashboard.putNumber("pressure", pressure);
 		SmartDashboard.putBoolean("hasNavx", RobotMap.navx.isConnected());
+		//SmartDashboard.putNumber("Distance",visionCamera.getDist());
 	}
 
 	/**
@@ -93,6 +95,8 @@ public class Robot extends TimedRobot {
 	public void disabledInit() {
 		teleopSuite.endTeleopCommands();
 		autoSuite.endAutoCommands();
+		autoOdometry.cancel();
+		autoOdometry.endOdmetry();
 		stopAllMotors.start();
 	}
 
@@ -119,8 +123,8 @@ public class Robot extends TimedRobot {
 		m_autonomousCommand = m_chooser.getSelected();
 		autoSuite.startAutoCommands();
 		robotConfig.autoConfig();
-	
-	
+		autoOdometry.zero();
+		autoOdometry.start();
 		/*
 		 * String autoSelected = SmartDashboard.getString("Auto Selector",
 		 * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
@@ -139,8 +143,6 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-		
-
 		Scheduler.getInstance().run();
 	}
 
@@ -163,10 +165,10 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		
+		if(Math.abs(OI.operatorController.getRawAxis(1))>0.1){
+			RobotMap.armMaster.set(ControlMode.PercentOutput, OI.operatorController.getRawAxis(1));
+		}
 		SmartDashboard.putNumber("navxValue", RobotMap.mainNavx.currentYaw());
-		SmartDashboard.putNumber("speed", this.testEncoder.getVelocity());
-
 		Scheduler.getInstance().run();
 	}
 

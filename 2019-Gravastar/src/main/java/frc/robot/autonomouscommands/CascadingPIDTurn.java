@@ -35,7 +35,6 @@ public class CascadingPIDTurn extends Command {
     p = kp;
     i = ki;
     d = kd;
-   
     requires(RobotMap.drive);
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
@@ -56,6 +55,9 @@ public class CascadingPIDTurn extends Command {
     leftDriveTrainVelocityPID.start();
     rightDriveTrainVelocityPID.start();
     navx.softResetYaw();
+  }
+  public void setTarget(double target){
+    turnPID.setSetPoint(target);
   }
 
   // Called repeatedly when this Command is scheduled to run
