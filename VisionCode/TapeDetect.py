@@ -39,10 +39,9 @@ class TapeDetect:
 		hsv = cv2.cvtColor(inimg, cv2.COLOR_BGR2HSV)
 		outimg = hsv
 		
-		errPass = " "
 		
 		#threshold colors to detect
-		lowerThreshold = np.array([65, 0, 0])
+		lowerThreshold = np.array([65, 0, 20])
 		upperThreshold = np.array([75, 255, 255])
 		
 		#check if color in range
@@ -55,61 +54,90 @@ class TapeDetect:
 		ret,thresh = cv2.threshold(blur,127,255,0)
 		countours, _ = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
 		
-		#sift through contours to find the two biggest 4 sided contours
-		
-		##### change logic to have loop that identifies only four sided contours and copy them to another array
-		##### outside loop, sort array to find the biggest two contours
-		
-		#areas = [cv2.contourArea(c) for c in countours]
-		#areas = np.sort(areas)
 		cntArray = []
+		yesNo = " "
 		
 		
+		#sift through contours and add 4 sided contours to cntArray
 		for countour in countours:
 			peri = cv2.arcLength(countour, True)
 			approx = cv2.approxPolyDP(countour, 0.04 * peri, True)
-			if len(approx) == 4:
+			if len(approx) == 4 and cv2.contourArea(countour) > 25:
 				cntArray.append(countour)
-				#max_index = np.argmax(areas)
 			
-		
+		#sort cntArray
 		sortedArray = sorted(cntArray, key=cv2.contourArea)
-		#areas = [cv2.contourArea(c) for c in cntArray]
+				
+		#check if there are more than one contours in sortedArray then find the two biggest and draw a rectangle around them
+		arraySize = len(sortedArray)
 		
-		
-		#sortedArray = areas.sort()
-		
-		
-		max_index = len(sortedArray)
-		if max_index > 0:
-			cnt = sortedArray[max_index - 1]
+		if arraySize > 1:
+			max_index = arraySize - 1
+			cnt = sortedArray[max_index]
 			rotatedRect = cv2.minAreaRect(cnt)
 			box = cv2.boxPoints(rotatedRect)
-			box_A = np.int0(box)
+			bigBoxArray	= np.int0(box)
 		
-			cv2.drawContours(outimg,[box_A],0,(0, 0, 255),2)
-		#angleOne = box_A.angle
-		#lowestCoordinate = box[0]
-		
-		#cv2.rectangle(inimg, lowestCoordinate,(lowestCoordinate[0] + box_A[2][0],lowestCoordinate[1] + box_A[2][1]),(0,255,0),1)
-		
-		#cnt2 = sortedArray[max_index - 2]
-		#rotatedRect2 = cv2.minAreaRect(cnt2)
-		#box2 = cv2.boxPoints(rotatedRect2)
-		#box2_B = np.int0(box2)
-		#angleTwo = rotatedRect2.angle
-		#lowestCoordinate2 = box2[0]
-		
-		#cv2.rectangle(inimg, (x, y), (x+w, y+h), (0,255,0), 1)
-				
-		outimg = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
-		#lowestCoordinate = str(lowestCoordinate)
-		#jevois.sendSerial(lowestCoordinate)
-		#max_index = str(max_index)
-		#box = str(box)
-		#angleOne = str(angleOne)
-		#jevois.sendSerial(angleOne)
-		#cntArray = str(cntArray)
-		#jevois.sendSerial(max_index)
-		#jevois.sendSerial(box)
+			cv2.drawContours(outimg,[bigBoxArray],0,(0, 0, 255),2)
+			
+			
+			cnt2 = sortedArray[max_index - 1]
+			rotatedRect2 = cv2.minAreaRect(cnt2)
+			box2 = cv2.boxPoints(rotatedRect2)
+			secondBoxArray = np.int0(box2)
+			
+			cv2.drawContours(outimg,[secondBoxArray],0,(0, 0, 255),2)
+			
+			#center coordinates of first rectangle
+			centerY = bigBoxArray[0][1]
+			centerX = bigBoxArray[0][0]
+			centerY2 = secondBoxArray[0][1]
+			centerX2 = secondBoxArray[0][0]
+			
+			#angle of robot relative to the target
+			yawAngle = (centerX - 155.5)
+			yawAngle = yawAngle * 0.203125
+			
+			# angle at which the target is angled
+			targetAngle_A = bigBoxArray[2]
+			targetAngle_B = secondBoxArray[2]
+
+			#determine which box is on the left or right
+			if centerX < centerX2:
+				leftY = centerY
+				leftX = centerX
+				rightY = centerY2
+				rightX = centerX2
+				leftAngle = targetAngle_A
+				rightAngle = targetAngle_B
+			else:
+				leftY = centerY2
+				leftX = centerX2
+				rightY = centerY
+				rightX = centerX
+				leftAngle = targetAngle_B
+				rightAngle = targetAngle_A
+			
+
+			# decide whether we are detecting the correct targets
+			#if leftAngle == rightAngle:
+			#	yesNo = "Yes"
+			
+			#else:
+			#	yesNo = "No"
+			
+			distance = -0.0013216275 * rightY**3 + 0.3319141337 * rightY**2 + -27.11835717 * rightY + 763.1474953
+			
+			#change vals to string to send over serial
+			yawAngle = str(yawAngle)
+			rightY = str(rightY)
+			distance = str(distance)
+			
+			#send values over serial
+			#jevois.sendSerial(yawAngle)
+			#jevois.sendSerial(yesNo)
+			#jevois.sendSerial(rightY)
+			jevois.sendSerial(distance)
+			#return an image if over usb
+		outimg = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)		
 		return outimg
