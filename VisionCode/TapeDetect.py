@@ -40,7 +40,7 @@ class TapeDetect:
 		outimg = hsv
 		
 		
-		#threshold colors to detect
+		#threshold colors to detect - Green: First value decides color, second val determines intensity, third val decides brightness
 		lowerThreshold = np.array([65, 0, 20])
 		upperThreshold = np.array([75, 255, 255])
 		
@@ -68,11 +68,13 @@ class TapeDetect:
 		#sort cntArray
 		sortedArray = sorted(cntArray, key=cv2.contourArea)
 				
-		#check if there are more than one contours in sortedArray then find the two biggest and draw a rectangle around them
+		#check if there is more than one contour in sortedArray; then find the two biggest and draw a rectangle around them
 		arraySize = len(sortedArray)
 		
 		if arraySize > 1:
 			max_index = arraySize - 1
+			
+			#First rectangle
 			cnt = sortedArray[max_index]
 			rotatedRect = cv2.minAreaRect(cnt)
 			box = cv2.boxPoints(rotatedRect)
@@ -80,7 +82,7 @@ class TapeDetect:
 		
 			cv2.drawContours(outimg,[bigBoxArray],0,(0, 0, 255),2)
 			
-			
+			#Second rectangle
 			cnt2 = sortedArray[max_index - 1]
 			rotatedRect2 = cv2.minAreaRect(cnt2)
 			box2 = cv2.boxPoints(rotatedRect2)
@@ -91,6 +93,7 @@ class TapeDetect:
 			#center coordinates of first rectangle
 			centerY = bigBoxArray[0][1]
 			centerX = bigBoxArray[0][0]
+			#center coordinates of second rectangle
 			centerY2 = secondBoxArray[0][1]
 			centerX2 = secondBoxArray[0][0]
 			
@@ -98,11 +101,11 @@ class TapeDetect:
 			yawAngle = (centerX - 155.5)
 			yawAngle = yawAngle * 0.203125
 			
-			# angle at which the target is angled
-			targetAngle_A = bigBoxArray[2]
-			targetAngle_B = secondBoxArray[2]
+			# slope (or angle) of the target
+			targetAngle_A = box[2]
+			targetAngle_B = box2[2]
 
-			#determine which box is on the left or right
+			#determine which box is on the left and which is on the right
 			if centerX < centerX2:
 				leftY = centerY
 				leftX = centerX
@@ -120,24 +123,22 @@ class TapeDetect:
 			
 
 			# decide whether we are detecting the correct targets
-			#if leftAngle == rightAngle:
+			#if leftAngle == (-rightAngle + 5) or leftAngle == (-rightAngle - 5):
 			#	yesNo = "Yes"
-			
 			#else:
 			#	yesNo = "No"
 			
+			#calculate the distance to the target. The values were calculated based on trial and error
 			distance = -0.0013216275 * rightY**3 + 0.3319141337 * rightY**2 + -27.11835717 * rightY + 763.1474953
 			
 			#change vals to string to send over serial
 			yawAngle = str(yawAngle)
-			rightY = str(rightY)
 			distance = str(distance)
 			
 			#send values over serial
-			#jevois.sendSerial(yawAngle)
-			#jevois.sendSerial(yesNo)
-			#jevois.sendSerial(rightY)
+			jevois.sendSerial(yawAngle)
 			jevois.sendSerial(distance)
+			
 			#return an image if over usb
 		outimg = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)		
 		return outimg
