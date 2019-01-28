@@ -9,12 +9,14 @@ package frc.robot.teleopcommands;
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.RobotConfig;
 import frc.robot.RobotMap;
 
 public class DriveTrainStallProtectionController extends Command {
+	private DoubleSolenoid.Value previousValue;
 	public DriveTrainStallProtectionController() {
 		// Use requires() here to declare subsystem dependencies
 		// eg. requires(chassis);
@@ -23,20 +25,22 @@ public class DriveTrainStallProtectionController extends Command {
 	// Called just before this Command runs the first time
 	@Override
 	protected void initialize() {
+		previousValue = DoubleSolenoid.Value.kOff;
 	}
 
 	// Called repeatedly when this Command is scheduled to run
 	@Override
 	protected void execute() {
-		if(RobotMap.shifters.get() == RobotMap.highGear) {
+		if(RobotMap.shifters.get() == RobotMap.highGear&&RobotMap.shifters.get()!=previousValue) {
 			for(TalonSRX talon:RobotMap.driveMotors) {
 				talon.configContinuousCurrentLimit(RobotConfig.driveMotorContinuousCurrentHighGear, RobotConfig.timeOut);
 				talon.configPeakCurrentLimit(RobotConfig.driveMotorPeakCurrentHighGear, 0);  
 				talon.configPeakCurrentDuration(RobotConfig.driveMotorPeakCurrentDurationHighGear, 0);
 				talon.enableCurrentLimit(true);
 			}
+			previousValue = RobotMap.highGear;
 		}
-		else if(RobotMap.shifters.get() == RobotMap.lowGear) {
+		else if(RobotMap.shifters.get() == RobotMap.lowGear&&RobotMap.shifters.get()!=previousValue) {
 			for(TalonSRX talon:RobotMap.driveMotors) {	
 				talon.configContinuousCurrentLimit(RobotConfig.driveMotorContinuousCurrentLowGear, RobotConfig.timeOut);
 				talon.configPeakCurrentLimit(RobotConfig.driveMotorPeakCurrentLowGear, 0);  
@@ -44,6 +48,7 @@ public class DriveTrainStallProtectionController extends Command {
 				talon.enableCurrentLimit(true);
 			
 			}
+			previousValue = RobotMap.lowGear;
 		}
 	}
 

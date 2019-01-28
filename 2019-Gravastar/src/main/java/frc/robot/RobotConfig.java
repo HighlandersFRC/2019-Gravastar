@@ -17,11 +17,11 @@ public class RobotConfig {
 	public static double voltageControlMaxTeleop = 11.0;
 	public static double robotMaxAcceleration = 10.0;
 	public static double robotMaxVelocity = 14.5;
-	public static int driveMotorContinuousCurrentHighGear = 20;
+	public static int driveMotorContinuousCurrentHighGear = 30;
 	public static int driveMotorContinuousCurrentLowGear = 40;
 	public static int driveMotorContinuousCurrentHighGearAuto = 30;
 	public static int driveMotorContinuousCurrentLowGearAuto = 40;
-	public static int driveMotorPeakCurrentHighGear= 20;		
+	public static int driveMotorPeakCurrentHighGear= 30;		
 	public static int driveMotorPeakCurrentLowGear = 60;
 	public static int driveMotorPeakCurrentHighGearAuto = 20;
 	public static int driveMotorPeakCurrentLowGearAuto = 60;
@@ -39,7 +39,8 @@ public class RobotConfig {
 			talon.configFactoryDefault();
 		}
 
-	 	RobotMap.navx.zeroYaw();
+		 RobotMap.navx.zeroYaw();
+		 
 	 	
 	 	RobotMap.rightDriveFollowerOne.set(ControlMode.Follower, RobotMap.rightDriveLeadID);
 		RobotMap.leftDriveFollowerOne.set(ControlMode.Follower, RobotMap.leftDriveLeadID);

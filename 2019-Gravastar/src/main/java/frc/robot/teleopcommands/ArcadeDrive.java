@@ -22,7 +22,7 @@ public class ArcadeDrive extends Command {
 	private double throttel = 0;
 	private double ratio = 0;
 	private double sensitivity;
-	private double turnSenstivity = 0.6;
+	private double turnSenstivity = 1;
 	private double leftPower;
 	private double rightPower;
 	public ArcadeDrive() {
