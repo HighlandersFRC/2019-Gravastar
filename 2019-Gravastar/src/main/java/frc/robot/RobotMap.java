@@ -55,6 +55,7 @@ public class RobotMap {
 
 		public static TalonSRX intake = new TalonSRX(intakeID);
 
+
 		public static AHRS navx = new AHRS(Port.kMXP);
 		public static Navx mainNavx = new Navx(navx);	    
 		//Initialize all pneumatic Actuators, predefine actuation directions
@@ -62,7 +63,9 @@ public class RobotMap {
 		public static DoubleSolenoid.Value lowGear = DoubleSolenoid.Value.kReverse;//TODO directions must be assigned
 		public static DoubleSolenoid.Value highGear = DoubleSolenoid.Value.kForward;//TODO directions mut be assinged
 		
-		public static DoubleSolenoid hatchPiston = new DoubleSolenoid(2, 3);
+		public static DoubleSolenoid hatchPiston1 = new DoubleSolenoid(2, 3);
+		public static DoubleSolenoid hatchPiston2 = new DoubleSolenoid(4,5);
+		public static DoubleSolenoid hatchPiston3 = new DoubleSolenoid(6, 7);
 		public static DoubleSolenoid.Value pushOut = DoubleSolenoid.Value.kForward;
 		public static DoubleSolenoid.Value in = DoubleSolenoid.Value.kReverse;
 

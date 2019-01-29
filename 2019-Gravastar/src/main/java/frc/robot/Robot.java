@@ -15,6 +15,8 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Watchdog;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -28,6 +30,7 @@ import frc.robot.sensors.VisionCamera;
 import frc.robot.teleopcommands.TeleopSuite;
 import frc.robot.tools.DriveTrainVelocityPID;
 import frc.robot.tools.Odometry;
+import frc.robot.universalcommands.ActuateAllHatchPistons;
 import frc.robot.universalcommands.StopAllMotors;
 //import org.json.simple.parser.JSONParser;
 /**
@@ -43,6 +46,7 @@ public class Robot extends TimedRobot {
 	private AutoSuite autoSuite  = new AutoSuite();
 	private RobotConfig robotConfig = new RobotConfig();
 	private StopAllMotors stopAllMotors = new StopAllMotors();
+	private ActuateAllHatchPistons actuateAllHatchPistons = new ActuateAllHatchPistons();
 	//private VisionCamera visionCamera = new VisionCamera(RobotMap.jevois1);
 	
 	private UsbCamera camera;
@@ -66,7 +70,8 @@ public class Robot extends TimedRobot {
 		robotConfig.setStartingConfig();
 		// chooser.addOption("My Auto", new MyAutoCommand());
 		SmartDashboard.putData("Auto mode", m_chooser);
-		//camera = CameraServer.getInstance().startAutomaticCapture(0);
+		camera = CameraServer.getInstance().startAutomaticCapture(0);
+
 		//camera2 = CameraServer.getInstance().startAutomaticCapture(1);
 	}
 
@@ -83,6 +88,8 @@ public class Robot extends TimedRobot {
 		double pressure = ((250*RobotMap.preassureSensor.getAverageVoltage())/4.53)-25;
 		SmartDashboard.putNumber("pressure", pressure);
 		SmartDashboard.putBoolean("hasNavx", RobotMap.navx.isConnected());
+		SmartDashboard.putNumber("armPos", RobotMap.armMaster.getSelectedSensorPosition());
+
 		//SmartDashboard.putNumber("Distance",visionCamera.getDist());
 	}
 
@@ -165,8 +172,27 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
+	
 		if(Math.abs(OI.operatorController.getRawAxis(1))>0.1){
-			RobotMap.armMaster.set(ControlMode.PercentOutput, OI.operatorController.getRawAxis(1));
+			RobotMap.armMaster.set(ControlMode.PercentOutput, OI.operatorController.getRawAxis(1)*-0.65);
+		}
+		else{
+			RobotMap.armMaster.set(ControlMode.PercentOutput, 0.15);	
+		}
+		if(OI.operatorController.getAButton()){
+			RobotMap.intake.set(ControlMode.PercentOutput, 1.0);
+		}
+		else if (OI.operatorController.getBButton()){
+			RobotMap.intake.set(ControlMode.PercentOutput, -0.4);
+		}
+		else{
+			RobotMap.intake.set(ControlMode.PercentOutput, 0);
+		}
+		if(OI.operatorController.getBumper(Hand.kLeft)){
+			actuateAllHatchPistons.actuatePistons(RobotMap.pushOut);
+		}	
+		else{
+			actuateAllHatchPistons.actuatePistons(RobotMap.in);
 		}
 		SmartDashboard.putNumber("navxValue", RobotMap.mainNavx.currentYaw());
 		Scheduler.getInstance().run();
