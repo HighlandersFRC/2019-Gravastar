@@ -22,7 +22,6 @@ public class ArcadeDrive extends Command {
 	private double throttel = 0;
 	private double ratio = 0;
 	private double sensitivity;
-	private double turnSenstivity = 1;
 	private double leftPower;
 	private double rightPower;
 	public ArcadeDrive() {
@@ -52,8 +51,8 @@ public class ArcadeDrive extends Command {
 			rightPower = (throttel + (sensitivity*turn*ratio));
 		}
 		else{
-			leftPower = (-turn*turnSenstivity);
-			rightPower = (turn*turnSenstivity); 
+			leftPower = (-turn);
+			rightPower = (turn); 
 		}
 		if(OI.pilotController.getRawAxis(3)>0.5) {
 			leftPower = (-turn);

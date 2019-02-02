@@ -95,7 +95,7 @@ public class Robot extends TimedRobot {
 	
 		SmartDashboard.putNumber("leftPos",RobotMap.leftMainDrive.getDistance());
 		SmartDashboard.putNumber("rightpos",RobotMap.rightMaindrive.getDistance());
-		//SmartDashboard.putNumber("Distance",visionCamera.getDist());
+		SmartDashboard.putString("Distance",RobotMap.jevois1.readString());
 	}
 
 	/**
@@ -181,39 +181,8 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		//System.out.println(RobotMap.jevois1.readString());
-		/*if(Math.abs(OI.operatorController.getRawAxis(1))>0.1){
-			RobotMap.armMaster.set(ControlMode.PercentOutput, OI.operatorController.getRawAxis(1)*-0.65+ Math.cos(Pathfinder.d2r(RobotMap.mainArmEncoder.getAngle()))*0.35);
-		}
-		else{
-			RobotMap.armMaster.set(ControlMode.PercentOutput, Math.cos(Pathfinder.d2r(RobotMap.mainArmEncoder.getAngle()))*0.35);	
-		}*/
-		if(OI.operatorController.getAButton()){
-			armPositionController.setArmPosition(0);
-		}
-		else if (OI.operatorController.getYButton()){
-			armPositionController.setArmPosition(90);
-		}
-		else if(OI.operatorController.getXButton()){
-			armPositionController.setArmPosition(82);
-		}
 		
-		if(OI.operatorController.getBumper(Hand.kLeft)){
-			actuateAllHatchPistons.actuatePistons(RobotMap.pushOut);
-		}	
-		else{
-			actuateAllHatchPistons.actuatePistons(RobotMap.in);
-		}
-		if(OI.operatorController.getTriggerAxis(Hand.kLeft)>0.1){
-			RobotMap.intake.set(ControlMode.PercentOutput, -0.4);
-		}
-		else if(OI.operatorController.getTriggerAxis(Hand.kRight)>0.1){
-			RobotMap.intake.set(ControlMode.PercentOutput, 1);
-		}
-		else{
-			RobotMap.intake.set(ControlMode.PercentOutput, 0);
-
-		}
+		
 		SmartDashboard.putNumber("navxValue", RobotMap.mainNavx.currentYaw());
 		Scheduler.getInstance().run();
 	}

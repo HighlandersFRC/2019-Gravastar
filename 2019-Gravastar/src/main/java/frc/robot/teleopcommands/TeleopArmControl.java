@@ -13,12 +13,14 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.OI;
 import frc.robot.RobotMap;
+import frc.robot.universalcommands.ArmPositionController;
 import jaci.pathfinder.Pathfinder;
 
 public class TeleopArmControl extends Command {
-
+  private ArmPositionController armPositionController;
   public TeleopArmControl() {
     requires(RobotMap.arm);
+    armPositionController = new ArmPositionController(90);
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
   }
@@ -26,47 +28,46 @@ public class TeleopArmControl extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    armPositionController.start();
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-  
-		if(Math.abs(OI.operatorController.getRawAxis(1))>0.1){
-      RobotMap.arm.disableArmControl();
+    if(Math.abs(OI.operatorController.getRawAxis(1))>0.15){
       RobotMap.armMaster.set(ControlMode.PercentOutput, OI.operatorController.getRawAxis(1)*-0.65+ Math.cos(Pathfinder.d2r(RobotMap.mainArmEncoder.getAngle()))*0.35);
-      
+      armPositionController.disablePID();
+      armPositionController.setArmPosition(armPositionController.getArmAngle());
 		}
 		else{
-      RobotMap.arm.enableArmControl();
+      armPositionController.endablePID();
+      
 		}
-		if(OI.operatorController.getAButton()){
-			RobotMap.arm.changeArmPosition(0);
+  
+    if(OI.operatorController.getAButton()){
+      armPositionController.setArmPosition(0);
 		}
 		else if (OI.operatorController.getYButton()){
-      RobotMap.arm.changeArmPosition(90);
+			armPositionController.setArmPosition(90);
 		}
 		else if(OI.operatorController.getXButton()){
-			RobotMap.arm.changeArmPosition(45);
+			armPositionController.setArmPosition(82);
 		}
-		
 		if(OI.operatorController.getBumper(Hand.kLeft)){
 			RobotMap.arm.pushOutHatch();
 		}	
 		else{
-			RobotMap.arm.pullInAllHatchPistons();
-    }
-    if(OI.operatorController.getTriggerAxis(Hand.kLeft)>0.1){
+      RobotMap.arm.pullInAllHatchPistons();
+		}
+		if(OI.operatorController.getTriggerAxis(Hand.kLeft)>0.1){
       RobotMap.arm.intakeBall();
-    }
-    else if(OI.operatorController.getTriggerAxis(Hand.kRight)>0.1){
+		}
+		else if(OI.operatorController.getTriggerAxis(Hand.kRight)>0.1){
       RobotMap.arm.shootBall();
-    }
-    else{
+		}
+		else{
       RobotMap.arm.intakeWheelsResting();
-    }
-    
-
+		}
   }
 
   // Make this return true when this Command no longer needs to run execute()

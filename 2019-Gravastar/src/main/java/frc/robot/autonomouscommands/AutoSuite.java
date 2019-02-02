@@ -8,7 +8,7 @@ public class AutoSuite {
     private OffHabToLeftSideHatchOne habToLeftSideHatchOne;
     private ShortPathToAngle shortPathToAngle;
     public AutoSuite() {
-        habToLeftSideHatchOne = new OffHabToLeftSideHatchOne();
+        
         shortPathToAngle = new ShortPathToAngle(5.0,Pathfinder.d2r(0),Pathfinder.d2r(0));
     }
     public void startAutoCommands() {

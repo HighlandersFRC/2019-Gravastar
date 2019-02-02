@@ -21,15 +21,15 @@ public class Arm extends Subsystem {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
   public Arm(){
-    armPositionController.start();
   }
   @Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
     // setDefaultCommand(new MySpecialCommand());
   }
+
   public void intakeBall(){
-    RobotMap.intake.set(ControlMode.PercentOutput, -0.2);
+    RobotMap.intake.set(ControlMode.PercentOutput, -0.4);
   }
   public void shootBall(){
     RobotMap.intake.set(ControlMode.PercentOutput, 0.8);
@@ -47,13 +47,5 @@ public class Arm extends Subsystem {
     RobotMap.hatchPiston2.set(RobotMap.in);
     RobotMap.hatchPiston3.set(RobotMap.in);
   }
-  public void changeArmPosition(double position){
-    armPositionController.setArmPosition(position);
-  }
-  public void disableArmControl(){
-    armPositionController.setShouldRun(false);
-  }
-  public void enableArmControl(){
-    armPositionController.setShouldRun(true);
-  }
+
 }
