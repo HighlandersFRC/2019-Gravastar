@@ -17,10 +17,12 @@ import frc.robot.universalcommands.ArmPositionController;
  * Add your docs here.
  */
 public class Arm extends Subsystem {
-  private ArmPositionController armPositionController = new ArmPositionController(0);
+  private ArmPositionController armPositionController = new ArmPositionController(90);
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
-
+  public Arm(){
+    armPositionController.start();
+  }
   @Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
@@ -47,5 +49,11 @@ public class Arm extends Subsystem {
   }
   public void changeArmPosition(double position){
     armPositionController.setArmPosition(position);
+  }
+  public void disableArmControl(){
+    armPositionController.setShouldRun(false);
+  }
+  public void enableArmControl(){
+    armPositionController.setShouldRun(true);
   }
 }

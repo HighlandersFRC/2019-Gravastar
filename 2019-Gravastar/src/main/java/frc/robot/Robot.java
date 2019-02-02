@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.autonomouscommands.AutoSuite;
 import frc.robot.autonomouscommands.CascadingDriveStraightPID;
+import frc.robot.sensors.ArmEncoder;
 import frc.robot.sensors.DriveEncoder;
 import frc.robot.sensors.Navx;
 import frc.robot.sensors.VisionCamera;
@@ -31,7 +32,9 @@ import frc.robot.teleopcommands.TeleopSuite;
 import frc.robot.tools.DriveTrainVelocityPID;
 import frc.robot.tools.Odometry;
 import frc.robot.universalcommands.ActuateAllHatchPistons;
+import frc.robot.universalcommands.ArmPositionController;
 import frc.robot.universalcommands.StopAllMotors;
+import jaci.pathfinder.Pathfinder;
 //import org.json.simple.parser.JSONParser;
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -47,6 +50,7 @@ public class Robot extends TimedRobot {
 	private RobotConfig robotConfig = new RobotConfig();
 	private StopAllMotors stopAllMotors = new StopAllMotors();
 	private ActuateAllHatchPistons actuateAllHatchPistons = new ActuateAllHatchPistons();
+	private ArmPositionController armPositionController = new ArmPositionController(90);
 	//private VisionCamera visionCamera = new VisionCamera(RobotMap.jevois1);
 	
 	private UsbCamera camera;
@@ -70,9 +74,7 @@ public class Robot extends TimedRobot {
 		robotConfig.setStartingConfig();
 		// chooser.addOption("My Auto", new MyAutoCommand());
 		SmartDashboard.putData("Auto mode", m_chooser);
-		camera = CameraServer.getInstance().startAutomaticCapture(0);
-
-		//camera2 = CameraServer.getInstance().startAutomaticCapture(1);
+		//camera = CameraServer.getInstance().startAutomaticCapture(0);
 	}
 
 	/**
@@ -86,10 +88,13 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotPeriodic() {
 		double pressure = ((250*RobotMap.preassureSensor.getAverageVoltage())/4.53)-25;
+	
 		SmartDashboard.putNumber("pressure", pressure);
 		SmartDashboard.putBoolean("hasNavx", RobotMap.navx.isConnected());
-		SmartDashboard.putNumber("armPos", RobotMap.armMaster.getSelectedSensorPosition());
-
+		SmartDashboard.putNumber("armPosit",RobotMap.mainArmEncoder.getAngle());
+	
+		SmartDashboard.putNumber("leftPos",RobotMap.leftMainDrive.getDistance());
+		SmartDashboard.putNumber("rightpos",RobotMap.rightMaindrive.getDistance());
 		//SmartDashboard.putNumber("Distance",visionCamera.getDist());
 	}
 
@@ -110,7 +115,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void disabledPeriodic() {
 	
-		
+
 		Scheduler.getInstance().run();
 	}
 
@@ -157,6 +162,10 @@ public class Robot extends TimedRobot {
 	public void teleopInit() {
 		robotConfig.teleopConfig();
 		teleopSuite.startTeleopCommands();
+
+		armPositionController.start();
+		armPositionController.setArmPosition(90);
+
 		//visionCamera.start();
 		// This makes sure that the autonomous stops running when
 		// teleop starts running. If you want the autonomous to
@@ -172,27 +181,38 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-	
-		if(Math.abs(OI.operatorController.getRawAxis(1))>0.1){
-			RobotMap.armMaster.set(ControlMode.PercentOutput, OI.operatorController.getRawAxis(1)*-0.65);
+		//System.out.println(RobotMap.jevois1.readString());
+		/*if(Math.abs(OI.operatorController.getRawAxis(1))>0.1){
+			RobotMap.armMaster.set(ControlMode.PercentOutput, OI.operatorController.getRawAxis(1)*-0.65+ Math.cos(Pathfinder.d2r(RobotMap.mainArmEncoder.getAngle()))*0.35);
 		}
 		else{
-			RobotMap.armMaster.set(ControlMode.PercentOutput, 0.15);	
-		}
+			RobotMap.armMaster.set(ControlMode.PercentOutput, Math.cos(Pathfinder.d2r(RobotMap.mainArmEncoder.getAngle()))*0.35);	
+		}*/
 		if(OI.operatorController.getAButton()){
-			RobotMap.intake.set(ControlMode.PercentOutput, 1.0);
+			armPositionController.setArmPosition(0);
 		}
-		else if (OI.operatorController.getBButton()){
-			RobotMap.intake.set(ControlMode.PercentOutput, -0.4);
+		else if (OI.operatorController.getYButton()){
+			armPositionController.setArmPosition(90);
 		}
-		else{
-			RobotMap.intake.set(ControlMode.PercentOutput, 0);
+		else if(OI.operatorController.getXButton()){
+			armPositionController.setArmPosition(82);
 		}
+		
 		if(OI.operatorController.getBumper(Hand.kLeft)){
 			actuateAllHatchPistons.actuatePistons(RobotMap.pushOut);
 		}	
 		else{
 			actuateAllHatchPistons.actuatePistons(RobotMap.in);
+		}
+		if(OI.operatorController.getTriggerAxis(Hand.kLeft)>0.1){
+			RobotMap.intake.set(ControlMode.PercentOutput, -0.4);
+		}
+		else if(OI.operatorController.getTriggerAxis(Hand.kRight)>0.1){
+			RobotMap.intake.set(ControlMode.PercentOutput, 1);
+		}
+		else{
+			RobotMap.intake.set(ControlMode.PercentOutput, 0);
+
 		}
 		SmartDashboard.putNumber("navxValue", RobotMap.mainNavx.currentYaw());
 		Scheduler.getInstance().run();

@@ -7,10 +7,24 @@
 
 package frc.robot.universalcommands;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.RobotMap;
+import frc.robot.sensors.ArmEncoder;
+import frc.robot.tools.PID;
+import jaci.pathfinder.Pathfinder;
 
 public class ArmPositionController extends Command {
   private double desiredValue;
+  private PID armPID;
+  private double armkF;
+  private double p = 0.08;
+  private double i;
+  private double d;
+  private ArmEncoder armEncoder;
+  private boolean shouldRun;
   public ArmPositionController(double startingAngle) {
     desiredValue = startingAngle;
     // Use requires() here to declare subsystem dependencies
@@ -20,15 +34,46 @@ public class ArmPositionController extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    armEncoder = new ArmEncoder(RobotMap.armMaster);
+    armPID = new PID(p, i, d);
+    armPID.setMaxOutput(0.4);
+    armPID.setMinOutput(-0.4);
+    armPID.setSetPoint(desiredValue);
+    shouldRun = true;
   }
   public void setArmPosition(double newValue){
     desiredValue = newValue;
+   
     
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    if(shouldRun){
+      
+      armPID.setSetPoint(desiredValue);
+      if(RobotMap.armMaster.getSensorCollection().isFwdLimitSwitchClosed()){
+        armEncoder.setForwardLimitSwitchAngle();
+      }
+      else if(RobotMap.armMaster.getSensorCollection().isRevLimitSwitchClosed()){
+        armEncoder.setReverseLimitSwitchAngle();
+      }
+      
+      armPID.updatePID(armEncoder.getAngle());
+      SmartDashboard.putNumber("result", armPID.getResult()+Math.cos(Pathfinder.d2r(armEncoder.getAngle()))*0.35);
+      SmartDashboard.putNumber("desired", armPID.getSetPoint());
+      RobotMap.armMaster.set(ControlMode.PercentOutput, armPID.getResult()+Math.cos(Pathfinder.d2r(armEncoder.getAngle()))*0.35);
+    }
+    else{
+      desiredValue = armEncoder.getAngle();
+    }
+        
+
+
+  }
+  public void setShouldRun(boolean run){
+    shouldRun  = run;
   }
 
   // Make this return true when this Command no longer needs to run execute()

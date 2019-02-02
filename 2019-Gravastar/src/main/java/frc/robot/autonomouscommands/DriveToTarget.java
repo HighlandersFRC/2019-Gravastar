@@ -32,7 +32,7 @@ public class DriveToTarget extends Command {
   @Override
   protected void execute() {
     if(!hasRun){
-      dist = cam.getDist();
+    //  dist = cam.getDist();
       if(dist>1){
         shortPath = new ShortPathToAngle(dist, 0, 0);
         shortPath.start();

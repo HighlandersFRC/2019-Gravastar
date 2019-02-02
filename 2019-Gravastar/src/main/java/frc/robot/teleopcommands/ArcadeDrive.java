@@ -56,8 +56,8 @@ public class ArcadeDrive extends Command {
 			rightPower = (turn*turnSenstivity); 
 		}
 		if(OI.pilotController.getRawAxis(3)>0.5) {
-			leftPower = (-turn*turnSenstivity);
-			rightPower= (turn*turnSenstivity);
+			leftPower = (-turn);
+			rightPower= (turn);
 		}
 		if(Math.abs(leftPower)>1) {
 			leftPower = (leftPower/Math.abs(leftPower));

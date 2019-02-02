@@ -1,6 +1,7 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -17,11 +18,13 @@ public class RobotConfig {
 	public static double voltageControlMaxTeleop = 11.0;
 	public static double robotMaxAcceleration = 10.0;
 	public static double robotMaxVelocity = 14.5;
-	public static int driveMotorContinuousCurrentHighGear = 30;
+	public static double armTicksToAngleConversion = -0.02857143;
+	public static int armAngleToTicksConversion = -35;
+	public static int driveMotorContinuousCurrentHighGear = 20;
 	public static int driveMotorContinuousCurrentLowGear = 40;
-	public static int driveMotorContinuousCurrentHighGearAuto = 30;
+	public static int driveMotorContinuousCurrentHighGearAuto = 20;
 	public static int driveMotorContinuousCurrentLowGearAuto = 40;
-	public static int driveMotorPeakCurrentHighGear= 30;		
+	public static int driveMotorPeakCurrentHighGear= 20;		
 	public static int driveMotorPeakCurrentLowGear = 60;
 	public static int driveMotorPeakCurrentHighGearAuto = 20;
 	public static int driveMotorPeakCurrentLowGearAuto = 60;
@@ -29,7 +32,9 @@ public class RobotConfig {
 	public static int driveMotorPeakCurrentDurationHighGear = 0;
 	public static int driveMotorPeakCurrentDurationLowGearAuto = 0;
 	public static int driveMotorPeakCurrentDurationHighGearAuto = 0;
-	public static char robotStartPosition;
+	public static int armMotorContinuousCurrent = 30;
+	public static int armMotorPeakCurrent = 30;
+	public static int armMotorPeakCurrentDuration = 100;
 	public static int timeOut = 0;//Milliseconds
 	public RobotConfig() {
 		setStartingConfig();
@@ -41,7 +46,10 @@ public class RobotConfig {
 
 		 RobotMap.navx.zeroYaw();
 		 
-	 	
+		RobotMap.rightDriveLead.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative,0,0);
+		RobotMap.leftDriveLead.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative,0,0);
+		RobotMap.armMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative,0,0);
+		 
 	 	RobotMap.rightDriveFollowerOne.set(ControlMode.Follower, RobotMap.rightDriveLeadID);
 		RobotMap.leftDriveFollowerOne.set(ControlMode.Follower, RobotMap.leftDriveLeadID);
 		
@@ -59,19 +67,32 @@ public class RobotConfig {
 
     	RobotMap.leftDriveLead.setSelectedSensorPosition(0, 0,0);
 		RobotMap.rightDriveLead.setSelectedSensorPosition(0, 0, 0);
+		RobotMap.armMaster.setSelectedSensorPosition(90*RobotConfig.armAngleToTicksConversion, 0, 0);
 		
 		RobotMap.leftDriveLead.setSensorPhase(false);
 		RobotMap.rightDriveLead.setSensorPhase(false);
+		RobotMap.armMaster.setSensorPhase(true);
 
     	for(TalonSRX talon:RobotMap.driveMotors) {
-    		talon.configContinuousCurrentLimit(RobotConfig.driveMotorContinuousCurrentLowGear, RobotConfig.timeOut);
-    		talon.configPeakCurrentLimit(RobotConfig.driveMotorPeakCurrentLowGear, RobotConfig.timeOut);
-    		talon.configPeakCurrentDuration(RobotConfig.driveMotorPeakCurrentDurationLowGear, RobotConfig.timeOut);
+    		talon.configContinuousCurrentLimit(RobotConfig.driveMotorContinuousCurrentHighGear, RobotConfig.timeOut);
+    		talon.configPeakCurrentLimit(RobotConfig.driveMotorPeakCurrentHighGear, RobotConfig.timeOut);
+    		talon.configPeakCurrentDuration(RobotConfig.driveMotorPeakCurrentDurationHighGear, RobotConfig.timeOut);
     		talon.enableCurrentLimit(true);
 		}
 		for(TalonSRX talon:RobotMap.driveMotors){
 			talon.configVoltageCompSaturation(RobotConfig.voltageControlMaxAuto);
 			talon.enableVoltageCompensation(false); 
+			talon.configVoltageMeasurementFilter(32);
+		}
+		for(TalonSRX talon:RobotMap.armMotors) {
+    		talon.configContinuousCurrentLimit(RobotConfig.armMotorContinuousCurrent, RobotConfig.timeOut);
+    		talon.configPeakCurrentLimit(RobotConfig.armMotorPeakCurrent, RobotConfig.timeOut);
+    		talon.configPeakCurrentDuration(RobotConfig.armMotorPeakCurrentDuration, RobotConfig.timeOut);
+    		talon.enableCurrentLimit(true);
+		}
+		for(TalonSRX talon:RobotMap.armMotors){
+			talon.configVoltageCompSaturation(RobotConfig.voltageControlMaxTeleop);
+			talon.enableVoltageCompensation(true); 
 			talon.configVoltageMeasurementFilter(32);
 		}
 	

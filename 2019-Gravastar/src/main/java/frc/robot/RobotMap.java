@@ -15,11 +15,14 @@ import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.SPI.Port;
 import frc.robot.autonomouscommands.PathList;
+import frc.robot.sensors.ArmEncoder;
 import frc.robot.sensors.DriveEncoder;
 import frc.robot.sensors.Navx;
+import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveBase;
 
 
@@ -52,7 +55,6 @@ public class RobotMap {
 
 		public static TalonSRX armMaster = new TalonSRX(armMasterID);
 		public static TalonSRX armFollower = new TalonSRX(armFollowerID);
-
 		public static TalonSRX intake = new TalonSRX(intakeID);
 
 
@@ -70,11 +72,12 @@ public class RobotMap {
 		public static DoubleSolenoid.Value in = DoubleSolenoid.Value.kReverse;
 
 		public static DriveEncoder leftMainDrive = new DriveEncoder(leftDriveLead,RobotMap.leftDriveLead.getSelectedSensorPosition(0));
-		public static DriveEncoder rightMaindrive = new DriveEncoder(rightDriveLead,RobotMap.rightDriveLead.getSelectedSensorPosition(0));	
+		public static DriveEncoder rightMaindrive = new DriveEncoder(rightDriveLead,RobotMap.rightDriveLead.getSelectedSensorPosition(0));
+		public static ArmEncoder mainArmEncoder	 = new ArmEncoder(armMaster);
 
 		public static AnalogInput preassureSensor = new AnalogInput(3);
 
-		//public static SerialPort jevois1 = new SerialPort(115200,edu.wpi.first.wpilibj.SerialPort.Port.kUSB, 5);
+		public static SerialPort jevois1 = new SerialPort(115200,edu.wpi.first.wpilibj.SerialPort.Port.kUSB);
 
 		//Array of drive motors to simplify configuration
 		public static TalonSRX driveMotors[] = {
@@ -88,8 +91,16 @@ public class RobotMap {
 			RobotMap.rightDriveLead,
 			RobotMap.leftDriveFollowerOne,
 			RobotMap.rightDriveFollowerOne,
+			RobotMap.armMaster,
+			RobotMap.armFollower,
+			RobotMap.intake,
+		};
+		public static TalonSRX armMotors[] = {
+			RobotMap.armMaster,
+			RobotMap.armFollower,
 		};
 		public static DriveBase drive = new DriveBase();
+		public static Arm arm = new Arm();
 		public static PathList universalPathList = new PathList();
 
 	// For example to map the left and right motors, you could define the
