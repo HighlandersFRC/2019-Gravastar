@@ -21,7 +21,7 @@ public class ArmPositionController extends Command {
   private double desiredValue;
   private PID armPID;
   private double armkF = 0.1;
-  private double p = 0.08;
+  private double p = 0.02;
   private double i;
   private double d;
   private ArmEncoder armEncoder;
@@ -38,8 +38,8 @@ public class ArmPositionController extends Command {
   protected void initialize() {
     armEncoder = new ArmEncoder(RobotMap.armMaster);
     armPID = new PID(p, i, d);
-    armPID.setMaxOutput(0.4);
-    armPID.setMinOutput(-0.4);
+    armPID.setMaxOutput(0.3);
+    armPID.setMinOutput(-0.3);
     armPID.setSetPoint(desiredValue);
     shouldRun = true;
   }
@@ -65,7 +65,17 @@ public class ArmPositionController extends Command {
       armPID.updatePID(armEncoder.getAngle());
       SmartDashboard.putNumber("result", armPID.getResult()+Math.cos(Pathfinder.d2r(armEncoder.getAngle()))*0.35);
       SmartDashboard.putNumber("desired", armPID.getSetPoint());
-      if(Math.abs(OI.operatorController.getRawAxis(1))<0.1){
+      
+      if(Math.abs(OI.operatorController.getRawAxis(1))>0.1){
+        desiredValue = armEncoder.getAngle();
+      }
+      else if(armPID.getSetPoint() == 90&&armEncoder.getAngle()>80){
+        RobotMap.armMaster.set(ControlMode.PercentOutput, 0.2 +Math.cos(Pathfinder.d2r(armEncoder.getAngle()))*0.35);
+      }
+      else if(armPID.getSetPoint() == 0&&armEncoder.getAngle()<10){
+        RobotMap.armMaster.set(ControlMode.PercentOutput, 0);
+      }
+      else{
         RobotMap.armMaster.set(ControlMode.PercentOutput, armPID.getResult()+Math.cos(Pathfinder.d2r(armEncoder.getAngle()))*armkF);
       }
      

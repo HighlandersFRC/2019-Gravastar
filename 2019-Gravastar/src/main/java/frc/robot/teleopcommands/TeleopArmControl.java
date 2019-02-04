@@ -51,7 +51,7 @@ public class TeleopArmControl extends Command {
 			armPositionController.setArmPosition(90);
 		}
 		else if(OI.operatorController.getXButton()){
-			armPositionController.setArmPosition(82);
+			armPositionController.setArmPosition(60);
 		}
 		if(OI.operatorController.getBumper(Hand.kLeft)){
 			RobotMap.arm.pushOutHatch();
