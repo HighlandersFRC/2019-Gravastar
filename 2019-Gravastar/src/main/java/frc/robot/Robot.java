@@ -51,7 +51,8 @@ public class Robot extends TimedRobot {
 	private StopAllMotors stopAllMotors = new StopAllMotors();
 	private ActuateAllHatchPistons actuateAllHatchPistons = new ActuateAllHatchPistons();
 	private ArmPositionController armPositionController = new ArmPositionController(90);
-	//private VisionCamera visionCamera = new VisionCamera(RobotMap.jevois1);
+
+	private VisionCamera visionCamera = new VisionCamera(RobotMap.jevois1);
 	
 	private UsbCamera camera;
 	private UsbCamera camera2;
@@ -95,7 +96,7 @@ public class Robot extends TimedRobot {
 	
 		SmartDashboard.putNumber("leftPos",RobotMap.leftMainDrive.getDistance());
 		SmartDashboard.putNumber("rightpos",RobotMap.rightMaindrive.getDistance());
-		SmartDashboard.putString("Distance",RobotMap.jevois1.readString());
+		//SmartDashboard.putString("Distance",RobotMap.jevois1.readString());
 	}
 
 	/**
@@ -181,6 +182,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
+		System.out.println(visionCamera.getDistance());
 		
 		
 		SmartDashboard.putNumber("navxValue", RobotMap.mainNavx.currentYaw());

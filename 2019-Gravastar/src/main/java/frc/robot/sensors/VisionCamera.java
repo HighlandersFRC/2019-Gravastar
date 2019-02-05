@@ -7,37 +7,33 @@
 
 package frc.robot.sensors;
 
+
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import edu.wpi.first.wpilibj.SerialPort;
+
+
 
 /**
  * Add your docs here.
  */
 public class VisionCamera {
-    private SerialPort camera;
-    private String rawData;
-    private String sanitizedData1;
-    private String sanitizedData2;
-    private Double rawDistance;
-    private double actualDistance;
-    private double x;
-    private double y;
-    public VisionCamera(SerialPort port){
-        camera = port;
+   SerialPort cam;
+   public VisionCamera(SerialPort port){
+      cam = port;
+   }
+   public String getDistance(){
+      String unsanatizedString = cam.readString();
+      if(unsanatizedString.length()<8||unsanatizedString.isBlank()||unsanatizedString.isEmpty()||unsanatizedString.indexOf(':')<1||unsanatizedString.indexOf(',')<1||unsanatizedString.indexOf(',')<unsanatizedString.indexOf(':')){
+         return "-12.0";
+      }
+      else{
+         return unsanatizedString.substring(unsanatizedString.indexOf(':'), unsanatizedString.indexOf(','));
+      }
+      
+   }
 
-    }
-    public String getDistance(){
-        rawData = camera.readString();
-        if(!rawData.isBlank()){
-            sanitizedData1 = rawData;
-        }
-        if(sanitizedData1.length()>6&&sanitizedData1.indexOf('.')>=2){
-            sanitizedData2 = sanitizedData1.substring(0,sanitizedData1.indexOf('.')+4);
-            
-        }
-        /*if(rawDistance>0){
-            actualDistance = rawDistance;
-        }*/
-        return sanitizedData2;
-    }
-   
 }
