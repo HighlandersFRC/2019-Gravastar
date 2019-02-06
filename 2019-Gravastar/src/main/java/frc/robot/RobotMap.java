@@ -75,7 +75,9 @@ public class RobotMap {
 		public static DriveEncoder rightMaindrive = new DriveEncoder(rightDriveLead,RobotMap.rightDriveLead.getSelectedSensorPosition(0));
 		public static ArmEncoder mainArmEncoder	 = new ArmEncoder(armMaster);
 
-		public static AnalogInput preassureSensor = new AnalogInput(3);
+		public static AnalogInput ultraSonic = new AnalogInput(3);
+
+		public static AnalogInput preassureSensor = new AnalogInput(2);
 
 		public static SerialPort jevois1 = new SerialPort(115200,edu.wpi.first.wpilibj.SerialPort.Port.kUSB);
 

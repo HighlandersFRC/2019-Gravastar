@@ -96,6 +96,7 @@ public class Robot extends TimedRobot {
 	
 		SmartDashboard.putNumber("leftPos",RobotMap.leftMainDrive.getDistance());
 		SmartDashboard.putNumber("rightpos",RobotMap.rightMaindrive.getDistance());
+		SmartDashboard.putNumber("analog", RobotMap.ultraSonic.getValue()*0.049393);
 		//SmartDashboard.putString("Distance",RobotMap.jevois1.readString());
 	}
 
@@ -182,7 +183,6 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		System.out.println(visionCamera.getDistance());
 		
 		
 		SmartDashboard.putNumber("navxValue", RobotMap.mainNavx.currentYaw());
