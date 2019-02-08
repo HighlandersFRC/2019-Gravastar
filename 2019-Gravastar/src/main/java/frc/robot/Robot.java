@@ -50,7 +50,6 @@ public class Robot extends TimedRobot {
 	private RobotConfig robotConfig = new RobotConfig();
 	private StopAllMotors stopAllMotors = new StopAllMotors();
 	private ActuateAllHatchPistons actuateAllHatchPistons = new ActuateAllHatchPistons();
-	private ArmPositionController armPositionController = new ArmPositionController(90);
 
 	private VisionCamera visionCamera = new VisionCamera(RobotMap.jevois1);
 	
@@ -96,8 +95,10 @@ public class Robot extends TimedRobot {
 	
 		SmartDashboard.putNumber("leftPos",RobotMap.leftMainDrive.getDistance());
 		SmartDashboard.putNumber("rightpos",RobotMap.rightMaindrive.getDistance());
-		SmartDashboard.putNumber("analog", RobotMap.ultraSonic.getValue()*0.049393);
-		//SmartDashboard.putString("Distance",RobotMap.jevois1.readString());
+		SmartDashboard.putNumber("analog", (RobotMap.ultraSonic.getValue()*0.049393)/12);
+	
+
+
 	}
 
 	/**
@@ -165,8 +166,6 @@ public class Robot extends TimedRobot {
 		robotConfig.teleopConfig();
 		teleopSuite.startTeleopCommands();
 
-		armPositionController.start();
-		armPositionController.setArmPosition(90);
 
 		//visionCamera.start();
 		// This makes sure that the autonomous stops running when
@@ -183,8 +182,8 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		
-		
+		SmartDashboard.putNumber("Distance",RobotMap.mainVisionCamera.getDistance());
+		SmartDashboard.putNumber("Angle",RobotMap.mainVisionCamera.getAngle());
 		SmartDashboard.putNumber("navxValue", RobotMap.mainNavx.currentYaw());
 		Scheduler.getInstance().run();
 	}

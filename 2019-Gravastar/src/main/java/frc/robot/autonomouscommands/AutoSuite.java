@@ -9,7 +9,7 @@ public class AutoSuite {
     private ShortPathToAngle shortPathToAngle;
     public AutoSuite() {
         
-        shortPathToAngle = new ShortPathToAngle(5.0,Pathfinder.d2r(0),Pathfinder.d2r(0));
+        shortPathToAngle = new ShortPathToAngle(RobotMap.mainUltrasonicSensor.getDistance(),Pathfinder.d2r(0),Pathfinder.d2r(0));
     }
     public void startAutoCommands() {
         shortPathToAngle.start();

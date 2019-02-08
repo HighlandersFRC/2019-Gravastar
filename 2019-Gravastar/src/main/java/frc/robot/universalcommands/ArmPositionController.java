@@ -20,7 +20,7 @@ import jaci.pathfinder.Pathfinder;
 public class ArmPositionController extends Command {
   private double desiredValue;
   private PID armPID;
-  private double armkF = 0.1;
+  private double armkF = 0.05;
   private double p = 0.02;
   private double i;
   private double d;

@@ -65,22 +65,22 @@ public class PurePursuitController extends Command {
   public double endThetaError;
   //no carried over position information
   public PurePursuitController(PathSetup path, double lookAhead, double kValue, double distoEndError){
-	chosenPath = path;
-	lookAheadDistance = lookAhead;  
-	k = kValue;  
-	endError = distoEndError;
-	// Use requires() here to declare subsystem dependencies
-	// eg. requires(chassis);
+		chosenPath = path;
+		lookAheadDistance = lookAhead;  
+		k = kValue;  
+		endError = distoEndError;
+		// Use requires() here to declare subsystem dependencies
+		// eg. requires(chassis);
   }
   //for carried over angle
   public PurePursuitController(PathSetup path, double lookAhead, double kValue, double distoEndError, double startingAngle){
-	chosenPath = path;
-	lookAheadDistance = lookAhead;  
-	k = kValue;  
-	endError = distoEndError;
-	startingTheta = startingAngle;
-	// Use requires() here to declare subsystem dependencies
-	// eg. requires(chassis);
+		chosenPath = path;
+		lookAheadDistance = lookAhead;  
+		k = kValue;  
+		endError = distoEndError;
+		startingTheta = startingAngle;
+		// Use requires() here to declare subsystem dependencies
+		// eg. requires(chassis);
   }
   //for carried over x, y, and theta
   public PurePursuitController(PathSetup path, double lookAhead, double kValue, double distoEndError, double startingAngle, double startXPos, double startYPos){
@@ -303,7 +303,7 @@ public class PurePursuitController extends Command {
 	if(distToEndVector.length()<endError){
 		return true;
 	}  
-	else if(distToEndVector.length()<0.5&&leftVelocity==0&&rightVelocity==0){
+	else if(distToEndVector.length()<0.01&&leftVelocity==0&&rightVelocity==0){
 		return true;
 	}
 	else{

@@ -16,12 +16,15 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Talon;
+import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.SPI.Port;
 import frc.robot.autonomouscommands.PathList;
 import frc.robot.sensors.ArmEncoder;
 import frc.robot.sensors.DriveEncoder;
 import frc.robot.sensors.Navx;
+import frc.robot.sensors.UltrasonicSensor;
+import frc.robot.sensors.VisionCamera;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveBase;
 
@@ -70,16 +73,18 @@ public class RobotMap {
 		public static DoubleSolenoid hatchPiston3 = new DoubleSolenoid(6, 7);
 		public static DoubleSolenoid.Value pushOut = DoubleSolenoid.Value.kForward;
 		public static DoubleSolenoid.Value in = DoubleSolenoid.Value.kReverse;
+		public static AnalogInput ultraSonic = new AnalogInput(3);
+		public static SerialPort jevois1 = new SerialPort(115200,edu.wpi.first.wpilibj.SerialPort.Port.kUSB);
+
 
 		public static DriveEncoder leftMainDrive = new DriveEncoder(leftDriveLead,RobotMap.leftDriveLead.getSelectedSensorPosition(0));
 		public static DriveEncoder rightMaindrive = new DriveEncoder(rightDriveLead,RobotMap.rightDriveLead.getSelectedSensorPosition(0));
 		public static ArmEncoder mainArmEncoder	 = new ArmEncoder(armMaster);
-
-		public static AnalogInput ultraSonic = new AnalogInput(3);
+		public static UltrasonicSensor mainUltrasonicSensor = new UltrasonicSensor(ultraSonic);
+		public static VisionCamera mainVisionCamera = new VisionCamera(jevois1);
 
 		public static AnalogInput preassureSensor = new AnalogInput(2);
 
-		public static SerialPort jevois1 = new SerialPort(115200,edu.wpi.first.wpilibj.SerialPort.Port.kUSB);
 
 		//Array of drive motors to simplify configuration
 		public static TalonSRX driveMotors[] = {

@@ -19,6 +19,7 @@ public class RobotConfig {
 	public static double robotMaxAcceleration = 10.0;
 	public static double robotMaxVelocity = 14.5;
 	public static double armTicksToAngleConversion = -0.02857143;
+	public static double ultraSonicConversionFactor = 0.00411608;
 	public static int armAngleToTicksConversion = -35;
 	public static int driveMotorContinuousCurrentHighGear = 20;
 	public static int driveMotorContinuousCurrentLowGear = 40;

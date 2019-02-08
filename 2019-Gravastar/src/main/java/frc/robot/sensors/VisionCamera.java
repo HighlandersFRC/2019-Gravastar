@@ -22,18 +22,44 @@ import edu.wpi.first.wpilibj.SerialPort;
  */
 public class VisionCamera {
    SerialPort cam;
+   private String sanatizedString= "Distance:00.000,Angle:0.0000000";
    public VisionCamera(SerialPort port){
       cam = port;
    }
-   public String getDistance(){
-      String unsanatizedString = cam.readString();
-      if(unsanatizedString.length()<8||unsanatizedString.isBlank()||unsanatizedString.isEmpty()||unsanatizedString.indexOf(':')<1||unsanatizedString.indexOf(',')<1||unsanatizedString.indexOf(',')<unsanatizedString.indexOf(':')){
-         return "-12.0";
+   public String getString(){
+      if(cam.getBytesReceived()>10){
+         String unsanatizedString = cam.readString();
+         if(unsanatizedString.length()<30||unsanatizedString.isBlank()||unsanatizedString.isEmpty()){
+            return sanatizedString;
+         }
+         else{
+            sanatizedString = unsanatizedString;
+            return sanatizedString;
+         }
       }
       else{
-         return unsanatizedString.substring(unsanatizedString.indexOf(':'), unsanatizedString.indexOf(','));
+         return sanatizedString;
       }
+     
       
+   }
+   public double getAngle(){
+      try{
+         return Double.parseDouble(this.getString().substring(23, 27));
+      }
+      catch(Exception e){
+         return -12;
+      }
+     
+   }
+   public double getDistance(){
+      try{
+         return Double.parseDouble(this.getString().substring(9, 14))/12;
+      }
+      catch(Exception e){
+         return -12;
+      }
+     
    }
 
 }
