@@ -30,7 +30,7 @@ public class VisionCamera {
    public String getString(){
       if(cam.getBytesReceived()>10){
          String unsanatizedString = cam.readString();
-         if(unsanatizedString.length()<30||unsanatizedString.isBlank()||unsanatizedString.isEmpty()){
+         if(unsanatizedString.length()<50||unsanatizedString.isBlank()||unsanatizedString.isEmpty()){
             hasGoodData = false;
             return sanatizedString;
             
@@ -48,14 +48,15 @@ public class VisionCamera {
      
       
    }
-   public double getAngle(){
+   public double getXDisplacement(){
       String camString = this.getString();
       try{
-         if(camString.indexOf('-')>0){
-            return Double.parseDouble(this.getString().substring(22, 27));
+         if(camString.indexOf('-')>0&&camString.indexOf('-')<13){
+            return Double.parseDouble(camString.substring(camString.indexOf(':')+1, 13));
          }
          else{
-            return Double.parseDouble(this.getString().substring(21, 27));
+            return Double.parseDouble(camString.substring(camString.indexOf(':')+1, 13));
+          
          }
          
       }
@@ -65,10 +66,12 @@ public class VisionCamera {
      
    }
    public double getDistance(){
+      String camString = this.getString();
       try{
-         return Double.parseDouble(this.getString().substring(9, 14))/12;
+         return Double.parseDouble(camString.substring(camString.lastIndexOf(':')+1, 50))/12;
       }
       catch(Exception e){
+         System.out.println(camString.substring(camString.lastIndexOf(':')+1, 50));
          return 0;
       }
      

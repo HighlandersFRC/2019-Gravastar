@@ -48,10 +48,10 @@ public class VisionToGetToTarget extends Command {
     public void run(){
       if(run<10&&!firstRun&&RobotState.isAutonomous()&&!isFinished()){
         double distance = visionCamera.getDistance();
-        double angle = visionCamera.getAngle();
+        //double angle = visionCamera.getAngle();
         if(distance>3&&distance<6){
           run++;
-          angleArrayList.add(angle);
+         // angleArrayList.add(angle);
           distanceArrayList.add(distance);
         }
         
