@@ -21,7 +21,7 @@ public class ShortPathToAngle extends Command {
   private PurePursuitController purePursuitController;
   private Navx navx;
   private double degreeEndAngle;
-  double startingAngle;
+  private double startingAngle;
   
   private boolean firstRun;
   
@@ -52,7 +52,7 @@ public class ShortPathToAngle extends Command {
     if(purePursuitController.isCompleted()){
       if(!firstRun){
         angleError = degreeEndAngle-navx.currentAngle();
-        System.out.println(eAngle);
+      
         CascadingPIDTurn cascadingPIDTurn= new CascadingPIDTurn(angleError,0.08,0.00085,0.00006);;
         cascadingPIDTurn.start();
         firstRun = true;
@@ -75,7 +75,6 @@ public class ShortPathToAngle extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    System.out.println("hi");
   }
 
   // Called when another command which requires one or more of the same

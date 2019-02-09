@@ -81,7 +81,6 @@ public class RobotMap {
 		public static DriveEncoder rightMaindrive = new DriveEncoder(rightDriveLead,RobotMap.rightDriveLead.getSelectedSensorPosition(0));
 		public static ArmEncoder mainArmEncoder	 = new ArmEncoder(armMaster);
 		public static UltrasonicSensor mainUltrasonicSensor = new UltrasonicSensor(ultraSonic);
-		public static VisionCamera mainVisionCamera = new VisionCamera(jevois1);
 
 		public static AnalogInput preassureSensor = new AnalogInput(2);
 

@@ -2,20 +2,23 @@ package frc.robot.autonomouscommands;
 
 import frc.robot.RobotMap;
 import frc.robot.autoRoutines.OffHabToLeftSideHatchOne;
+import frc.robot.sensors.VisionCamera;
 import jaci.pathfinder.Pathfinder;
 
 public class AutoSuite {
-    private OffHabToLeftSideHatchOne habToLeftSideHatchOne;
-    private ShortPathToAngle shortPathToAngle;
+    private VisionToGetToTarget visionToGetToTarget;
+
     public AutoSuite() {
+        visionToGetToTarget = new VisionToGetToTarget();
         
-        shortPathToAngle = new ShortPathToAngle(RobotMap.mainUltrasonicSensor.getDistance(),Pathfinder.d2r(0),Pathfinder.d2r(0));
+        
     }
     public void startAutoCommands() {
-        shortPathToAngle.start();
+        visionToGetToTarget.start();
+       
+
     }
     public void endAutoCommands(){
-        shortPathToAngle.cancel();
        
     }
 

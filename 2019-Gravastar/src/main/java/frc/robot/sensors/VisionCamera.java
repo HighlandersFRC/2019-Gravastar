@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.SerialPort;
  */
 public class VisionCamera {
    SerialPort cam;
+   private boolean hasGoodData;
    private String sanatizedString= "Distance:00.000,Angle:0.0000000";
    public VisionCamera(SerialPort port){
       cam = port;
@@ -30,25 +31,36 @@ public class VisionCamera {
       if(cam.getBytesReceived()>10){
          String unsanatizedString = cam.readString();
          if(unsanatizedString.length()<30||unsanatizedString.isBlank()||unsanatizedString.isEmpty()){
+            hasGoodData = false;
             return sanatizedString;
+            
          }
          else{
+            hasGoodData = true;
             sanatizedString = unsanatizedString;
             return sanatizedString;
          }
       }
       else{
+         hasGoodData = false;
          return sanatizedString;
       }
      
       
    }
    public double getAngle(){
+      String camString = this.getString();
       try{
-         return Double.parseDouble(this.getString().substring(23, 27));
+         if(camString.indexOf('-')>0){
+            return Double.parseDouble(this.getString().substring(22, 27));
+         }
+         else{
+            return Double.parseDouble(this.getString().substring(21, 27));
+         }
+         
       }
       catch(Exception e){
-         return -12;
+         return 0;
       }
      
    }
@@ -57,9 +69,12 @@ public class VisionCamera {
          return Double.parseDouble(this.getString().substring(9, 14))/12;
       }
       catch(Exception e){
-         return -12;
+         return 0;
       }
      
+   }
+   public boolean goodData(){
+      return hasGoodData;
    }
 
 }
