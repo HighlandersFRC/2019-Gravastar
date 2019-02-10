@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.OI;
+import frc.robot.Robot;
 import frc.robot.RobotConfig;
 import frc.robot.RobotMap;
 import frc.robot.sensors.DriveEncoder;
@@ -30,6 +31,7 @@ public class CascadingPIDTurn extends Command {
   private double p;
   private double i;
   private double d;
+  private boolean shouldEnd;
   public CascadingPIDTurn(double Angle, double kp, double ki, double kd) {
     desiredAngle = Angle;
     p = kp;
@@ -43,6 +45,7 @@ public class CascadingPIDTurn extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    shouldEnd = false;
     leftDriveTrainVelocityPID = new DriveTrainVelocityPID(0, RobotMap.leftDriveLead, 0,0.0402026, 0.18, 0.0004, 0.8);
     rightDriveTrainVelocityPID = new DriveTrainVelocityPID(0, RobotMap.rightDriveLead, 0,0.0406258, 0.18, 0.0004, 0.8);
     turnPID =  new PID(p,i,d );
@@ -68,14 +71,16 @@ public class CascadingPIDTurn extends Command {
     rightDriveTrainVelocityPID.changeDesiredSpeed(-turnPID.getResult());
     SmartDashboard.putNumber("error", desiredAngle-navx.currentYaw());
   }
-
+  public void forceFinish(){
+    shouldEnd = true;
+  }
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
     if(Math.abs(navx.currentAngle()-desiredAngle)<0.5){
       return true;
     }
-    return false;
+    return shouldEnd;
   }
 
   // Called once after isFinished returns true
@@ -83,8 +88,8 @@ public class CascadingPIDTurn extends Command {
   protected void end() {
     leftDriveTrainVelocityPID.cancel();
     rightDriveTrainVelocityPID.cancel();
-    RobotMap.leftDriveLead.set(ControlMode.PercentOutput, 0);
-    RobotMap.rightDriveLead.set(ControlMode.PercentOutput, 0);
+    Robot.stopMotors.stopDriveTrainMotors();
+
   }
 
   // Called when another command which requires one or more of the same

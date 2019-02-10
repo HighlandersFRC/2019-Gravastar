@@ -20,6 +20,7 @@ import frc.robot.tools.DriveTrainVelocityPID;
 import frc.robot.tools.Odometry;
 import frc.robot.tools.Point;
 import frc.robot.tools.Vector;
+import frc.robot.Robot;
 import frc.robot.RobotConfig;
 import jaci.pathfinder.Pathfinder;
 
@@ -59,16 +60,15 @@ public class PurePursuitController extends Command {
   private double startingTheta = 0;
   private double startingX = 0;
   private double startingY = 0;
-  private boolean shouldEndThetaCorrect;
-  private double leftVelocity;
-  private double rightVelocity;
   public double endThetaError;
+  private boolean shouldEnd;
   //no carried over position information
   public PurePursuitController(PathSetup path, double lookAhead, double kValue, double distoEndError){
         chosenPath = path;
         lookAheadDistance = lookAhead;  
         k = kValue;  
         endError = distoEndError;
+        requires(RobotMap.drive);
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
   }
@@ -79,6 +79,7 @@ public class PurePursuitController extends Command {
         k = kValue;  
         endError = distoEndError;
         startingTheta = startingAngle;
+        requires(RobotMap.drive);
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
   }
@@ -91,6 +92,7 @@ public class PurePursuitController extends Command {
         startingTheta = startingAngle;
         startingX = startXPos;
         startingY = startYPos;
+        requires(RobotMap.drive);
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
   }
@@ -98,6 +100,7 @@ public class PurePursuitController extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+        shouldEnd = false;
         odometry = new Odometry(chosenPath.getReversed());
         leftDriveTrainVelocityPID = new DriveTrainVelocityPID(0, RobotMap.leftDriveLead, 1, 0.04430683771, 0.18, 0.0009, 1.80);
         rightDriveTrainVelocityPID = new DriveTrainVelocityPID(0, RobotMap.rightDriveLead, 1, 0.04430683771, 0.18, 0.0009, 1.80);
@@ -296,18 +299,18 @@ public class PurePursuitController extends Command {
   @Override
   protected void execute() {
   }
-
+  public void forceFinish(){
+    shouldEnd = true;
+  }
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
         if(distToEndVector.length()<endError){
             return true;
         }  
-        else{
-            return false;
-            }
-    
-  }
+      
+        return shouldEnd;
+   }
   // Called once after isFinished returns true
   @Override
   protected void end() {
@@ -321,8 +324,7 @@ public class PurePursuitController extends Command {
     leftDriveTrainVelocityPID.cancel();
     rightDriveTrainVelocityPID.cancel();
     odometry.cancel();
-    RobotMap.leftDriveLead.set(ControlMode.PercentOutput, 0);
-    RobotMap.rightDriveLead.set(ControlMode.PercentOutput, 0);
+    Robot.stopMotors.stopDriveTrainMotors();
   }
 
   // Called when another command which requires one or more of the same

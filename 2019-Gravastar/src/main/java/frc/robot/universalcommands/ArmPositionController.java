@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.OI;
+import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.sensors.ArmEncoder;
 import frc.robot.tools.PID;
@@ -26,6 +27,7 @@ public class ArmPositionController extends Command {
   private double d;
   private ArmEncoder armEncoder;
   private boolean shouldRun;
+  private boolean shouldEnd;
   
   public ArmPositionController(double startingAngle) {
     desiredValue = startingAngle;
@@ -42,6 +44,7 @@ public class ArmPositionController extends Command {
     armPID.setMinOutput(-0.3);
     armPID.setSetPoint(desiredValue);
     shouldRun = true;
+    shouldEnd = false;
   }
   public void setArmPosition(double newValue){
     desiredValue = newValue;
@@ -91,16 +94,19 @@ public class ArmPositionController extends Command {
   public double getArmAngle(){
     return armEncoder.getAngle();
   }
-
+  public void forceFinish(){
+    shouldEnd = true;
+  }
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return false;
+    return shouldEnd;
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    Robot.stopMotors.stopArmMotors();
   }
 
   // Called when another command which requires one or more of the same

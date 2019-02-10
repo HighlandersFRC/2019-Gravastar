@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.sensors.Navx;
 import frc.robot.tools.DriveTrainVelocityPID;
@@ -24,10 +25,12 @@ public class CascadingDriveStraightPID extends Command {
   private double desiredSpeed;
   private double startTime;
   private double deltaTime;
+  private boolean shouldEnd;
   public CascadingDriveStraightPID(double speed, double time) {
     desiredSpeed = speed;
     deltaTime = time;
     straightNavx = new Navx(RobotMap.navx);
+    requires(RobotMap.drive);
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
   }
@@ -35,6 +38,7 @@ public class CascadingDriveStraightPID extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    shouldEnd = false;
     stayStraightPID.setMaxOutput(5);
     stayStraightPID.setMinOutput(-5);
     stayStraightPID.setSetPoint(0);
@@ -53,13 +57,16 @@ public class CascadingDriveStraightPID extends Command {
     leftVelocityPID.changeDesiredSpeed(desiredSpeed - stayStraightPID.getResult());
     rightVelocityPID.changeDesiredSpeed(desiredSpeed + stayStraightPID.getResult());
   }
+  public void forceFinish(){
+    shouldEnd = true;
+  }
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
     if(Timer.getFPGATimestamp()-startTime>deltaTime){
       return true;
     }
-    return false;
+    return shouldEnd;
   }
 
   // Called once after isFinished returns true
@@ -67,13 +74,14 @@ public class CascadingDriveStraightPID extends Command {
   protected void end() {
     leftVelocityPID.endPID();
     rightVelocityPID.endPID();
-    RobotMap.leftDriveLead.set(ControlMode.PercentOutput, 0);
-    RobotMap.rightDriveLead.set(ControlMode.PercentOutput,0);
+    Robot.stopMotors.stopDriveTrainMotors();
+
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    this.end();
   }
 }

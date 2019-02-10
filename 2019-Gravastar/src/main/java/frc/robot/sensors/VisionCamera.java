@@ -48,30 +48,32 @@ public class VisionCamera {
      
       
    }
-   public double getXDisplacement(){
+   public double getYDisplacement(){
       String camString = this.getString();
       try{
          if(camString.indexOf('-')>0&&camString.indexOf('-')<13){
-            return Double.parseDouble(camString.substring(camString.indexOf(':')+1, 13));
+            return Double.parseDouble(camString.substring(camString.indexOf(':')+1, 13))/12;
          }
          else{
-            return Double.parseDouble(camString.substring(camString.indexOf(':')+1, 13));
+            return Double.parseDouble(camString.substring(camString.indexOf(':')+1, 13))/12;
           
          }
          
       }
       catch(Exception e){
+         System.out.println(camString.substring(camString.lastIndexOf(':')+1, 13));
+
          return 0;
       }
      
    }
-   public double getDistance(){
+   public double getXDisplacement(){
       String camString = this.getString();
       try{
-         return Double.parseDouble(camString.substring(camString.lastIndexOf(':')+1, 50))/12;
+         return Double.parseDouble(camString.substring(camString.lastIndexOf(':')+1, 53))/12;
       }
       catch(Exception e){
-         System.out.println(camString.substring(camString.lastIndexOf(':')+1, 50));
+         System.out.println(camString.substring(camString.lastIndexOf(':')+1, 53));
          return 0;
       }
      

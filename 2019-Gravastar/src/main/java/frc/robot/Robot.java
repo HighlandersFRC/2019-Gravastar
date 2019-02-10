@@ -8,33 +8,20 @@
 package frc.robot;
 
 
-import java.beans.Encoder;
-
-import com.ctre.phoenix.motorcontrol.ControlMode;
-
 import edu.wpi.cscore.UsbCamera;
-import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Watchdog;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.autonomouscommands.AutoSuite;
-import frc.robot.autonomouscommands.CascadingDriveStraightPID;
-import frc.robot.sensors.ArmEncoder;
-import frc.robot.sensors.DriveEncoder;
-import frc.robot.sensors.Navx;
+import frc.robot.autonomouscommands.EnableDriverControl;
 import frc.robot.sensors.VisionCamera;
 import frc.robot.teleopcommands.TeleopSuite;
-import frc.robot.tools.DriveTrainVelocityPID;
 import frc.robot.tools.Odometry;
 import frc.robot.universalcommands.ActuateAllHatchPistons;
-import frc.robot.universalcommands.ArmPositionController;
-import frc.robot.universalcommands.StopAllMotors;
-import jaci.pathfinder.Pathfinder;
+import frc.robot.universalcommands.StopMotors;
 //import org.json.simple.parser.JSONParser;
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -45,12 +32,12 @@ import jaci.pathfinder.Pathfinder;
  */
 public class Robot extends TimedRobot {
 
-	private TeleopSuite teleopSuite = new TeleopSuite();
-	private AutoSuite autoSuite  = new AutoSuite();
+	public static TeleopSuite teleopSuite = new TeleopSuite();
+	public static AutoSuite autoSuite  = new AutoSuite();
 	private RobotConfig robotConfig = new RobotConfig();
-	private StopAllMotors stopAllMotors = new StopAllMotors();
-	private ActuateAllHatchPistons actuateAllHatchPistons = new ActuateAllHatchPistons();
+	public static StopMotors stopMotors = new StopMotors();
 
+	private EnableDriverControl enableDriverControl = new EnableDriverControl();
 	private VisionCamera visionCamera = new VisionCamera(RobotMap.jevois1);
 	
 	private UsbCamera camera;
@@ -112,7 +99,7 @@ public class Robot extends TimedRobot {
 		autoSuite.endAutoCommands();
 		autoOdometry.cancel();
 		autoOdometry.endOdmetry();
-		stopAllMotors.start();
+		stopMotors.stopAllMotors();
 	}
 
 	@Override
@@ -158,6 +145,9 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
+		if(OI.pilotController.getTriggerAxis(Hand.kLeft)>0.5&&OI.pilotController.getTriggerAxis(Hand.kRight)>0.5&&OI.pilotController.getStartButton()&&OI.pilotController.getBackButton()){
+			enableDriverControl.startDriverControl();
+		}
 		Scheduler.getInstance().run();
 	}
 

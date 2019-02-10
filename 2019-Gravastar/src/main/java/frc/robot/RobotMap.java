@@ -37,77 +37,76 @@ import frc.robot.subsystems.DriveBase;
  */
 public class RobotMap {
     //all 0s are placeholder values
-		//Name all Talon ID's for Easy Acess
-		//TODO must set all Talon IDs
-		public static int rightDriveLeadID = 3;
-		public static int leftDriveLeadID = 1;
+	//Name all Talon ID's for Easy Acess
+	//TODO must set all Talon IDs
+	public static int rightDriveLeadID = 3;
+	public static int leftDriveLeadID = 1;
 		
-		public static int rightDriveFollowerOneID = 4; 
-		public static int leftDriveFollowerOneID = 2;
+	public static int rightDriveFollowerOneID = 4; 
+	public static int leftDriveFollowerOneID = 2;
 
-		public static int armMasterID = 5;
-		public static int armFollowerID = 6;
+	public static int armMasterID = 5;
+	public static int armFollowerID = 6;
 
-		public static int intakeID = 7;
-		//Initialize all TalonsSRX
-		public static TalonSRX rightDriveLead = new TalonSRX(rightDriveLeadID);
-		public static TalonSRX leftDriveLead = new TalonSRX(leftDriveLeadID);
+	public static int intakeID = 7;
+	//Initialize all TalonsSRX
+	public static TalonSRX rightDriveLead = new TalonSRX(rightDriveLeadID);
+	public static TalonSRX leftDriveLead = new TalonSRX(leftDriveLeadID);
+	
+	public static TalonSRX rightDriveFollowerOne = new TalonSRX(rightDriveFollowerOneID);
+	public static TalonSRX leftDriveFollowerOne = new TalonSRX(leftDriveFollowerOneID);
+
+	public static TalonSRX armMaster = new TalonSRX(armMasterID);
+	public static TalonSRX armFollower = new TalonSRX(armFollowerID);
+	public static TalonSRX intake = new TalonSRX(intakeID);
+
+
+	public static AHRS navx = new AHRS(Port.kMXP);
+	public static Navx mainNavx = new Navx(navx);	    
+	//Initialize all pneumatic Actuators, predefine actuation directions
+	public static DoubleSolenoid shifters = new DoubleSolenoid(0,1);
+	public static DoubleSolenoid.Value lowGear = DoubleSolenoid.Value.kReverse;//TODO directions must be assigned
+	public static DoubleSolenoid.Value highGear = DoubleSolenoid.Value.kForward;//TODO directions mut be assinged
 		
-		public static TalonSRX rightDriveFollowerOne = new TalonSRX(rightDriveFollowerOneID);
-		public static TalonSRX leftDriveFollowerOne = new TalonSRX(leftDriveFollowerOneID);
-
-		public static TalonSRX armMaster = new TalonSRX(armMasterID);
-		public static TalonSRX armFollower = new TalonSRX(armFollowerID);
-		public static TalonSRX intake = new TalonSRX(intakeID);
-
-
-		public static AHRS navx = new AHRS(Port.kMXP);
-		public static Navx mainNavx = new Navx(navx);	    
-		//Initialize all pneumatic Actuators, predefine actuation directions
-		public static DoubleSolenoid shifters = new DoubleSolenoid(0,1);
-		public static DoubleSolenoid.Value lowGear = DoubleSolenoid.Value.kReverse;//TODO directions must be assigned
-		public static DoubleSolenoid.Value highGear = DoubleSolenoid.Value.kForward;//TODO directions mut be assinged
-		
-		public static DoubleSolenoid hatchPiston1 = new DoubleSolenoid(2, 3);
-		public static DoubleSolenoid hatchPiston2 = new DoubleSolenoid(4,5);
-		public static DoubleSolenoid hatchPiston3 = new DoubleSolenoid(6, 7);
-		public static DoubleSolenoid.Value pushOut = DoubleSolenoid.Value.kForward;
-		public static DoubleSolenoid.Value in = DoubleSolenoid.Value.kReverse;
-		public static AnalogInput ultraSonic = new AnalogInput(3);
-		public static SerialPort jevois1 = new SerialPort(115200,edu.wpi.first.wpilibj.SerialPort.Port.kUSB);
+	public static DoubleSolenoid hatchPiston1 = new DoubleSolenoid(2, 3);
+	public static DoubleSolenoid hatchPiston2 = new DoubleSolenoid(4,5);
+	public static DoubleSolenoid hatchPiston3 = new DoubleSolenoid(6, 7);
+	public static DoubleSolenoid.Value pushOut = DoubleSolenoid.Value.kForward;
+	public static DoubleSolenoid.Value in = DoubleSolenoid.Value.kReverse;
+	public static AnalogInput ultraSonic = new AnalogInput(3);
+	public static SerialPort jevois1 = new SerialPort(115200,edu.wpi.first.wpilibj.SerialPort.Port.kUSB);
 
 
-		public static DriveEncoder leftMainDrive = new DriveEncoder(leftDriveLead,RobotMap.leftDriveLead.getSelectedSensorPosition(0));
-		public static DriveEncoder rightMaindrive = new DriveEncoder(rightDriveLead,RobotMap.rightDriveLead.getSelectedSensorPosition(0));
-		public static ArmEncoder mainArmEncoder	 = new ArmEncoder(armMaster);
-		public static UltrasonicSensor mainUltrasonicSensor = new UltrasonicSensor(ultraSonic);
-		public static VisionCamera mainVisionCamera = new VisionCamera(jevois1);
-		public static AnalogInput preassureSensor = new AnalogInput(2);
+	public static DriveEncoder leftMainDrive = new DriveEncoder(leftDriveLead,RobotMap.leftDriveLead.getSelectedSensorPosition(0));
+	public static DriveEncoder rightMaindrive = new DriveEncoder(rightDriveLead,RobotMap.rightDriveLead.getSelectedSensorPosition(0));
+	public static ArmEncoder mainArmEncoder	 = new ArmEncoder(armMaster);
+	public static UltrasonicSensor mainUltrasonicSensor = new UltrasonicSensor(ultraSonic);
+	public static AnalogInput preassureSensor = new AnalogInput(2);
 
 
-		//Array of drive motors to simplify configuration
-		public static TalonSRX driveMotors[] = {
-				RobotMap.leftDriveLead,
-				RobotMap.rightDriveLead,
-				RobotMap.leftDriveFollowerOne,
-				RobotMap.rightDriveFollowerOne,
-		};
-		public static TalonSRX allMotors[] = {
+	//Array of drive motors to simplify configuration
+	public static TalonSRX driveMotors[] = {
 			RobotMap.leftDriveLead,
 			RobotMap.rightDriveLead,
 			RobotMap.leftDriveFollowerOne,
 			RobotMap.rightDriveFollowerOne,
-			RobotMap.armMaster,
-			RobotMap.armFollower,
-			RobotMap.intake,
-		};
-		public static TalonSRX armMotors[] = {
-			RobotMap.armMaster,
-			RobotMap.armFollower,
-		};
-		public static DriveBase drive = new DriveBase();
-		public static Arm arm = new Arm();
-		public static PathList universalPathList = new PathList();
+	};
+	public static TalonSRX allMotors[] = {
+		RobotMap.leftDriveLead,
+		RobotMap.rightDriveLead,
+		RobotMap.leftDriveFollowerOne,
+		RobotMap.rightDriveFollowerOne,
+		RobotMap.armMaster,
+		RobotMap.armFollower,
+		RobotMap.intake,
+	};
+	public static TalonSRX armMotors[] = {
+		RobotMap.armMaster,
+		RobotMap.armFollower,
+	};
+	public static DriveBase drive = new DriveBase();
+	public static Arm arm = new Arm();
+	public static PathList universalPathList = new PathList();
 
 	// For example to map the left and right motors, you could define the
 	// following variables to use with your drivetrain subsystem.

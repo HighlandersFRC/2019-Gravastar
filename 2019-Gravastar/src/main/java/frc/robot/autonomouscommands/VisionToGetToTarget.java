@@ -8,6 +8,7 @@
 package frc.robot.autonomouscommands;
 
 import edu.wpi.first.wpilibj.command.Command;
+import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.sensors.VisionCamera;
 import jaci.pathfinder.Pathfinder;
@@ -19,13 +20,15 @@ import edu.wpi.first.wpilibj.RobotState;
 
 public class VisionToGetToTarget extends Command {
   private Notifier camNotifier;
-  private ArrayList<Double> distanceArrayList;
-  private ArrayList<Double> angleArrayList;
+  private ArrayList<Double> xDeltaArrayList;
+  private ArrayList<Double> yDeltaArrayList;
   private int run;
   private boolean firstRun;
   private VisionCamera visionCamera;
   private ShortPathToAngle shortPathToAngle;
+  private boolean shouldEnd;
   public VisionToGetToTarget() {
+    requires(RobotMap.drive);
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
   }
@@ -33,10 +36,11 @@ public class VisionToGetToTarget extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    distanceArrayList = new ArrayList<>();
-    distanceArrayList.clear();
-    angleArrayList = new ArrayList<>();
-    angleArrayList.clear();
+    shouldEnd = false;
+    xDeltaArrayList = new ArrayList<>();
+    xDeltaArrayList.clear();
+    yDeltaArrayList = new ArrayList<>();
+    yDeltaArrayList.clear();
     visionCamera = new VisionCamera(RobotMap.jevois1);
     camNotifier = new Notifier(new CamRunnable());
     run = 0;
@@ -47,16 +51,13 @@ public class VisionToGetToTarget extends Command {
   private class CamRunnable implements Runnable{
     public void run(){
       if(run<10&&!firstRun&&RobotState.isAutonomous()&&!isFinished()){
-        double distance = visionCamera.getDistance();
-        //double angle = visionCamera.getAngle();
-        if(distance>3&&distance<6){
+        double xDelta = visionCamera.getXDisplacement();
+        double yDelta = visionCamera.getYDisplacement();
+        if(xDelta>3&&xDelta<6){
           run++;
-         // angleArrayList.add(angle);
-          distanceArrayList.add(distance);
-        }
-        
-        //System.out.println(run +"angle " + angle + "distance " + distance);
-  
+          xDeltaArrayList.add(xDelta);
+          yDeltaArrayList.add(yDelta);
+        }  
       }
       else{
         camNotifier.stop();
@@ -69,38 +70,44 @@ public class VisionToGetToTarget extends Command {
   @Override
   protected void execute() {
     if(run>5&&!firstRun){
-      double distanceSum = 0;
-      double angleSum = 0;
-      double distanceAverage = 0;
-      double angleAverage = 0;
-      for(int i= 0;i<distanceArrayList.size();i++){
-        distanceSum = distanceSum +distanceArrayList.get(i);
+      double xSum = 0;
+      double ySum = 0;
+      double xAverage = 0;
+      double yAverage = 0;
+      for(int i= 0;i<xDeltaArrayList.size();i++){
+        xSum = xSum +xDeltaArrayList.get(i);
       }
-      for(int i= 0;i<angleArrayList.size();i++){
-        angleSum = distanceSum +angleArrayList.get(i);
+      for(int i= 0;i<yDeltaArrayList.size();i++){
+        ySum = ySum +yDeltaArrayList.get(i);
       }
-      distanceAverage = distanceSum/distanceArrayList.size();
-      angleAverage = angleSum/angleArrayList.size();
-      shortPathToAngle = new ShortPathToAngle(distanceAverage, Pathfinder.d2r(angleAverage), Pathfinder.d2r(0));
+      xAverage = xSum/xDeltaArrayList.size();
+      yAverage = ySum/yDeltaArrayList.size();
+      shortPathToAngle = new ShortPathToAngle(xAverage, yAverage, Pathfinder.d2r(0));
       shortPathToAngle.start();
-      System.out.println(distanceAverage + " " + angleAverage);
+      System.out.println(xAverage + " " + yAverage);
       firstRun = true;
     }
     else{
       System.out.println(run);
     }
   }
-
+  public void forceFinish(){
+    shouldEnd = true;
+  }
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return firstRun;
+    if(firstRun = true){
+      return true;
+    }
+    return shouldEnd;
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
     camNotifier.stop();
+    Robot.stopMotors.stopDriveTrainMotors();
 
   }
 
@@ -108,5 +115,6 @@ public class VisionToGetToTarget extends Command {
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    this.end();
   }
 }

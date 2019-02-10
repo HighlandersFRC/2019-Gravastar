@@ -18,10 +18,11 @@ public class QuickPathGeneration {
   private double heading;
   private PathSetup returnPath;
   private Waypoint[] returnPathPoints;
+  private double yDisplacement;
   //for small quick paths with short distances. Useful for variable paths
-  public QuickPathGeneration(double dist, double angleToCenterOfTarget, double targetAngle){
-    xpos = dist*Math.cos(angleToCenterOfTarget);
-    ypos = dist*Math.sin(angleToCenterOfTarget);
+  public QuickPathGeneration(double xdist, double ydist, double targetAngle){
+    xpos = xdist;
+    ypos = yDisplacement;
     heading = targetAngle;
   }
   public PathSetup GeneratePath(){

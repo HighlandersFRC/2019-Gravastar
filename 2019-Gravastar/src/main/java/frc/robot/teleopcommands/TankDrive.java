@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.OI;
+import frc.robot.Robot;
 import frc.robot.RobotMap;
 
 public class TankDrive extends Command {
@@ -32,14 +33,14 @@ public class TankDrive extends Command {
 	// Called repeatedly when this Command is scheduled to run
 	@Override
 	protected void execute() {
-		if(Math.abs(OI.pilotController.getRawAxis(5))>deadZone){
-			RobotMap.leftDriveLead.set(ControlMode.PercentOutput, OI.pilotController.getRawAxis(1));
+		if(Math.abs(OI.pilotController.getRawAxis(1))>deadZone){
+			RobotMap.leftDriveLead.set(ControlMode.PercentOutput, -OI.pilotController.getRawAxis(1));
 		}
 		else {
 			RobotMap.leftDriveLead.set(ControlMode.PercentOutput, 0);		
 		}
-		if(Math.abs(OI.pilotController.getRawAxis(1))>deadZone){
-			RobotMap.rightDriveLead.set(ControlMode.PercentOutput, OI.pilotController.getRawAxis(5));
+		if(Math.abs(OI.pilotController.getRawAxis(5))>deadZone){
+			RobotMap.rightDriveLead.set(ControlMode.PercentOutput, -OI.pilotController.getRawAxis(5));
 		}
 		else {
 			RobotMap.rightDriveLead.set(ControlMode.PercentOutput, 0);
@@ -63,11 +64,13 @@ public class TankDrive extends Command {
 	// Called once after isFinished returns true
 	@Override
 	protected void end() {
+		Robot.stopMotors.stopDriveTrainMotors();
 	}
 
 	// Called when another command which requires one or more of the same
 	// subsystems is scheduled to run
 	@Override
 	protected void interrupted() {
+		this.end();
 	}
 }

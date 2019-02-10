@@ -22,17 +22,11 @@ public class RobotConfig {
 	public static double ultraSonicConversionFactor = 0.00411608;
 	public static int armAngleToTicksConversion = -35;
 	public static int driveMotorContinuousCurrentHighGear = 20;
-	public static int driveMotorContinuousCurrentLowGear = 40;
-	public static int driveMotorContinuousCurrentHighGearAuto = 20;
-	public static int driveMotorContinuousCurrentLowGearAuto = 40;
-	public static int driveMotorPeakCurrentHighGear= 20;		
+	public static int driveMotorContinuousCurrentLowGear = 30;
+	public static int driveMotorPeakCurrentHighGear= 25;		
 	public static int driveMotorPeakCurrentLowGear = 60;
-	public static int driveMotorPeakCurrentHighGearAuto = 20;
-	public static int driveMotorPeakCurrentLowGearAuto = 60;
 	public static int driveMotorPeakCurrentDurationLowGear = 100;
-	public static int driveMotorPeakCurrentDurationHighGear = 0;
-	public static int driveMotorPeakCurrentDurationLowGearAuto = 0;
-	public static int driveMotorPeakCurrentDurationHighGearAuto = 0;
+	public static int driveMotorPeakCurrentDurationHighGear = 100;
 	public static int armMotorContinuousCurrent = 30;
 	public static int armMotorPeakCurrent = 30;
 	public static int armMotorPeakCurrentDuration = 100;
@@ -78,7 +72,7 @@ public class RobotConfig {
     		talon.configContinuousCurrentLimit(RobotConfig.driveMotorContinuousCurrentHighGear, RobotConfig.timeOut);
     		talon.configPeakCurrentLimit(RobotConfig.driveMotorPeakCurrentHighGear, RobotConfig.timeOut);
     		talon.configPeakCurrentDuration(RobotConfig.driveMotorPeakCurrentDurationHighGear, RobotConfig.timeOut);
-    		talon.enableCurrentLimit(true);
+    		talon.enableCurrentLimit(false);
 		}
 		for(TalonSRX talon:RobotMap.driveMotors){
 			talon.configVoltageCompSaturation(RobotConfig.voltageControlMaxAuto);
@@ -102,6 +96,9 @@ public class RobotConfig {
 	}
 	public void autoConfig() {
 		for(TalonSRX talon:RobotMap.driveMotors){
+			talon.configOpenloopRamp(0.00);
+		}
+		for(TalonSRX talon:RobotMap.driveMotors){
 			talon.configVoltageCompSaturation(RobotConfig.voltageControlMaxAuto);
 			talon.configVoltageMeasurementFilter(32);
 			talon.enableVoltageCompensation(true); 
@@ -110,9 +107,9 @@ public class RobotConfig {
 			talon.configOpenloopRamp(0, 0);
 		}
 		for(TalonSRX talon:RobotMap.driveMotors) {
-    		talon.configContinuousCurrentLimit(RobotConfig.driveMotorContinuousCurrentHighGearAuto, RobotConfig.timeOut);
-    		talon.configPeakCurrentLimit(RobotConfig.driveMotorPeakCurrentHighGearAuto, RobotConfig.timeOut);
-    		talon.configPeakCurrentDuration(RobotConfig.driveMotorPeakCurrentDurationHighGearAuto, RobotConfig.timeOut);
+    		talon.configContinuousCurrentLimit(RobotConfig.driveMotorContinuousCurrentHighGear, RobotConfig.timeOut);
+    		talon.configPeakCurrentLimit(RobotConfig.driveMotorPeakCurrentHighGear, RobotConfig.timeOut);
+    		talon.configPeakCurrentDuration(RobotConfig.driveMotorPeakCurrentDurationHighGear, RobotConfig.timeOut);
     		talon.enableCurrentLimit(true);
 		}
 		this.setAllMotorsBreak();
@@ -120,6 +117,9 @@ public class RobotConfig {
 	}
 	public void teleopConfig() {
 		RobotMap.shifters.set(RobotMap.highGear);
+		for(TalonSRX talon:RobotMap.driveMotors){
+			talon.configOpenloopRamp(0.01);
+		}
 		for(TalonSRX talon:RobotMap.driveMotors){
 			talon.configVoltageCompSaturation(RobotConfig.voltageControlMaxTeleop);
 			talon.enableVoltageCompensation(false); 
