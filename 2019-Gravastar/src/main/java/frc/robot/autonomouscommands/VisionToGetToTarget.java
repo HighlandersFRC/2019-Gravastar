@@ -55,7 +55,7 @@ public class VisionToGetToTarget extends Command {
     public void run(){
       if(run<10&&!firstRun&&RobotState.isAutonomous()&&!isFinished()){
         double xDelta = visionCamera.getDistance();
-        double yDelta = visionCamera.getYDisplacement();
+        double yDelta = visionCamera.getXOffSet();
         if(xDelta>3&&xDelta<6){
           run++;
           xDeltaArrayList.add(xDelta);
