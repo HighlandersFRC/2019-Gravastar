@@ -9,11 +9,14 @@ package frc.robot.autonomouscommands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
+import frc.robot.RobotConfig;
 import frc.robot.RobotMap;
 import frc.robot.sensors.VisionCamera;
 import jaci.pathfinder.Pathfinder;
 
 import java.util.ArrayList;
+
+import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotState;
@@ -51,7 +54,7 @@ public class VisionToGetToTarget extends Command {
   private class CamRunnable implements Runnable{
     public void run(){
       if(run<10&&!firstRun&&RobotState.isAutonomous()&&!isFinished()){
-        double xDelta = visionCamera.getXDisplacement();
+        double xDelta = visionCamera.getDistance();
         double yDelta = visionCamera.getYDisplacement();
         if(xDelta>3&&xDelta<6){
           run++;
@@ -107,7 +110,8 @@ public class VisionToGetToTarget extends Command {
   @Override
   protected void end() {
     camNotifier.stop();
-    Robot.stopMotors.stopDriveTrainMotors();
+    RobotMap.leftDriveLead.set(ControlMode.PercentOutput, 0);
+    RobotMap.rightDriveLead.set(ControlMode.PercentOutput, 0);
 
   }
 

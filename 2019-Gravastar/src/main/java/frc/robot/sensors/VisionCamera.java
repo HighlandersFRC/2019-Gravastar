@@ -14,6 +14,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import edu.wpi.first.wpilibj.SerialPort;
+import jaci.pathfinder.Pathfinder;
 
 
 
@@ -48,7 +49,7 @@ public class VisionCamera {
      
       
    }
-   public double getYDisplacement(){
+   public double getAngle(){
       String camString = this.getString();
       try{
          if(camString.indexOf('-')>0&&camString.indexOf('-')<13){
@@ -67,7 +68,7 @@ public class VisionCamera {
       }
      
    }
-   public double getXDisplacement(){
+   public double getDistance(){
       String camString = this.getString();
       try{
          return Double.parseDouble(camString.substring(camString.lastIndexOf(':')+1, 53))/12;
@@ -76,6 +77,10 @@ public class VisionCamera {
          System.out.println(camString.substring(camString.lastIndexOf(':')+1, 53));
          return 0;
       }
+     
+   }
+   public double getYDisplacement(){
+     return Math.cos(Pathfinder.d2r(this.getAngle()))*this.getDistance();
      
    }
    public boolean goodData(){

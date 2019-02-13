@@ -91,6 +91,10 @@ public class RobotMap {
 			RobotMap.leftDriveFollowerOne,
 			RobotMap.rightDriveFollowerOne,
 	};
+	public static TalonSRX driveMotorLeads[] = {
+		RobotMap.leftDriveLead,
+		RobotMap.rightDriveLead,
+	};
 	public static TalonSRX allMotors[] = {
 		RobotMap.leftDriveLead,
 		RobotMap.rightDriveLead,
@@ -100,9 +104,18 @@ public class RobotMap {
 		RobotMap.armFollower,
 		RobotMap.intake,
 	};
+	public static TalonSRX allMotorLeads[] = {
+		RobotMap.leftDriveLead,
+		RobotMap.rightDriveLead,
+		RobotMap.armMaster,
+		RobotMap.intake,
+	};
 	public static TalonSRX armMotors[] = {
 		RobotMap.armMaster,
 		RobotMap.armFollower,
+	};
+	public static TalonSRX armMotorLeads[] = {
+		RobotMap.armMaster,
 	};
 	public static DriveBase drive = new DriveBase();
 	public static Arm arm = new Arm();
