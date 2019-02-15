@@ -205,6 +205,7 @@ class TapeDetect:
 		yawAngle = (centerX - 159.5) * 0.203125
 		distance = -0.00002750028278 * centerY **3 + 0.0110106527 * centerY ** 2 -0.7826513252 * centerY + 51.55036834
 		
+		yawAngle = (centerX - 160 ) * 0.203125
 		
 		realWorldPointY = (centerX - 159.5)/251
 		realWorldPointY = realWorldPointY * distance
@@ -220,6 +221,7 @@ class TapeDetect:
 		
 		
 		#send vals over serial
-		jevois.sendSerial("RealWorldPoint: " + realWorldPointY + "centerX: " + centerX)
+		JSON = '{"Distance":' + str(distance) + ', "Angle":' + str(yawAngle) + '}'
+		JSON = str(JSON)
 		#jevois.sendSerial("Hello World")
 		return outimg

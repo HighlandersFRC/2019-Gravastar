@@ -47,17 +47,18 @@ public class ArcadeDrive extends Command {
 		else {
 			turn = 0;
 		}
-		if(Math.abs(OI.pilotController.getRawAxis(1))>deadZone){
+		if(Math.abs(OI.pilotController.getRawAxis(1))>0.2){
 			leftPower = (throttel - (sensitivity*turn*ratio));
 			rightPower = (throttel + (sensitivity*turn*ratio));
 		}
+	
 		else{
 			leftPower = (-turn);
 			rightPower = (turn); 
 		}
 		if(OI.pilotController.getRawAxis(3)>0.5) {
-			leftPower = (-turn);
-			rightPower= (turn);
+			leftPower = throttel +(-turn);
+			rightPower= throttel +(turn);
 		}
 		if(Math.abs(leftPower)>1) {
 			leftPower = (leftPower/Math.abs(leftPower));

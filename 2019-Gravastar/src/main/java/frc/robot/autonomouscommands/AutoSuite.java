@@ -10,20 +10,16 @@ import frc.robot.sensors.VisionCamera;
 import jaci.pathfinder.Pathfinder;
 
 public class AutoSuite {
-    private VisionToGetToTarget visionToGetToTarget;
-    //private OffHabToLeftSideHatchOne offHabToLeftSideHatchOne;
+    private VisionToGetToTarget visionToGetToTarget= new VisionToGetToTarget();
+    private PurePursuitController purePursuitController ;
+    private QuickPathGeneration quickPathGeneration = new QuickPathGeneration(4, 0, 0);
     private SendableChooser autoChooser = new SendableChooser<Command>();
     private Command autoCommand;
     public AutoSuite() {
     
-        visionToGetToTarget = new VisionToGetToTarget();
-       // offHabToLeftSideHatchOne = new OffHabToLeftSideHatchOne();
-        //autoChooser.addOption("OffHabToLeftSideHatchOne", offHabToLeftSideHatchOne);
-        autoChooser.addOption("VisionToGetToTarget", visionToGetToTarget);
     }
     public void startAutoCommands() {
-       // autoCommand = (Command) autoChooser.getSelected();
-        //autoCommand.start();
+       visionToGetToTarget.start();
        
 
     }

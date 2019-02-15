@@ -25,7 +25,7 @@ public class DriveTrainStallProtectionController extends Command {
 	// Called just before this Command runs the first time
 	@Override
 	protected void initialize() {
-		previousValue = DoubleSolenoid.Value.kOff;
+		previousValue = RobotMap.highGear;
 	}
 
 	// Called repeatedly when this Command is scheduled to run

@@ -21,9 +21,9 @@ public class RobotConfig {
 	public static double armTicksToAngleConversion = -0.02857143;
 	public static double ultraSonicConversionFactor = 0.00411608;
 	public static int armAngleToTicksConversion = -35;
-	public static int driveMotorContinuousCurrentHighGear = 25;
+	public static int driveMotorContinuousCurrentHighGear = 22;
 	public static int driveMotorContinuousCurrentLowGear = 40;
-	public static int driveMotorPeakCurrentHighGear= 25;		
+	public static int driveMotorPeakCurrentHighGear= 22;		
 	public static int driveMotorPeakCurrentLowGear = 60;
 	public static int driveMotorPeakCurrentDurationLowGear = 100;
 	public static int driveMotorPeakCurrentDurationHighGear = 0;
@@ -118,7 +118,7 @@ public class RobotConfig {
 	public void teleopConfig() {
 		RobotMap.shifters.set(RobotMap.highGear);
 		for(TalonSRX talon:RobotMap.driveMotors){
-			talon.configOpenloopRamp(0.01);
+			talon.configOpenloopRamp(0.15);
 		}
 		for(TalonSRX talon:RobotMap.driveMotors){
 			talon.configVoltageCompSaturation(RobotConfig.voltageControlMaxTeleop);

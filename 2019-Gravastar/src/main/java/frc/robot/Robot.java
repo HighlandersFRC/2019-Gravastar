@@ -172,8 +172,6 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		//System.out.println(RobotMap.jevois1.readString());
-		//System.out.println(RobotMap.mainVisionCamera.getDistance());
 		SmartDashboard.putNumber("navxValue", RobotMap.mainNavx.currentYaw());
 		Scheduler.getInstance().run();
 	}

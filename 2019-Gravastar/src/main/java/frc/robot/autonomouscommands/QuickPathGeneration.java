@@ -7,6 +7,7 @@
 
 package frc.robot.autonomouscommands;
 
+import frc.robot.RobotConfig;
 import jaci.pathfinder.Waypoint;
 
 /**
@@ -18,11 +19,10 @@ public class QuickPathGeneration {
   private double heading;
   private PathSetup returnPath;
   private Waypoint[] returnPathPoints;
-  private double yDisplacement;
   //for small quick paths with short distances. Useful for variable paths
   public QuickPathGeneration(double xdist, double ydist, double targetAngle){
     xpos = xdist;
-    ypos = yDisplacement;
+    ypos = ydist;
     heading = targetAngle;
   }
   public PathSetup GeneratePath(){
@@ -30,7 +30,9 @@ public class QuickPathGeneration {
       new Waypoint(xpos, ypos, 0),
       new Waypoint(0,0, heading), 
     };
-    returnPath = new PathSetup(returnPathPoints, 6, false);
+    System.out.println(ypos+"ypose");
+
+    returnPath = new PathSetup(returnPathPoints, 2, false);
     returnPath.generateMainPath();
     
     return returnPath;

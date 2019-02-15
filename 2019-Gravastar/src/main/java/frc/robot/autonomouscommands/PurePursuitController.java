@@ -284,8 +284,8 @@ public class PurePursuitController extends Command {
         }
         SmartDashboard.putNumber("left", leftVelocity);
         SmartDashboard.putNumber("right",rightVelocity);  
-        }
-        private void findRobotCurvature(){
+    }
+    private void findRobotCurvature(){
         double a = -Math.tan(Pathfinder.d2r(odometry.gettheta()));
         double b = 1;
         double c = Math.tan(Pathfinder.d2r(odometry.gettheta())) * odometry.getX() - odometry.getY();
@@ -293,7 +293,7 @@ public class PurePursuitController extends Command {
         double side = Math.signum(Math.sin(Pathfinder.d2r(odometry.gettheta())) * (lookAheadPoint.getXPos()-odometry.getX())-Math.cos(Pathfinder.d2r(odometry.gettheta()))*(lookAheadPoint.getYPos()-odometry.getY())); 
         double curvature = ((2*x)/Math.pow(lookAheadDistance,2))*side;
         desiredRobotCurvature = curvature;
-  }
+   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override

@@ -28,8 +28,8 @@ public class ShortPathToAngle extends Command {
   
   public ShortPathToAngle(double xDisplacement, double yDisplacement, double endAngle) {
     xDist = xDisplacement;
-    eAngle = endAngle;
     yDist = yDisplacement;
+    eAngle = endAngle;
     requires(RobotMap.drive);
 
     // Use requires() here to declare subsystem dependencies
