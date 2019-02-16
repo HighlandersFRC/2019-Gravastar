@@ -21,14 +21,14 @@ public class RobotConfig {
 	public static double armTicksToAngleConversion = -0.02857143;
 	public static double ultraSonicConversionFactor = 0.00411608;
 	public static int armAngleToTicksConversion = -35;
-	public static int driveMotorContinuousCurrentHighGear = 20;
-	public static int driveMotorContinuousCurrentLowGear = 30;
+	public static int driveMotorContinuousCurrentHighGear = 25;
+	public static int driveMotorContinuousCurrentLowGear = 40;
 	public static int driveMotorPeakCurrentHighGear= 25;		
 	public static int driveMotorPeakCurrentLowGear = 60;
 	public static int driveMotorPeakCurrentDurationLowGear = 100;
-	public static int driveMotorPeakCurrentDurationHighGear = 100;
-	public static int armMotorContinuousCurrent = 30;
-	public static int armMotorPeakCurrent = 30;
+	public static int driveMotorPeakCurrentDurationHighGear = 0;
+	public static int armMotorContinuousCurrent = 10;
+	public static int armMotorPeakCurrent = 10;
 	public static int armMotorPeakCurrentDuration = 100;
 	public static int timeOut = 0;//Milliseconds
 	public RobotConfig() {
