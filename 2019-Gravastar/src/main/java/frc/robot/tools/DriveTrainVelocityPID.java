@@ -48,13 +48,18 @@ public class DriveTrainVelocityPID extends Command {
     talon.config_kI(profile, i, 0);
     talon.config_kD(profile, d, 0);
     talon.set(ControlMode.Velocity, driveEncoder.convertftpersToNativeUnitsper100ms(speed));
+    talon.configNominalOutputForward(0.08);
+    talon.configNominalOutputReverse(-0.08);
+
     finish = false;
   }
   public void changeDesiredSpeed(double feetPerSecond){
     speed = feetPerSecond;
     talon.set(ControlMode.Velocity, driveEncoder.convertftpersToNativeUnitsper100ms(speed));
   }
-
+  public double getSpeed(){
+    return driveEncoder.getVelocity();
+  }
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
@@ -76,6 +81,8 @@ public class DriveTrainVelocityPID extends Command {
   
   @Override
   protected void end() {
+    talon.configNominalOutputForward(0.0);
+    talon.configNominalOutputReverse(0.0);
     talon.set(ControlMode.Velocity, 0);
     talon.set(ControlMode.PercentOutput, 0);
   }

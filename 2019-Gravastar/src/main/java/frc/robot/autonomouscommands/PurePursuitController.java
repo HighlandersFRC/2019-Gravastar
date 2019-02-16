@@ -274,9 +274,11 @@ public class PurePursuitController extends Command {
         }
         leftVelocity = v*(2-(c*RobotConfig.robotBaseDist))/2;
         rightVelocity = v*(2+(c*RobotConfig.robotBaseDist))/2;
+
         if(chosenPath.getReversed()){
             leftDriveTrainVelocityPID.changeDesiredSpeed(rightVelocity);
             rightDriveTrainVelocityPID.changeDesiredSpeed(leftVelocity);
+
         }
         else{
             leftDriveTrainVelocityPID.changeDesiredSpeed(leftVelocity);
@@ -298,6 +300,9 @@ public class PurePursuitController extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+      System.out.println(distToEndVector.length());
+    //  System.out.println(this.leftDriveTrainVelocityPID.getSpeed());
+    //  System.out.println(this.rightDriveTrainVelocityPID.getSpeed());
   }
   public void forceFinish(){
     shouldEnd = true;
@@ -307,9 +312,15 @@ public class PurePursuitController extends Command {
   protected boolean isFinished() {
         if(distToEndVector.length()<endError){
             return true;
-        }  
+        } 
+        else if(distToEndVector.length()<0.15 && this.leftDriveTrainVelocityPID.getSpeed() ==0&&this.rightDriveTrainVelocityPID.getSpeed() ==0){
+            return true;
+        } 
+        else{
+            return shouldEnd;
+        }   
+
       
-        return shouldEnd;
    }
   // Called once after isFinished returns true
   @Override

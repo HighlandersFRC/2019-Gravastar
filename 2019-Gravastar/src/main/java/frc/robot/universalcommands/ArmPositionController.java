@@ -62,6 +62,7 @@ public class ArmPositionController extends Command {
         armEncoder.setForwardLimitSwitchAngle();
       }
       else if(RobotMap.armMaster.getSensorCollection().isRevLimitSwitchClosed()){
+        
         armEncoder.setReverseLimitSwitchAngle();
       }
       

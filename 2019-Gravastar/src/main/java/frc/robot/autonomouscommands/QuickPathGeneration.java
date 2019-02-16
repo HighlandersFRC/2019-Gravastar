@@ -30,9 +30,8 @@ public class QuickPathGeneration {
       new Waypoint(xpos, ypos, 0),
       new Waypoint(0,0, heading), 
     };
-    System.out.println(ypos+"ypose");
 
-    returnPath = new PathSetup(returnPathPoints, 2, false);
+    returnPath = new PathSetup(returnPathPoints, 4, false);
     returnPath.generateMainPath();
     
     return returnPath;

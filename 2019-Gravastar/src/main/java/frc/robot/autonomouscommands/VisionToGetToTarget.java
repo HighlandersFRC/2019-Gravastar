@@ -57,12 +57,11 @@ public class VisionToGetToTarget extends Command {
     
       double distance = visionCamera.getDistance();
       double angle = Pathfinder.d2r(visionCamera.getAngle());
-      System.out.println(angle);
       if(run<10&&!firstRun&&!isFinished()){
         
         
         double xDelta = Math.cos(angle)*distance;
-        double yDelta = Math.sin(angle)*distance;
+        double yDelta = Math.sin(2*angle)*distance;
         if(xDelta>1&&xDelta<6){
           run++;
           xDeltaArrayList.add(xDelta);
@@ -94,7 +93,7 @@ public class VisionToGetToTarget extends Command {
       xAverage = xSum/xDeltaArrayList.size();
       yAverage = ySum/yDeltaArrayList.size();
       System.out.println(xAverage + " " + yAverage);
-      shortPathToAngle = new ShortPathToAngle(xAverage, yAverage, Pathfinder.d2r(0));
+      shortPathToAngle = new ShortPathToAngle(xAverage-0.25, yAverage+0.75, Pathfinder.d2r(0));
       shortPathToAngle.start();
       firstRun = true;
     }

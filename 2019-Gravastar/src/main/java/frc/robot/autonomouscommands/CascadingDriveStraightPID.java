@@ -66,7 +66,7 @@ public class CascadingDriveStraightPID extends Command {
     if(Timer.getFPGATimestamp()-startTime>deltaTime){
       return true;
     }
-    return shouldEnd;
+    return false;
   }
 
   // Called once after isFinished returns true
