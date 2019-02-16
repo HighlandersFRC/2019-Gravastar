@@ -53,7 +53,6 @@ public class VisionCamera{
          
          
       } catch (Exception e) {
-         System.out.println(e.getMessage());
          return -900.0;
          //TODO: handle exception
       }

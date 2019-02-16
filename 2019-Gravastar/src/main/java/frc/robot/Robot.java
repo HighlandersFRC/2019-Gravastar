@@ -10,6 +10,7 @@ package frc.robot;
 
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Command;
@@ -39,12 +40,13 @@ public class Robot extends TimedRobot {
 	public static AutoSuite autoSuite  = new AutoSuite();
 	private RobotConfig robotConfig = new RobotConfig();
 	public static StopMotors stopMotors = new StopMotors();
+	private String sanatizedString = "nothing";
 
 	private EnableDriverControl enableDriverControl = new EnableDriverControl();
-	private VisionCamera visionCamera = new VisionCamera(RobotMap.jevois1);
 	
 	private UsbCamera camera;
 	private UsbCamera camera2;
+	public static SerialPort jevois1;
 	
 	//this odometry is used to provide reference data for the start of paths, it should only be used in autonomous
 	public static Odometry autoOdometry = new Odometry(false);
@@ -61,10 +63,18 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void robotInit() {
+		
+		
+		try {
+		 jevois1= new SerialPort(115200,edu.wpi.first.wpilibj.SerialPort.Port.kUSB);
+
+		} catch (Exception e) {
+			//TODO: handle exception
+		}
 		robotConfig.setStartingConfig();
 		// chooser.addOption("My Auto", new MyAutoCommand());
 		SmartDashboard.putData("Auto mode", m_chooser);
-		camera = CameraServer.getInstance().startAutomaticCapture(1);
+		camera = CameraServer.getInstance().startAutomaticCapture(0);
 	}
 
 	/**
@@ -81,9 +91,21 @@ public class Robot extends TimedRobot {
 	
 		SmartDashboard.putNumber("pressure", pressure);
 		SmartDashboard.putBoolean("hasNavx", RobotMap.navx.isConnected());
+		try {
+			String unsanatizedString = jevois1.readString();
+			if(unsanatizedString.isBlank()||unsanatizedString.isEmpty()||unsanatizedString.length()<10){
+				
+			}
+			else{
+				sanatizedString = unsanatizedString;
+			}
+			//SmartDashboard.putString("camReadout",sanatizedString );
+		} catch (Exception e) {
+			//SmartDashboard.putString("camReadout", "nothing");
+
+		}
 		
-		double distance = visionCamera.getDistance();
-		double angle = Pathfinder.d2r(visionCamera.getAngle());
+		/*double distance = visionCamera.getDistance();
 		double xDelta = Math.cos(angle)*distance;
 		double yDelta = Math.sin(2*angle)*distance;
 		if(xDelta<6 && xDelta>1&&yDelta<1.5&&yDelta>-1.5){
@@ -92,7 +114,7 @@ public class Robot extends TimedRobot {
 		else{
 			SmartDashboard.putBoolean("DriverAssist availiable", false);
 		}
-		
+		*/
 		SmartDashboard.putNumber("armPosit",RobotMap.mainArmEncoder.getAngle());
 	
 		SmartDashboard.putNumber("leftPos",RobotMap.leftMainDrive.getDistance());
@@ -138,10 +160,12 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 		m_autonomousCommand = m_chooser.getSelected();
+		robotConfig.teleopConfig();
+		//teleopSuite.startTeleopCommands();
 		autoSuite.startAutoCommands();
-		robotConfig.autoConfig();
-		autoOdometry.zero();
-		autoOdometry.start();
+		//robotConfig.autoConfig();
+		//autoOdometry.zero();
+		//autoOdometry.start();
 		/*
 		 * String autoSelected = SmartDashboard.getString("Auto Selector",
 		 * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
@@ -150,9 +174,9 @@ public class Robot extends TimedRobot {
 		 */
 
 		// schedule the autonomous command (example)
-		if (m_autonomousCommand != null) {
+		/*if (m_autonomousCommand != null) {
 			m_autonomousCommand.start();
-		}
+		}*/
 	}
 
 	/**
@@ -160,9 +184,9 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-		if(OI.pilotController.getTriggerAxis(Hand.kLeft)>0.5&&OI.pilotController.getTriggerAxis(Hand.kRight)>0.5&&OI.pilotController.getStartButton()&&OI.pilotController.getBackButton()){
+		/*if(OI.pilotController.getTriggerAxis(Hand.kLeft)>0.5&&OI.pilotController.getTriggerAxis(Hand.kRight)>0.5&&OI.pilotController.getStartButton()&&OI.pilotController.getBackButton()){
 			enableDriverControl.startDriverControl();
-		}
+		}*/
 		Scheduler.getInstance().run();
 	}
 
@@ -187,8 +211,9 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		
-		
+	
+		System.out.print(Robot.jevois1.readString()+":");
+
 		SmartDashboard.putNumber("navxValue", RobotMap.mainNavx.currentYaw());
 		Scheduler.getInstance().run();
 	}

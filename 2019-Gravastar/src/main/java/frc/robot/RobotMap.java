@@ -74,8 +74,9 @@ public class RobotMap {
 	public static DoubleSolenoid.Value pushOut = DoubleSolenoid.Value.kForward;
 	public static DoubleSolenoid.Value in = DoubleSolenoid.Value.kReverse;
 	public static AnalogInput ultraSonic = new AnalogInput(3);
-	public static SerialPort jevois1 = new SerialPort(115200,edu.wpi.first.wpilibj.SerialPort.Port.kUSB);
-
+	
+	
+	
 
 	public static DriveEncoder leftMainDrive = new DriveEncoder(leftDriveLead,RobotMap.leftDriveLead.getSelectedSensorPosition(0));
 	public static DriveEncoder rightMaindrive = new DriveEncoder(rightDriveLead,RobotMap.rightDriveLead.getSelectedSensorPosition(0));
