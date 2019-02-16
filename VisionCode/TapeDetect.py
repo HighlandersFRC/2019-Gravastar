@@ -53,21 +53,63 @@ class TapeDetect:
 		
 		return sortedArray
 	
-	def isLeft(self, contour):
-		rectangle = cv2.minAreaRect(contour)
-		targetAngle = rectangle[2]
-		if targetAngle >= -80 and targetAngle <= -65:
-			return True
+	def isLeft(self, contour, hsv):
+		rows,cols = hsv.shape[:2]
+		[vx,vy,x,y] = cv2.fitLine(contour, cv2.DIST_L2,0,0.01,0.01)
+		lefty = int((-x*vy/vx) + y)
+		righty = int(((cols-x)*vy/vx)+y)
+		rectangle = cv2.fitLine(contour, cv2.DIST_L2,0,0.01,0.01)
+		slope = math.fabs(120 - y/160 - x)
+		#slope = -slope
+		slope = slope * 3.14
+		slope = slope/180
+		angle = math.atan(slope)
+		angle = angle * 180
+		angle = angle/3.14
+		boxColor = (0, 0, 255)
+		if angle >= 0 and angle <= 45:
+			boxColor = (0, 0, 255)
+		elif angle >= 46 and angle <= 90:
+			boxColor = (153, 255, 255)
 		else:
-			return False
+			boxColor = (255,0, 0)
+		cv2.line(hsv,(cols-1,righty),(0,lefty), boxColor,2)
 		
-	def isRight(self, contour):
-		rectangle = cv2.minAreaRect(contour)
-		targetAngle = rectangle[2]
-		if targetAngle >= -25 and targetAngle <= -5:
-			return True
+		#angle = math.atan((vy - y)/(vx - x))
+		
+		angle = str(angle)
+		jevois.sendSerial("Angle One" + angle)
+		
+		#if targetAngle >= -80 and targetAngle <= -65:
+		#	return True
+		#else:
+		#	return False
+		return True
+		
+	def isRight(self, contour, hsv):
+		rows2,cols2 = hsv.shape[:2]
+		[vx2,vy2,x2,y2] = cv2.fitLine(contour, cv2.DIST_L2,0,0.01,0.01)
+		lefty2 = int((-x2*vy2/vx2) + y2)
+		righty2 = int(((cols2-x2)*vy2/vx2)+y2)
+		rectangle2 = cv2.fitLine(contour, cv2.DIST_L2,0,0.001,0.001)
+		slope2 = math.fabs(120 - y2/160 - x2)
+		#slope2 = -slope2
+		slope2 = slope2 * 3.14
+		slope2 = slope2/180
+		angle2 = math.atan(slope2)
+		angle2 = angle2 * 180
+		angle2 = angle2/3.14
+		boxColor = (0, 0, 255)
+		if angle2 >= 0 and angle2 <= 45:
+			boxColor = (0, 0, 255)
+		elif angle2 >= 46 and angle2 <= 90:
+			boxColor = (153, 255, 255)
 		else:
-			return False
+			boxColor = (255,0, 0)
+		cv2.line(hsv,(cols2-1,righty2),(0,lefty2),boxColor,2)
+		#angle2 = math.atan((vy2 - y2)/(vx2 - x2))
+		angle2 = str(angle2)
+		jevois.sendSerial("Angle Two" + angle2)
 	
 	def UniversalProcess(self, inframe):
 		#jevois.sendSerial("Hello World")
@@ -95,7 +137,7 @@ class TapeDetect:
 		
 		
 		#threshold colors to detect - Green: First value decides color, second val determines intensity, third val decides brightness
-		lowerThreshold = np.array([55, 50, 20])
+		lowerThreshold = np.array([55, 50, 15])
 		upperThreshold = np.array([85, 255, 255])
 		
 		#check if color in range
@@ -128,7 +170,7 @@ class TapeDetect:
 			rotatedRect = cv2.minAreaRect(countour)
 			box = cv2.boxPoints(rotatedRect)
 			boxArray = np.int0(box)
-			boxColor = (0,0,255)
+			boxColor = (255,0,0)
 			if len(approx) == 4 and cntArea > 100 and cntArea < 800:
 				targetAngle = rotatedRect[2]
 				#if targetAngle >= -80 and targetAngle <= -65:
@@ -147,17 +189,18 @@ class TapeDetect:
 		
 		sortedArray = self.sortContours(cntArray)
 				
-		outimg = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)		
-		#opening2 = cv2.cvtColor(opening, cv2.COLOR_GRAY2BGR)
-		#outimg = opening2
+		
+		#outimg = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)		
+		opening2 = cv2.cvtColor(opening, cv2.COLOR_GRAY2BGR)
+		outimg = opening2
 		#time.sleep(0.25)
 
 
 		if len(sortedArray) > 0:
-			if self.isRight(sortedArray[0]):
+			if self.isRight(sortedArray[0], hsv):
 				sortedArray.pop(0)
 		if len(sortedArray) > 0:
-			if self.isLeft(sortedArray[len(sortedArray) - 1]):
+			if self.isLeft(sortedArray[len(sortedArray) - 1], hsv):
 				sortedArray.pop(len(sortedArray) - 1)
 		
 		if len(sortedArray) < 2 or (len(sortedArray) % 2) != 0:
