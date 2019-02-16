@@ -28,9 +28,8 @@ public class ShortPathToAngle extends Command {
   
   public ShortPathToAngle(double xDisplacement, double yDisplacement, double endAngle) {
     xDist = xDisplacement;
-    eAngle = endAngle;
     yDist = yDisplacement;
-    requires(RobotMap.drive);
+    eAngle = endAngle;
 
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
@@ -40,7 +39,7 @@ public class ShortPathToAngle extends Command {
   @Override
   protected void initialize() {
     quickPathGeneration = new QuickPathGeneration(xDist, yDist, eAngle);
-    purePursuitController = new PurePursuitController(quickPathGeneration.GeneratePath(), 1.0, 4, 0.05);
+    purePursuitController = new PurePursuitController(quickPathGeneration.GeneratePath(), 0.5, 1.5, 0.05);
     navx = new Navx(RobotMap.navx);
     startingAngle = navx.currentAngle();
     firstRun = false;
@@ -56,10 +55,13 @@ public class ShortPathToAngle extends Command {
       if(!firstRun){
         angleError = degreeEndAngle-navx.currentAngle();
       
-        CascadingPIDTurn cascadingPIDTurn= new CascadingPIDTurn(angleError,0.08,0.00085,0.00006);;
+        CascadingPIDTurn cascadingPIDTurn= new CascadingPIDTurn(angleError,0.12,0.00085,0.06);;
         cascadingPIDTurn.start();
         firstRun = true;
       }
+    }
+    else{
+
     }
     
   }
@@ -74,7 +76,7 @@ public class ShortPathToAngle extends Command {
       return true;
     }
    
-    return shouldEnd;
+    return false;
 
   }
 

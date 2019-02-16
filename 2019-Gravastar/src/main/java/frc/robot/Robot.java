@@ -9,10 +9,12 @@ package frc.robot;
 
 
 import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.autonomouscommands.AutoSuite;
@@ -22,6 +24,7 @@ import frc.robot.teleopcommands.TeleopSuite;
 import frc.robot.tools.Odometry;
 import frc.robot.universalcommands.ActuateAllHatchPistons;
 import frc.robot.universalcommands.StopMotors;
+import jaci.pathfinder.Pathfinder;
 //import org.json.simple.parser.JSONParser;
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -61,7 +64,7 @@ public class Robot extends TimedRobot {
 		robotConfig.setStartingConfig();
 		// chooser.addOption("My Auto", new MyAutoCommand());
 		SmartDashboard.putData("Auto mode", m_chooser);
-		//camera = CameraServer.getInstance().startAutomaticCapture(0);
+		camera = CameraServer.getInstance().startAutomaticCapture(1);
 	}
 
 	/**
@@ -78,6 +81,18 @@ public class Robot extends TimedRobot {
 	
 		SmartDashboard.putNumber("pressure", pressure);
 		SmartDashboard.putBoolean("hasNavx", RobotMap.navx.isConnected());
+		
+		double distance = visionCamera.getDistance();
+		double angle = Pathfinder.d2r(visionCamera.getAngle());
+		double xDelta = Math.cos(angle)*distance;
+		double yDelta = Math.sin(2*angle)*distance;
+		if(xDelta<6 && xDelta>1&&yDelta<1.5&&yDelta>-1.5){
+			SmartDashboard.putBoolean("DriverAssist availiable", true);
+		}
+		else{
+			SmartDashboard.putBoolean("DriverAssist availiable", false);
+		}
+		
 		SmartDashboard.putNumber("armPosit",RobotMap.mainArmEncoder.getAngle());
 	
 		SmartDashboard.putNumber("leftPos",RobotMap.leftMainDrive.getDistance());
@@ -172,8 +187,8 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		//System.out.println(RobotMap.jevois1.readString());
-		//System.out.println(RobotMap.mainVisionCamera.getDistance());
+		
+		
 		SmartDashboard.putNumber("navxValue", RobotMap.mainNavx.currentYaw());
 		Scheduler.getInstance().run();
 	}

@@ -10,108 +10,55 @@ import edu.wpi.first.hal.util.UncleanStatusException;
 
 public class VisionCamera{
    
-   JSONParser parser = new JSONParser();
-   SerialPort port;
-
-   public VisionCamera(SerialPort jevois){
-      port = jevois;
+   private SerialPort cam;
+   private String sanatizedString = "nothing";
+   public VisionCamera(SerialPort port){
+      cam = port;
    }
+   public String getString(){
+      try {
 
-   public double getAngle(){
-     
-      double angle = -12.0;
-
-      try{
-         
-         String unsanatizedString = RobotMap.jevois1.readString();
-         System.out.println(unsanatizedString);
-           if (unsanatizedString != null){
-  
-              Object object = parser.parse(unsanatizedString);
-  
-              JSONObject jsonObject = (JSONObject) object;
-         
-              if (jsonObject != null){
-  
-              Long distString = (Long) jsonObject.get("Angle");
-  
-              angle = Double.valueOf(distString);
-  
-              }
-  
-           }
-  
-        } catch(ParseException e) {
-          // e.printStackTrace();
-        } catch(UncleanStatusException e) {
-          // e.printStackTrace();
-        } 
-      return angle;
-   }
-
-   public double getDistance(){
-
-      double distance = -12.0;
-      
-      try{
-         
-       String unsanatizedString = RobotMap.jevois1.readString();
-       System.out.println(unsanatizedString);
-         if (unsanatizedString != null){
-
-            Object object = parser.parse(unsanatizedString);
-
-            JSONObject jsonObject = (JSONObject) object;
-            if (jsonObject != null){
-            System.out.println(jsonObject);
-
-            Long distString = (Long) jsonObject.get("Distance");
-
-            distance = Double.valueOf(distString);
-
+         if(cam.getBytesReceived()>2){
+            String unsanatizedString = cam.readString();
+            if(unsanatizedString.length()>29||unsanatizedString.isBlank()||unsanatizedString.isEmpty()){
+               sanatizedString = unsanatizedString;
             }
-
          }
+      } catch (Exception e) {
 
-      } catch(ParseException e) {
-        // e.printStackTrace();
-      } catch(UncleanStatusException e) {
-        // e.printStackTrace();
-      } 
-
-      return distance; 
-   } 
-
-   public double getXOffSet(){
-     
-      double x = -12.0;
-
-      try{
+         //TODO: handle exception
+      }
+      
+      
+      return sanatizedString;
+   }
+   public double getDistance(){
+      try {
+         String usedString = this.getString();
+        
+         return Double.parseDouble(usedString.substring(usedString.indexOf("Distance:")+9, usedString.indexOf("Distance:")+11))/12;
          
-         String unsanatizedString = RobotMap.jevois1.readString();
-         System.out.println(unsanatizedString);
-           if (unsanatizedString != null){
-  
-              Object object = parser.parse(unsanatizedString);
-  
-              JSONObject jsonObject = (JSONObject) object;
          
-              if (jsonObject != null){
-  
-              Long distString = (Long) jsonObject.get("PLACEHOLDER");
-  
-              x = Double.valueOf(distString);
-  
-              }
-  
-           }
-  
-        } catch(ParseException e) {
-          // e.printStackTrace();
-        } catch(UncleanStatusException e) {
-          // e.printStackTrace();
-        } 
-      return x;
-   } 
+      } catch (Exception e) {
+         return -900.0;
+         //TODO: handle exception
+      }
+   }
+   public double getAngle(){
+      try {
+         String usedString = this.getString();
+
+        
+         return Double.parseDouble(usedString.substring(usedString.indexOf("Angle:")+6, usedString.indexOf("Angle:")+11));
+         
+         
+      } catch (Exception e) {
+         System.out.println(e.getMessage());
+         return -900.0;
+         //TODO: handle exception
+      }
+   }
+   
+
 
 } 

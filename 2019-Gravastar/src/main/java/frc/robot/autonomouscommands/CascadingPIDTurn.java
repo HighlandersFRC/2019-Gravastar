@@ -80,7 +80,8 @@ public class CascadingPIDTurn extends Command {
     if(Math.abs(navx.currentAngle()-desiredAngle)<0.5){
       return true;
     }
-    return shouldEnd;
+    System.out.println(Math.abs(navx.currentAngle()-desiredAngle));
+    return false;
   }
 
   // Called once after isFinished returns true

@@ -26,7 +26,7 @@ public class VisionToGetToTarget extends Command {
   private ArrayList<Double> xDeltaArrayList;
   private ArrayList<Double> yDeltaArrayList;
   private int run;
-  private boolean firstRun;
+  private boolean firstRun = false;
   private VisionCamera visionCamera;
   private ShortPathToAngle shortPathToAngle;
   private boolean shouldEnd;
@@ -48,21 +48,28 @@ public class VisionToGetToTarget extends Command {
     camNotifier = new Notifier(new CamRunnable());
     run = 0;
     firstRun = false;
-    camNotifier.startPeriodic(0.001);
+    camNotifier.startPeriodic(0.05);
   
   }
   private class CamRunnable implements Runnable{
+  
     public void run(){
-      if(run<10&&!firstRun&&RobotState.isAutonomous()&&!isFinished()){
-        double xDelta = visionCamera.getDistance();
-        double yDelta = visionCamera.getXOffSet();
-        if(xDelta>3&&xDelta<6){
+    
+      double distance = visionCamera.getDistance();
+      double angle = Pathfinder.d2r(visionCamera.getAngle());
+      if(run<10&&!firstRun&&!isFinished()){
+        
+        
+        double xDelta = Math.cos(angle)*distance;
+        double yDelta = Math.sin(2*angle)*distance;
+        if(xDelta>1&&xDelta<6){
           run++;
           xDeltaArrayList.add(xDelta);
           yDeltaArrayList.add(yDelta);
         }  
       }
       else{
+       
         camNotifier.stop();
       }
      
@@ -85,13 +92,12 @@ public class VisionToGetToTarget extends Command {
       }
       xAverage = xSum/xDeltaArrayList.size();
       yAverage = ySum/yDeltaArrayList.size();
-      shortPathToAngle = new ShortPathToAngle(xAverage, yAverage, Pathfinder.d2r(0));
-      shortPathToAngle.start();
       System.out.println(xAverage + " " + yAverage);
+      shortPathToAngle = new ShortPathToAngle(xAverage-0.25, yAverage+0.75, Pathfinder.d2r(0));
+      shortPathToAngle.start();
       firstRun = true;
     }
     else{
-      System.out.println(run);
     }
   }
   public void forceFinish(){
@@ -100,10 +106,10 @@ public class VisionToGetToTarget extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    if(firstRun = true){
+    if(firstRun == true){
       return true;
     }
-    return shouldEnd;
+    return false;
   }
 
   // Called once after isFinished returns true
