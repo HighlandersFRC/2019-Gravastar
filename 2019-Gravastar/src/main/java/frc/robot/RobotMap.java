@@ -60,9 +60,8 @@ public class RobotMap {
 	public static TalonSRX armFollower = new TalonSRX(armFollowerID);
 	public static TalonSRX intake = new TalonSRX(intakeID);
 
-
-	public static AHRS navx = new AHRS(Port.kMXP);
-	public static Navx mainNavx = new Navx(navx);	    
+	public static AHRS navx;
+	public static Navx mainNavx;
 	//Initialize all pneumatic Actuators, predefine actuation directions
 	public static DoubleSolenoid shifters = new DoubleSolenoid(0,1);
 	public static DoubleSolenoid.Value lowGear = DoubleSolenoid.Value.kReverse;//TODO directions must be assigned
@@ -73,16 +72,18 @@ public class RobotMap {
 	public static DoubleSolenoid hatchPiston3 = new DoubleSolenoid(6, 7);
 	public static DoubleSolenoid.Value pushOut = DoubleSolenoid.Value.kForward;
 	public static DoubleSolenoid.Value in = DoubleSolenoid.Value.kReverse;
-	public static AnalogInput ultraSonic = new AnalogInput(3);
-	
-	
-	
+	public static AnalogInput ultraSonic1;
+	public static AnalogInput ultraSonic2;
+
+	public static AnalogInput preassureSensor;
 
 	public static DriveEncoder leftMainDrive = new DriveEncoder(leftDriveLead,RobotMap.leftDriveLead.getSelectedSensorPosition(0));
 	public static DriveEncoder rightMaindrive = new DriveEncoder(rightDriveLead,RobotMap.rightDriveLead.getSelectedSensorPosition(0));
 	public static ArmEncoder mainArmEncoder	 = new ArmEncoder(armMaster);
-	public static UltrasonicSensor mainUltrasonicSensor = new UltrasonicSensor(ultraSonic);
-	public static AnalogInput preassureSensor = new AnalogInput(2);
+
+	public static UltrasonicSensor mainUltrasonicSensor1;
+	public static UltrasonicSensor mainUltrasonicSensor2; 
+
 
 
 	//Array of drive motors to simplify configuration
@@ -121,14 +122,37 @@ public class RobotMap {
 	public static DriveBase drive = new DriveBase();
 	public static Arm arm = new Arm();
 	public static PathList universalPathList = new PathList();
+	public RobotMap(){
+		try {
+			navx = new AHRS(Port.kMXP);
+			mainNavx = new Navx(navx);
+			
+		} catch (Exception e) {
+			System.out.println("navxNotPresent");
+		}
+		try {
+			ultraSonic1 = new AnalogInput(3);
+			mainUltrasonicSensor1=new UltrasonicSensor(ultraSonic1);
 
-	// For example to map the left and right motors, you could define the
-	// following variables to use with your drivetrain subsystem.
-	// public static int leftMotor = 1;
-	// public static int rightMotor = 2;
+		} catch (Exception e) {
+			System.out.println("UltraSonic1NotPresent");
+		}
+		try {
+			ultraSonic2 = new AnalogInput(0);
+			mainUltrasonicSensor2= new UltrasonicSensor(ultraSonic1);
 
-	// If you are using multiple modules, make sure to define both the port
-	// number and the module. For example you with a rangefinder:
-	// public static int rangefinderPort = 1;
-	// public static int rangefinderModule = 1;
+		} catch (Exception e) {
+			System.out.println("UltraSonic2NotPresent");
+		}
+		try {
+			preassureSensor = new AnalogInput(2);
+
+		} catch (Exception e) {
+			System.out.println("Preassure2NotPresent");
+		}
+	
+
+	}
 }
+
+				   

@@ -28,23 +28,22 @@ public class AutoSuite {
 		tankDrive = new TankDrive();
 		driveTrainStallProtectionController = new DriveTrainStallProtectionController();
 		teleopArmControl = new TeleopArmControl();	
-    
     }
-    public void startAutoCommands() {
+    public void startAutoCommandsDriverControl() {
         arcadeDrive.start();
-		//tankDrive.start();
 		driveTrainStallProtectionController.start();
 		teleopArmControl.start();
-      // visionToGetToTarget.start();
-       
-
     }
+    public void startAutoCommandsRobotControl() {
+        arcadeDrive.start();
+		driveTrainStallProtectionController.start();
+		teleopArmControl.start();
+    }
+
     public void endAutoCommands(){
         arcadeDrive.cancel();
-		//tankDrive.cancel();
 		driveTrainStallProtectionController.cancel();
 		teleopArmControl.cancel();
-        //autoCommand.cancel();
     }
 
 }
