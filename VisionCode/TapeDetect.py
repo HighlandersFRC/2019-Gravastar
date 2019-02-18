@@ -192,8 +192,9 @@ class TapeDetect:
 			if self.isLeft(sortedArray[len(sortedArray) - 1], hsv):
 				sortedArray.pop(len(sortedArray) - 1)
 		
-		if len(sortedArray) < 2 or (len(sortedArray) % 2) != 0:
+		if len(sortedArray) < 2 or len(sortedArray) % 2 != 0:
 			outimg = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
+			jevois.sendSerial('{"Distance":' + "-11.0" + ', "Angle":' + "-100.0" + '}')
 			#jevois.sendSerial("Hello")
 			return outimg
 		
@@ -202,19 +203,20 @@ class TapeDetect:
 		xArray = []
 		
 		for index in range(0, len(sortedArray), 2):
-			leftRect = cv2.minAreaRect(sortedArray[index])
-			rightRect = cv2.minAreaRect(sortedArray[index + 1])
-			points_A = cv2.boxPoints(leftRect)
-			points_1 = np.int0(points_A)
-			points_B = cv2.boxPoints(rightRect)
-			points_2 = np.int0(points_B)
-			leftX = leftRect[0][0]
-			rightX = rightRect[0][0]
-			cv2.drawContours(hsv, [points_1], 0, boxColor, 2)
-			cv2.drawContours(hsv, [points_2], 0, boxColor, 2)
-			centerX = (leftX + rightX)/2
-			centerX = math.fabs(centerX - 160)
-			xArray.append(centerX)
+			if index != len(sortedArray):
+				leftRect = cv2.minAreaRect(sortedArray[index])
+				rightRect = cv2.minAreaRect(sortedArray[index + 1])
+				points_A = cv2.boxPoints(leftRect)
+				points_1 = np.int0(points_A)
+				points_B = cv2.boxPoints(rightRect)
+				points_2 = np.int0(points_B)
+				leftX = leftRect[0][0]
+				rightX = rightRect[0][0]
+				cv2.drawContours(hsv, [points_1], 0, boxColor, 2)
+				cv2.drawContours(hsv, [points_2], 0, boxColor, 2)
+				centerX = (leftX + rightX)/2
+				centerX = math.fabs(centerX - 160)
+				xArray.append(centerX)
 		
 		minX = np.argmin(xArray)
 		
@@ -223,8 +225,18 @@ class TapeDetect:
 		centerPairLeft = sortedArray[minX * 2]
 		centerPairRight = sortedArray[(minX * 2) + 1]
 		
+		boxColor = (120, 255, 255)
+		
 		rightRect = cv2.minAreaRect(centerPairRight)
 		leftRect = cv2.minAreaRect(centerPairLeft)
+		
+		pointsLeft = cv2.boxPoints(leftRect)
+		pointsRight = cv2.boxPoints(rightRect)
+		pointsLeft = np.int0(pointsLeft)
+		pointsRight = np.int0(pointsRight)
+		
+		cv2.drawContours(hsv, [pointsLeft], 0, boxColor, 2)
+		cv2.drawContours(hsv, [pointsRight], 0, boxColor, 2)
 		
 		leftY = leftRect[0][1]
 		rightY = rightRect[0][1]
@@ -252,7 +264,7 @@ class TapeDetect:
 		centerX = str(centerX)
 		
 		
-		JSON = '{"Distance":' + distance + ', "Angle":' + yawAngle + '}'
+		JSON = '{"Distance":' + distance + ', "centerY":' + centerY +  + ', "Angle":' + yawAngle + '}'
 		
 		
 		#send vals over serial
