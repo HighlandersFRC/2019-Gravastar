@@ -4,6 +4,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.RobotMap;
 import edu.wpi.first.hal.util.UncleanStatusException;
 
@@ -15,19 +16,42 @@ public class VisionCamera {
     JSONParser parser = new JSONParser();
     SerialPort port;
     private String sanatizedString = "nothing";
-
+    public double lastParseTime;
+   public double distance;
+   public double angle;
+   private double badAngle = -3000.0;
+   private double badDistance = -12.0;
     public VisionCamera(SerialPort jevois) {
        port = jevois;
     }
-    
-    public double getAngle(){
-      
-       double angle = -12.0;
+    public void updateVision(){
+
+      try{
+       String jsonString = this.getString();
+
+       if (jsonString != null){
+         double tryDistance = parseDistance(jsonString);
+         double tryAngle = parseAngle(jsonString);
+   
+         if (tryDistance != badDistance && tryAngle != badAngle){
+            distance = tryDistance;
+            angle = tryAngle;
+
+            lastParseTime = Timer.getFPGATimestamp();
+         }
+      }
+   
+   }
+   catch (Exception e){
+
+   }
+}
+    public double parseAngle(String jsonString){
+
  
        try{
-          
-          String jsonString = this.getString();
-            if (jsonString != null){
+
+
    
                Object object = parser.parse(jsonString);
    
@@ -35,70 +59,86 @@ public class VisionCamera {
           
                if (jsonObject != null){
    
-               Long distString = (Long) jsonObject.get("Angle");
+               double distString = (double) jsonObject.get("Angle");
    
-               angle = Double.valueOf(distString);
-
+               return Double.valueOf(distString);
    
-               }
+               
    
             }
    
          } catch(ParseException e) {
-           // e.printStackTrace();
+
          } catch(UncleanStatusException e) {
-           // e.printStackTrace();
+
          } catch(ClassCastException e) {
 
          }
-               return angle;
+               return badAngle;
     }
  
-    public double getDistance(){
- 
-        double distance = -12.0;
-       
+    public double parseDistance(String jsonString){
+
+      
+             
        try{
-          
-        String jsonString = this.getString();
-          if (jsonString != null){
+
+
  
              Object object = parser.parse(jsonString);
-
              JSONObject jsonObject = (JSONObject) object;
-             if (jsonObject != null){ 
-             Long distString = (Long) jsonObject.get("Distance");
- 
-             distance = Double.valueOf(distString);
 
- 
+         
+             if (jsonObject != null){ 
+
+             double distString = (double) jsonObject.get("Distance");
+             return Double.valueOf(distString);
+
              }
  
-          }
+          
  
        } catch(ParseException e) {
-         // e.printStackTrace();
+
+
        } catch(UncleanStatusException e) {
-         // e.printStackTrace();
+
+ 
        } catch(ClassCastException e) {
+
              
          }
  
-       return distance; 
+       return badDistance; 
+       
     } 
+    
+    public double getDistance(){
+       return distance;
+    }
   
+    public double getAngle(){
+      return angle;
+   }
+
     public String getString(){
         try {     
+          // System.out.println("Raw Read: "+port.readString());
+          // System.out.println("Bytes Available: "+port.getBytesReceived());
            if(port.getBytesReceived()>2){
               String unsanatizedString = port.readString();
-              if(unsanatizedString.length()>18||unsanatizedString.isBlank()||unsanatizedString.isEmpty()){
+              //System.out.println("Raw Read: "+unsanatizedString);
+              if(unsanatizedString.length()>5&&!unsanatizedString.isBlank()&&!unsanatizedString.isEmpty()){
 
                  sanatizedString = unsanatizedString;
               }
            }
         } catch (Exception e) {
-
+          // System.out.println("Parse Failed");
         }
+    //    System.out.println(sanatizedString);
+        //System.out.println("Get String: " + sanatizedString);
         return sanatizedString;   
-    }
+    } 
+
     }
