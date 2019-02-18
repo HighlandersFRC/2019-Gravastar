@@ -24,6 +24,7 @@ import frc.robot.sensors.VisionCamera;
 import frc.robot.teleopcommands.TeleopSuite;
 import frc.robot.tools.Odometry;
 import frc.robot.universalcommands.ActuateAllHatchPistons;
+import frc.robot.universalcommands.ChangeLightColor;
 import frc.robot.universalcommands.StopMotors;
 import jaci.pathfinder.Pathfinder;
 //import org.json.simple.parser.JSONParser;
@@ -41,7 +42,9 @@ public class Robot extends TimedRobot {
 	private RobotConfig robotConfig = new RobotConfig();
 	public static StopMotors stopMotors = new StopMotors();
 	private UsbCamera camera;
-	public static SerialPort jevois1;
+	private ChangeLightColor changeLightColor = new ChangeLightColor(255,255, 255);
+	//public static VisionCamera visionCamera = new VisionCamera(RobotMap.jevois1);
+	private boolean hasNavx;
 	//this odometry is used to provide reference data for the start of paths, it should only be used in autonomous
 	public static Odometry autoOdometry = new Odometry(false);
 	//private VisionCamera visionCamera = new VisionCamera(RobotMap.jevois1);
@@ -56,14 +59,9 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 		
-		
-		try {
-		 jevois1= new SerialPort(115200,edu.wpi.first.wpilibj.SerialPort.Port.kUSB);
-		} catch (Exception e) {
-		}
 		robotConfig.setStartingConfig();
 		// chooser.addOption("My Auto", new MyAutoCommand());
-		camera = CameraServer.getInstance().startAutomaticCapture(0);
+		//camera = CameraServer.getInstance().startAutomaticCapture();
 	}
 
 	/**
@@ -82,8 +80,10 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber("armPosit",RobotMap.mainArmEncoder.getAngle());
 		SmartDashboard.putNumber("leftPos",RobotMap.leftMainDrive.getDistance());
 		SmartDashboard.putNumber("rightpos",RobotMap.rightMaindrive.getDistance());
-		SmartDashboard.putNumber("analog", RobotMap.mainUltrasonicSensor1.getDistance());
-		SmartDashboard.putNumber("analog", RobotMap.mainUltrasonicSensor2.getDistance());
+		//SmartDashboard.putNumber("visionAngle", visionCamera.getAngle());
+		//SmartDashboard.putNumber("visionDistance", visionCamera.getDistance());
+		SmartDashboard.putNumber("ultraSonic1",RobotMap.mainUltrasonicSensor1.getDistance());
+		SmartDashboard.putNumber("ultraSonic2", RobotMap.mainUltrasonicSensor2.getDistance());
 
 	
 	}
@@ -105,7 +105,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 		robotConfig.autoConfig();
-		autoSuite.startAutoCommandsDriverControl();
+		autoSuite.startAutoCommandsRobotControl();
 	}
 	@Override
 	public void autonomousPeriodic() {
@@ -123,6 +123,9 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopPeriodic() {
+	
+
+	//	System.out.println(RobotMap.jevois1.readString());
 		SmartDashboard.putNumber("navxValue", RobotMap.mainNavx.currentYaw());
 		Scheduler.getInstance().run();
 	}

@@ -19,6 +19,15 @@ public class UltrasonicSensor {
         ultraSonic = input;
     }
     public double getDistance(){
-        return ultraSonic.getAverageVoltage()*RobotConfig.ultraSonicConversionFactor;
+        if(ultraSonic.getAverageValue()*RobotConfig.ultraSonicConversionFactor>1.2){
+            return ultraSonic.getValue()*RobotConfig.ultraSonicConversionFactor;
+        }  
+        else{
+            return -1;
+        }
+        
+    }
+    public double getVoltage(){
+        return ultraSonic.getVoltage();
     }
 }

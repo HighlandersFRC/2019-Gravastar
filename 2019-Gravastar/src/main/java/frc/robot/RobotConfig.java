@@ -19,7 +19,7 @@ public class RobotConfig {
 	public static double robotMaxAcceleration = 10.0;
 	public static double robotMaxVelocity = 14.5;
 	public static double armTicksToAngleConversion = -0.02857143;
-	public static double ultraSonicConversionFactor = 0.00411608;
+	public static double ultraSonicConversionFactor = 0.00427807;
 	public static int armAngleToTicksConversion = -35;
 	public static int driveMotorContinuousCurrentHighGear = 22;
 	public static int driveMotorContinuousCurrentLowGear = 40;
@@ -58,6 +58,8 @@ public class RobotConfig {
 		
 		RobotMap.armMaster.setInverted(false);
 		RobotMap.armFollower.setInverted(InvertType.FollowMaster);
+
+		RobotMap.intake.setInverted(false);
 
     	RobotMap.leftDriveLead.setSelectedSensorPosition(0, 0,0);
 		RobotMap.rightDriveLead.setSelectedSensorPosition(0, 0, 0);

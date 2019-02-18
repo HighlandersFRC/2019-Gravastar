@@ -23,6 +23,8 @@ public class AutoSuite {
 	private TeleopArmControl teleopArmControl;
 	private DriveTrainStallProtectionController driveTrainStallProtectionController;
     private Command autoCommand;
+    private CascadingPIDUltrasonicAlignment cascadingPIDUltrasonicAlignment;
+    private UltrasoundAlineandGetTo ultrasoundAlineandGetTo;
     public AutoSuite() {
         arcadeDrive = new ArcadeDrive();
 		tankDrive = new TankDrive();
@@ -35,9 +37,9 @@ public class AutoSuite {
 		teleopArmControl.start();
     }
     public void startAutoCommandsRobotControl() {
-        arcadeDrive.start();
-		driveTrainStallProtectionController.start();
-		teleopArmControl.start();
+       ultrasoundAlineandGetTo = new UltrasoundAlineandGetTo();
+       ultrasoundAlineandGetTo.start();
+       
     }
 
     public void endAutoCommands(){

@@ -67,8 +67,7 @@ public class ArmPositionController extends Command {
       }
       
       armPID.updatePID(armEncoder.getAngle());
-      SmartDashboard.putNumber("result", armPID.getResult()+Math.cos(Pathfinder.d2r(armEncoder.getAngle()))*0.35);
-      SmartDashboard.putNumber("desired", armPID.getSetPoint());
+    
       
       if(Math.abs(OI.operatorController.getRawAxis(1))>0.1){
         desiredValue = armEncoder.getAngle();

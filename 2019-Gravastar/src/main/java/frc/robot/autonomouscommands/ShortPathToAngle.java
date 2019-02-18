@@ -47,7 +47,11 @@ public class ShortPathToAngle extends Command {
     purePursuitController.start();
     shouldEnd = false;
   }
-
+  public void changePoint(double xDisp, double yDisp, double endAngle){
+    xDist = xDisp;
+    yDist = yDisp;
+    eAngle = endAngle;
+  }
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {

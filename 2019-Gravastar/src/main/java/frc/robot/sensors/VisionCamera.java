@@ -8,56 +8,97 @@ import frc.robot.RobotMap;
 import edu.wpi.first.hal.util.UncleanStatusException;
 
 
-public class VisionCamera{
-   
-   private SerialPort cam;
-   private String sanatizedString = "nothing";
-   public VisionCamera(SerialPort port){
-      cam = port;
-   }
-   public String getString(){
-      try {
 
-         if(cam.getBytesReceived()>2){
-            String unsanatizedString = cam.readString();
-            if(unsanatizedString.length()>29||unsanatizedString.isBlank()||unsanatizedString.isEmpty()){
-               sanatizedString = unsanatizedString;
+
+public class VisionCamera {
+   
+    JSONParser parser = new JSONParser();
+    SerialPort port;
+    private String sanatizedString = "nothing";
+
+    public VisionCamera(SerialPort jevois) {
+       port = jevois;
+    }
+    
+    public double getAngle(){
+      
+       double angle = -12.0;
+ 
+       try{
+          
+          String jsonString = this.getString();
+            if (jsonString != null){
+   
+               Object object = parser.parse(jsonString);
+   
+               JSONObject jsonObject = (JSONObject) object;
+          
+               if (jsonObject != null){
+   
+               Long distString = (Long) jsonObject.get("Angle");
+   
+               angle = Double.valueOf(distString);
+
+   
+               }
+   
             }
-         }
-      } catch (Exception e) {
-
-         //TODO: handle exception
-      }
-      
-      
-      return sanatizedString;
-   }
-   public double getDistance(){
-      try {
-         String usedString = this.getString();
-        
-         return Double.parseDouble(usedString.substring(usedString.indexOf("Distance:")+9, usedString.indexOf("Distance:")+11))/12;
-         
-         
-      } catch (Exception e) {
-         return -900.0;
-         //TODO: handle exception
-      }
-   }
-   public double getAngle(){
-      try {
-         String usedString = this.getString();
-
-        
-         return Double.parseDouble(usedString.substring(usedString.indexOf("Angle:")+6, usedString.indexOf("Angle:")+11));
-         
-         
-      } catch (Exception e) {
-         return -900.0;
-         //TODO: handle exception
-      }
-   }
    
+         } catch(ParseException e) {
+           // e.printStackTrace();
+         } catch(UncleanStatusException e) {
+           // e.printStackTrace();
+         } catch(ClassCastException e) {
 
+         }
+               return angle;
+    }
+ 
+    public double getDistance(){
+ 
+        double distance = -12.0;
+       
+       try{
+          
+        String jsonString = this.getString();
+          if (jsonString != null){
+ 
+             Object object = parser.parse(jsonString);
 
-} 
+             JSONObject jsonObject = (JSONObject) object;
+             if (jsonObject != null){ 
+             Long distString = (Long) jsonObject.get("Distance");
+ 
+             distance = Double.valueOf(distString);
+
+ 
+             }
+ 
+          }
+ 
+       } catch(ParseException e) {
+         // e.printStackTrace();
+       } catch(UncleanStatusException e) {
+         // e.printStackTrace();
+       } catch(ClassCastException e) {
+             
+         }
+ 
+       return distance; 
+    } 
+  
+    public String getString(){
+        try {     
+           if(port.getBytesReceived()>2){
+              String unsanatizedString = port.readString();
+              if(unsanatizedString.length()>18||unsanatizedString.isBlank()||unsanatizedString.isEmpty()){
+
+                 sanatizedString = unsanatizedString;
+              }
+           }
+        } catch (Exception e) {
+
+        }
+        return sanatizedString;   
+    }
+    }
