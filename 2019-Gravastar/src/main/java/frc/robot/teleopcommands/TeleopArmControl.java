@@ -35,7 +35,7 @@ public class TeleopArmControl extends Command {
   @Override
   protected void execute() {
     if(Math.abs(OI.operatorController.getRawAxis(1))>0.15){
-      RobotMap.armMaster.set(ControlMode.PercentOutput, OI.operatorController.getRawAxis(1)*-0.30+ Math.cos(Pathfinder.d2r(RobotMap.mainArmEncoder.getAngle()))*0.05);
+      RobotMap.armMaster.set(ControlMode.PercentOutput, OI.operatorController.getRawAxis(1)*-0.60+ Math.cos(Pathfinder.d2r(RobotMap.mainArmEncoder.getAngle()))*0.05);
       armPositionController.disablePID();
       armPositionController.setArmPosition(armPositionController.getArmAngle());
 		}

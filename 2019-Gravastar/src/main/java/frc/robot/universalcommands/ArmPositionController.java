@@ -40,8 +40,8 @@ public class ArmPositionController extends Command {
   protected void initialize() {
     armEncoder = new ArmEncoder(RobotMap.armMaster);
     armPID = new PID(p, i, d);
-    armPID.setMaxOutput(0.3);
-    armPID.setMinOutput(-0.3);
+    armPID.setMaxOutput(0.5);
+    armPID.setMinOutput(-0.5);
     armPID.setSetPoint(desiredValue);
     shouldRun = true;
     shouldEnd = false;
@@ -67,8 +67,7 @@ public class ArmPositionController extends Command {
       }
       
       armPID.updatePID(armEncoder.getAngle());
-      SmartDashboard.putNumber("result", armPID.getResult()+Math.cos(Pathfinder.d2r(armEncoder.getAngle()))*0.35);
-      SmartDashboard.putNumber("desired", armPID.getSetPoint());
+    
       
       if(Math.abs(OI.operatorController.getRawAxis(1))>0.1){
         desiredValue = armEncoder.getAngle();

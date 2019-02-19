@@ -17,10 +17,11 @@ import frc.robot.RobotConfig;
 import frc.robot.RobotMap;
 import frc.robot.sensors.DriveEncoder;
 import frc.robot.sensors.Navx;
+import frc.robot.sensors.UltrasonicSensor;
 import frc.robot.tools.DriveTrainVelocityPID;
 import frc.robot.tools.PID;
 
-public class CascadingPIDTurn extends Command {
+public class CascadingPIDUltrasonicAlignment extends Command {
   private Navx navx;
   private DriveTrainVelocityPID leftDriveTrainVelocityPID;
   private DriveTrainVelocityPID rightDriveTrainVelocityPID;
@@ -31,12 +32,15 @@ public class CascadingPIDTurn extends Command {
   private double p;
   private double i;
   private double d;
+  private UltrasonicSensor ultraSonic1;
+  private UltrasonicSensor ultraSonic2;
   private boolean shouldEnd;
-  public CascadingPIDTurn(double Angle, double kp, double ki, double kd) {
-    desiredAngle = Angle;
+  public CascadingPIDUltrasonicAlignment(double kp, double ki, double kd, UltrasonicSensor sonic1, UltrasonicSensor sonic2) {
     p = kp;
     i = ki;
     d = kd;
+    ultraSonic1 = sonic1;
+    ultraSonic2 = sonic2;
     requires(RobotMap.drive);
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
@@ -48,28 +52,23 @@ public class CascadingPIDTurn extends Command {
     shouldEnd = false;
     leftDriveTrainVelocityPID = new DriveTrainVelocityPID(0, RobotMap.leftDriveLead, 0,0.0402026, 0.18, 0.0004, 0.8);
     rightDriveTrainVelocityPID = new DriveTrainVelocityPID(0, RobotMap.rightDriveLead, 0,0.0406258, 0.18, 0.0004, 0.8);
-    turnPID =  new PID(p,i,d );
-    navx = new Navx(RobotMap.navx);
+    turnPID =  new PID(p,i,d);
     leftSideDriveEncoder = new DriveEncoder(RobotMap.leftDriveLead, RobotMap.leftDriveLead.getSelectedSensorPosition(0));
     rightSideDriveEncoder = new DriveEncoder(RobotMap.rightDriveLead, RobotMap.rightDriveLead.getSelectedSensorPosition(0));
     turnPID.setMaxOutput(RobotConfig.robotMaxVelocity);
     turnPID.setMinOutput(-RobotConfig.robotMaxVelocity);
-    turnPID.setSetPoint(desiredAngle);
+    turnPID.setSetPoint(0);
     leftDriveTrainVelocityPID.start();
     rightDriveTrainVelocityPID.start();
-    navx.softResetYaw();
   }
-  public void setTarget(double target){
-    turnPID.setSetPoint(target);
-  }
+ 
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    turnPID.updatePID(navx.currentAngle());
+    turnPID.updatePID(ultraSonic1.getDistance()-ultraSonic2.getDistance());
     leftDriveTrainVelocityPID.changeDesiredSpeed(turnPID.getResult());
     rightDriveTrainVelocityPID.changeDesiredSpeed(-turnPID.getResult());
-    SmartDashboard.putNumber("error", desiredAngle-navx.currentYaw());
   }
   public void forceFinish(){
     shouldEnd = true;
@@ -77,7 +76,7 @@ public class CascadingPIDTurn extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    if(Math.abs(navx.currentAngle()-desiredAngle)<0.5){
+    if(ultraSonic1.getDistance()-ultraSonic2.getDistance()<0.01){
       return true;
     }
     return false;

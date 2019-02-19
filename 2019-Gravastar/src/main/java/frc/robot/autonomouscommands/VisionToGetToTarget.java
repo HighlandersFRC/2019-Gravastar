@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.autonomouscommands;
+/*package frc.robot.autonomouscommands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
@@ -25,11 +25,16 @@ public class VisionToGetToTarget extends Command {
   private Notifier camNotifier;
   private ArrayList<Double> xDeltaArrayList;
   private ArrayList<Double> yDeltaArrayList;
-  private int run;
+  private int succesfulRunCounter;
+  private int runCounter;
+
+
   private boolean firstRun = false;
   private VisionCamera visionCamera;
   private ShortPathToAngle shortPathToAngle;
   private boolean shouldEnd;
+  private double previousAngle;
+  private double previousDistance;
   public VisionToGetToTarget() {
     requires(RobotMap.drive);
     // Use requires() here to declare subsystem dependencies
@@ -46,7 +51,7 @@ public class VisionToGetToTarget extends Command {
     yDeltaArrayList.clear();
     visionCamera = new VisionCamera(RobotMap.jevois1);
     camNotifier = new Notifier(new CamRunnable());
-    run = 0;
+    succesfulRunCounter = 0;
     firstRun = false;
     camNotifier.startPeriodic(0.05);
   
@@ -54,19 +59,27 @@ public class VisionToGetToTarget extends Command {
   private class CamRunnable implements Runnable{
   
     public void run(){
-    
       double distance = visionCamera.getDistance();
       double angle = Pathfinder.d2r(visionCamera.getAngle());
-      if(run<10&&!firstRun&&!isFinished()){
-        
-        
-        double xDelta = Math.cos(angle)*distance;
-        double yDelta = Math.sin(2*angle)*distance;
-        if(xDelta>1&&xDelta<6){
-          run++;
-          xDeltaArrayList.add(xDelta);
-          yDeltaArrayList.add(yDelta);
-        }  
+      if(succesfulRunCounter==0){
+        previousAngle = angle;
+        previousDistance = distance;
+      }
+      if(Math.abs(angle)< 0.2879793 && distance>1.5){
+        if(Math.abs(previousDistance-distance)<0.3&&Math.abs(previousAngle-angle)<1){
+          if(succesfulRunCounter<10&&!firstRun&&!isFinished()){
+            double xDelta = Math.cos(angle)*distance;
+            double yDelta = Math.sin(2*angle)*distance;
+            if(xDelta>1&&xDelta<6){
+              succesfulRunCounter++;
+              xDeltaArrayList.add(xDelta);
+              yDeltaArrayList.add(yDelta);
+              previousAngle = angle;
+              previousAngle = distance;
+            }  
+          }
+        }
+       
       }
       else{
        
@@ -79,7 +92,7 @@ public class VisionToGetToTarget extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    if(run>5&&!firstRun){
+    if(succesfulRunCounter>5&&!firstRun){
       double xSum = 0;
       double ySum = 0;
       double xAverage = 0;
@@ -99,6 +112,8 @@ public class VisionToGetToTarget extends Command {
     }
     else{
     }
+    runCounter++;
+
   }
   public void forceFinish(){
     shouldEnd = true;
@@ -107,6 +122,9 @@ public class VisionToGetToTarget extends Command {
   @Override
   protected boolean isFinished() {
     if(firstRun == true){
+      return true;
+    }
+    if(runCounter>30){
       return true;
     }
     return false;
@@ -127,4 +145,4 @@ public class VisionToGetToTarget extends Command {
   protected void interrupted() {
     this.end();
   }
-}
+}*/

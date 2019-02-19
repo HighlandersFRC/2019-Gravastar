@@ -5,21 +5,18 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.autoRoutines;
+package frc.robot.autonomouscommands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import frc.robot.Robot;
 import frc.robot.RobotMap;
-import frc.robot.autonomouscommands.PurePursuitController;
 
-public class OffHabToLeftSideHatchOne extends CommandGroup {
+public class UltrasoundAlineandGetTo extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public OffHabToLeftSideHatchOne() {
-   
-   // addSequential( new PurePursuitController(RobotMap.universalPathList.driveOffHabLeft, 1.9, 2.25, 0.1));
-   // addSequential( new PurePursuitController(RobotMap.universalPathList.LeftSideHatchOne, 1.9, 2.25, 0.1,Robot.autoOdometry.gettheta()));
+  public UltrasoundAlineandGetTo() {
+    addSequential(new CascadingPIDUltrasonicAlignment(0.12,0.0585,0.06, RobotMap.mainUltrasonicSensor1, RobotMap.mainUltrasonicSensor2));
+    addSequential(new UltrasoundGetToTarget(RobotMap.mainUltrasonicSensor1,RobotMap.mainUltrasonicSensor2));
     // Add Commands here:
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());

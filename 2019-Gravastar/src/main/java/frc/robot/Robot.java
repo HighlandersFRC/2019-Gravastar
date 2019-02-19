@@ -10,6 +10,7 @@ package frc.robot;
 
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Command;
@@ -23,6 +24,7 @@ import frc.robot.sensors.VisionCamera;
 import frc.robot.teleopcommands.TeleopSuite;
 import frc.robot.tools.Odometry;
 import frc.robot.universalcommands.ActuateAllHatchPistons;
+import frc.robot.universalcommands.ChangeLightColor;
 import frc.robot.universalcommands.StopMotors;
 import jaci.pathfinder.Pathfinder;
 //import org.json.simple.parser.JSONParser;
@@ -39,18 +41,13 @@ public class Robot extends TimedRobot {
 	public static AutoSuite autoSuite  = new AutoSuite();
 	private RobotConfig robotConfig = new RobotConfig();
 	public static StopMotors stopMotors = new StopMotors();
-
-	private EnableDriverControl enableDriverControl = new EnableDriverControl();
-	private VisionCamera visionCamera = new VisionCamera(RobotMap.jevois1);
-	
 	private UsbCamera camera;
-	private UsbCamera camera2;
-	
+	private ChangeLightColor changeLightColor = new ChangeLightColor(255,255, 255);
+	//public static VisionCamera visionCamera = new VisionCamera(RobotMap.jevois1);
+	private boolean hasNavx;
 	//this odometry is used to provide reference data for the start of paths, it should only be used in autonomous
 	public static Odometry autoOdometry = new Odometry(false);
 	//private VisionCamera visionCamera = new VisionCamera(RobotMap.jevois1);
-	Command m_autonomousCommand;
-	Command autCommand;  
 		
 	
 	SendableChooser<Command> m_chooser = new SendableChooser<>();
@@ -61,10 +58,10 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void robotInit() {
+		
 		robotConfig.setStartingConfig();
 		// chooser.addOption("My Auto", new MyAutoCommand());
-		SmartDashboard.putData("Auto mode", m_chooser);
-		camera = CameraServer.getInstance().startAutomaticCapture(1);
+		//camera = CameraServer.getInstance().startAutomaticCapture();
 	}
 
 	/**
@@ -78,36 +75,18 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotPeriodic() {
 		double pressure = ((250*RobotMap.preassureSensor.getAverageVoltage())/4.53)-25;
-	
 		SmartDashboard.putNumber("pressure", pressure);
 		SmartDashboard.putBoolean("hasNavx", RobotMap.navx.isConnected());
-		
-		double distance = visionCamera.getDistance();
-		double angle = Pathfinder.d2r(visionCamera.getAngle());
-		double xDelta = Math.cos(angle)*distance;
-		double yDelta = Math.sin(2*angle)*distance;
-		if(xDelta<6 && xDelta>1&&yDelta<1.5&&yDelta>-1.5){
-			SmartDashboard.putBoolean("DriverAssist availiable", true);
-		}
-		else{
-			SmartDashboard.putBoolean("DriverAssist availiable", false);
-		}
-		
 		SmartDashboard.putNumber("armPosit",RobotMap.mainArmEncoder.getAngle());
-	
 		SmartDashboard.putNumber("leftPos",RobotMap.leftMainDrive.getDistance());
 		SmartDashboard.putNumber("rightpos",RobotMap.rightMaindrive.getDistance());
-		SmartDashboard.putNumber("analog", RobotMap.mainUltrasonicSensor.getDistance());
+		//SmartDashboard.putNumber("visionAngle", visionCamera.getAngle());
+		//SmartDashboard.putNumber("visionDistance", visionCamera.getDistance());
+		SmartDashboard.putNumber("ultraSonic1",RobotMap.mainUltrasonicSensor1.getDistance());
+		SmartDashboard.putNumber("ultraSonic2", RobotMap.mainUltrasonicSensor2.getDistance());
+
 	
-
-
 	}
-
-	/**
-	 * This function is called once each time the robot enters Disabled mode.
-	 * You can use it to reset any subsystem information you want to clear when
-	 * the robot is disabled.
-	 */
 	@Override
 	public void disabledInit() {
 		teleopSuite.endTeleopCommands();
@@ -123,45 +102,15 @@ public class Robot extends TimedRobot {
 
 		Scheduler.getInstance().run();
 	}
-
-	/**
-	 * This autonomous (along with the chooser code above) shows how to select
-	 * between different autonomous modes using the dashboard. The sendable
-	 * chooser code works with the Java SmartDashboard. If you prefer the
-	 * LabVIEW Dashboard, remove all of the chooser code and uncomment the
-	 * getString code to get the auto name from the text box below the Gyro
-	 *
-	 * <p>You can add additional auto modes by adding additional commands to the
-	 * chooser code above (like the commented example) or additional comparisons
-	 * to the switch structure below with additional strings & commands.
-	 */
 	@Override
 	public void autonomousInit() {
-		m_autonomousCommand = m_chooser.getSelected();
-		autoSuite.startAutoCommands();
 		robotConfig.autoConfig();
-		autoOdometry.zero();
-		autoOdometry.start();
-		/*
-		 * String autoSelected = SmartDashboard.getString("Auto Selector",
-		 * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
-		 * = new MyAutoCommand(); break; case "Default Auto": default:
-		 * autonomousCommand = new ExampleCommand(); break; }
-		 */
-
-		// schedule the autonomous command (example)
-		if (m_autonomousCommand != null) {
-			m_autonomousCommand.start();
-		}
+		autoSuite.startAutoCommandsRobotControl();
 	}
-
-	/**
-	 * This function is called periodically during autonomous.
-	 */
 	@Override
 	public void autonomousPeriodic() {
 		if(OI.pilotController.getTriggerAxis(Hand.kLeft)>0.5&&OI.pilotController.getTriggerAxis(Hand.kRight)>0.5&&OI.pilotController.getStartButton()&&OI.pilotController.getBackButton()){
-			enableDriverControl.startDriverControl();
+			autoSuite.startAutoCommandsDriverControl();
 		}
 		Scheduler.getInstance().run();
 	}
@@ -170,32 +119,17 @@ public class Robot extends TimedRobot {
 	public void teleopInit() {
 		robotConfig.teleopConfig();
 		teleopSuite.startTeleopCommands();
-
-
-		//visionCamera.start();
-		// This makes sure that the autonomous stops running when
-		// teleop starts running. If you want the autonomous to
-		// continue until interrupted by another command, remove
-		// this line or comment it out.
-		if (m_autonomousCommand != null) {
-			m_autonomousCommand.cancel();
-		}
 	}
 
-	/**
-	 * This function is called periodically during operator control.
-	 */
 	@Override
 	public void teleopPeriodic() {
-		
-		
+	
+
+	//	System.out.println(RobotMap.jevois1.readString());
 		SmartDashboard.putNumber("navxValue", RobotMap.mainNavx.currentYaw());
 		Scheduler.getInstance().run();
 	}
 
-	/**
-	 * This function is called periodically during test mode.
-	 */
 	@Override
 	public void testPeriodic() {
 	}

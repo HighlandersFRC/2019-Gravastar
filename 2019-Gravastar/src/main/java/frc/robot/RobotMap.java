@@ -7,24 +7,20 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.CANifier;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.SerialPort;
-import edu.wpi.first.wpilibj.Talon;
-import edu.wpi.first.wpilibj.Ultrasonic;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.SPI.Port;
 import frc.robot.autonomouscommands.PathList;
 import frc.robot.sensors.ArmEncoder;
 import frc.robot.sensors.DriveEncoder;
 import frc.robot.sensors.Navx;
 import frc.robot.sensors.UltrasonicSensor;
-import frc.robot.sensors.VisionCamera;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveBase;
 
@@ -60,9 +56,8 @@ public class RobotMap {
 	public static TalonSRX armFollower = new TalonSRX(armFollowerID);
 	public static TalonSRX intake = new TalonSRX(intakeID);
 
-
-	public static AHRS navx = new AHRS(Port.kMXP);
-	public static Navx mainNavx = new Navx(navx);	    
+	public static AHRS 	navx = new AHRS(Port.kMXP);
+	public static Navx mainNavx = new Navx(navx);
 	//Initialize all pneumatic Actuators, predefine actuation directions
 	public static DoubleSolenoid shifters = new DoubleSolenoid(0,1);
 	public static DoubleSolenoid.Value lowGear = DoubleSolenoid.Value.kReverse;//TODO directions must be assigned
@@ -73,15 +68,22 @@ public class RobotMap {
 	public static DoubleSolenoid hatchPiston3 = new DoubleSolenoid(6, 7);
 	public static DoubleSolenoid.Value pushOut = DoubleSolenoid.Value.kForward;
 	public static DoubleSolenoid.Value in = DoubleSolenoid.Value.kReverse;
-	public static AnalogInput ultraSonic = new AnalogInput(3);
-	public static SerialPort jevois1 = new SerialPort(115200,edu.wpi.first.wpilibj.SerialPort.Port.kUSB);
+	public static AnalogInput ultraSonic1 = new AnalogInput(2);
+	
+	//public static SerialPort jevois1 = new SerialPort(115200, SerialPort.Port.kUSB);
 
+	public static AnalogInput ultraSonic2 = new AnalogInput(3);
+
+	public static AnalogInput preassureSensor = new AnalogInput(1);
 
 	public static DriveEncoder leftMainDrive = new DriveEncoder(leftDriveLead,RobotMap.leftDriveLead.getSelectedSensorPosition(0));
 	public static DriveEncoder rightMaindrive = new DriveEncoder(rightDriveLead,RobotMap.rightDriveLead.getSelectedSensorPosition(0));
 	public static ArmEncoder mainArmEncoder	 = new ArmEncoder(armMaster);
-	public static UltrasonicSensor mainUltrasonicSensor = new UltrasonicSensor(ultraSonic);
-	public static AnalogInput preassureSensor = new AnalogInput(2);
+	
+	public static UltrasonicSensor mainUltrasonicSensor1=new UltrasonicSensor(ultraSonic1);
+	
+	public static UltrasonicSensor mainUltrasonicSensor2= new UltrasonicSensor(ultraSonic2);
+
 
 
 	//Array of drive motors to simplify configuration
@@ -120,14 +122,31 @@ public class RobotMap {
 	public static DriveBase drive = new DriveBase();
 	public static Arm arm = new Arm();
 	public static PathList universalPathList = new PathList();
+	public static CANifier canifier = new CANifier(0);
 
-	// For example to map the left and right motors, you could define the
-	// following variables to use with your drivetrain subsystem.
-	// public static int leftMotor = 1;
-	// public static int rightMotor = 2;
+	public RobotMap(){
+		try {
+		
+			
+		} catch (Exception e) {
+		}
+		try {
 
-	// If you are using multiple modules, make sure to define both the port
-	// number and the module. For example you with a rangefinder:
-	// public static int rangefinderPort = 1;
-	// public static int rangefinderModule = 1;
+		} catch (Exception e) {
+		}
+		try {
+			
+
+		} catch (Exception e) {
+		}
+		try {
+			
+
+		} catch (Exception e) {
+		}
+	
+
+	}
 }
+
+				   
