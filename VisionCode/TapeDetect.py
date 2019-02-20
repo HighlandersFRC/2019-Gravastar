@@ -54,51 +54,27 @@ class TapeDetect:
 		return sortedArray
 	
 	def isLeft(self, contour, hsv):
-		rotatedRect = cv2.minAreaRect(contour)
-		box = cv2.boxPoints(rotatedRect)
-		box = np.int0(box)
-		
-		angle = rotatedRect[2]
-		#angle = angle * 180
-		#angle = angle/3.14
-		if angle >= -85 and angle <= -65:
-			boxColor = (0, 0, 255)
-			cv2.drawContours(hsv,[box],0,boxColor,2)
+		rows,cols = hsv.shape[:2]
+		[vx,vy,x,y] = cv2.fitLine(contour, cv2.DIST_L2,0,0.01,0.01)
+		lefty = int((-x*vy/vx) + y)
+		righty = int(((cols-x)*vy/vx)+y)
+		cv2.line(hsv,(cols-1,righty),(0,lefty),(0,255,255),2)
+		slope = (vy)/(vx)
+		if slope < 0:
 			return True
-
-		
-		
-		
-		#angle = str(angle)
-		#jevois.sendSerial("Angle One" + angle)
-		
-		#if targetAngle >= -80 and targetAngle <= -65:
-		#	return True
-		#else:
-		#	return False
 		return False
-		
+
 	def isRight(self, contour, hsv):
-		rotatedRect = cv2.minAreaRect(contour)
-		box = cv2.boxPoints(rotatedRect)
-		box = np.int0(box)
-		
-		angle = rotatedRect[2]
-		#angle = angle * 180
-		#angle = angle/3.14
-		if angle >= -25 and angle <= -5:
-			boxColor = (0, 0, 255)
-			cv2.drawContours(hsv,[box],0,boxColor,2)
+		rows,cols = hsv.shape[:2]
+		[vx,vy,x,y] = cv2.fitLine(contour, cv2.DIST_L2,0,0.01,0.01)
+		lefty = int((-x*vy/vx) + y)
+		righty = int(((cols-x)*vy/vx)+y)
+		cv2.line(hsv,(cols-1,righty),(0,lefty),(0,255,0),2)
+		slope = (vy)/(vx)
+		if slope > 0:
 			return True
-
-		
-		#cv2.drawContours(hsv,box,0,boxColor,2)
-		
-		#angle = str(angle)
-		#jevois.sendSerial("Angle Two" + angle)
-		
 		return False
-	
+
 	def UniversalProcess(self, inframe):
 		#jevois.sendSerial("Hello World")
 		#jevois.sendSerial("Hello World")
@@ -264,7 +240,7 @@ class TapeDetect:
 		centerX = str(centerX)
 		
 		
-		JSON = '{"Distance":' + distance + ', "centerY":' + centerY +  + ', "Angle":' + yawAngle + '}'
+		JSON = '{"Distance":' + distance + ', "Angle":' + yawAngle + '}'
 		
 		
 		#send vals over serial
