@@ -32,7 +32,7 @@ public class Arm extends Subsystem {
     RobotMap.intake.set(ControlMode.PercentOutput, -0.6);
   }
   public void shootBall(){
-    RobotMap.intake.set(ControlMode.PercentOutput, 0.8);
+    RobotMap.intake.set(ControlMode.PercentOutput, 1.0);
   }
   public void intakeWheelsResting(){
     RobotMap.intake.set(ControlMode.PercentOutput, 0);

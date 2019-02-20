@@ -13,9 +13,12 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.Counter;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.SPI.Port;
+import edu.wpi.first.wpilibj.Ultrasonic.Unit;
 import frc.robot.autonomouscommands.PathList;
 import frc.robot.sensors.ArmEncoder;
 import frc.robot.sensors.DriveEncoder;
@@ -69,8 +72,8 @@ public class RobotMap {
 	public static DoubleSolenoid.Value pushOut = DoubleSolenoid.Value.kForward;
 	public static DoubleSolenoid.Value in = DoubleSolenoid.Value.kReverse;
 	public static AnalogInput ultraSonic1 = new AnalogInput(2);
-	
-	//public static SerialPort jevois1 = new SerialPort(115200, SerialPort.Port.kUSB);
+	public static Counter counter = new Counter(0);
+	public static Counter counter2 = new Counter(1);
 
 	public static AnalogInput ultraSonic2 = new AnalogInput(3);
 
@@ -122,7 +125,9 @@ public class RobotMap {
 	public static DriveBase drive = new DriveBase();
 	public static Arm arm = new Arm();
 	public static PathList universalPathList = new PathList();
-	public static CANifier canifier = new CANifier(0);
+	public static CANifier canifier1 = new CANifier(0);
+	public static CANifier canifier2 = new CANifier(0);
+
 
 	public RobotMap(){
 		try {

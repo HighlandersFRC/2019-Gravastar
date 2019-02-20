@@ -29,9 +29,9 @@ public class ArmEncoder {
         return talon.getSelectedSensorPosition()*RobotConfig.armTicksToAngleConversion; 
     }
     public void setForwardLimitSwitchAngle(){
-        talon.setSelectedSensorPosition(90*RobotConfig.armAngleToTicksConversion);
+        talon.setSelectedSensorPosition((int)(RobotConfig.armUpAngle*RobotConfig.armAngleToTicksConversion));
     }
     public void setReverseLimitSwitchAngle(){
-        talon.setSelectedSensorPosition(0*RobotConfig.armAngleToTicksConversion);
+        talon.setSelectedSensorPosition((int)(RobotConfig.armRestingAngle*RobotConfig.armAngleToTicksConversion));
     }
 }

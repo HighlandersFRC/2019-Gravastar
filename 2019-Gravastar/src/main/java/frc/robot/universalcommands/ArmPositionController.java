@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.OI;
 import frc.robot.Robot;
+import frc.robot.RobotConfig;
 import frc.robot.RobotMap;
 import frc.robot.sensors.ArmEncoder;
 import frc.robot.tools.PID;
@@ -21,7 +22,7 @@ import jaci.pathfinder.Pathfinder;
 public class ArmPositionController extends Command {
   private double desiredValue;
   private PID armPID;
-  private double armkF = 0.05;
+  private double armkF = RobotConfig.armKfFactor;
   private double p = 0.02;
   private double i;
   private double d;
@@ -40,8 +41,8 @@ public class ArmPositionController extends Command {
   protected void initialize() {
     armEncoder = new ArmEncoder(RobotMap.armMaster);
     armPID = new PID(p, i, d);
-    armPID.setMaxOutput(0.5);
-    armPID.setMinOutput(-0.5);
+    armPID.setMaxOutput(0.35);
+    armPID.setMinOutput(-0.35);
     armPID.setSetPoint(desiredValue);
     shouldRun = true;
     shouldEnd = false;
@@ -72,14 +73,14 @@ public class ArmPositionController extends Command {
       if(Math.abs(OI.operatorController.getRawAxis(1))>0.1){
         desiredValue = armEncoder.getAngle();
       }
-      else if(armPID.getSetPoint() == 90&&armEncoder.getAngle()>80){
-        RobotMap.armMaster.set(ControlMode.PercentOutput, 0.2 +Math.cos(Pathfinder.d2r(armEncoder.getAngle()))*0.35);
+      else if(armPID.getSetPoint() == RobotConfig.armUpAngle&&armEncoder.getAngle()>80){
+        RobotMap.armMaster.set(ControlMode.PercentOutput, 0.2 +Math.cos(Pathfinder.d2r(armEncoder.getAngle()))*RobotConfig.armKfFactor);
       }
-      else if(armPID.getSetPoint() == 0&&armEncoder.getAngle()<10){
+      else if(armPID.getSetPoint() == RobotConfig.armRestingAngle&&armEncoder.getAngle()<10){
         RobotMap.armMaster.set(ControlMode.PercentOutput, 0);
       }
       else{
-        RobotMap.armMaster.set(ControlMode.PercentOutput, armPID.getResult()+Math.cos(Pathfinder.d2r(armEncoder.getAngle()))*armkF);
+        RobotMap.armMaster.set(ControlMode.PercentOutput, armPID.getResult()+Math.cos(Pathfinder.d2r(armEncoder.getAngle()))*RobotConfig.armKfFactor);
       }
      
 

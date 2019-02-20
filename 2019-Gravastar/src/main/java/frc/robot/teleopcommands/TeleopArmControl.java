@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.OI;
+import frc.robot.RobotConfig;
 import frc.robot.RobotMap;
 import frc.robot.universalcommands.ArmPositionController;
 import jaci.pathfinder.Pathfinder;
@@ -20,7 +21,7 @@ public class TeleopArmControl extends Command {
   private ArmPositionController armPositionController;
   public TeleopArmControl() {
     requires(RobotMap.arm);
-    armPositionController = new ArmPositionController(90);
+    armPositionController = new ArmPositionController(RobotConfig.armUpAngle);
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
   }
@@ -35,7 +36,7 @@ public class TeleopArmControl extends Command {
   @Override
   protected void execute() {
     if(Math.abs(OI.operatorController.getRawAxis(1))>0.15){
-      RobotMap.armMaster.set(ControlMode.PercentOutput, OI.operatorController.getRawAxis(1)*-0.60+ Math.cos(Pathfinder.d2r(RobotMap.mainArmEncoder.getAngle()))*0.05);
+      RobotMap.armMaster.set(ControlMode.PercentOutput, OI.operatorController.getRawAxis(1)*-0.60+ Math.cos(Pathfinder.d2r(RobotMap.mainArmEncoder.getAngle()))*RobotConfig.armKfFactor);
       armPositionController.disablePID();
       armPositionController.setArmPosition(armPositionController.getArmAngle());
 		}
@@ -45,13 +46,13 @@ public class TeleopArmControl extends Command {
 		}
   
     if(OI.operatorController.getAButton()){
-      armPositionController.setArmPosition(0);
+      armPositionController.setArmPosition(RobotConfig.armRestingAngle);
 		}
 		else if (OI.operatorController.getYButton()){
-			armPositionController.setArmPosition(90);
+			armPositionController.setArmPosition(RobotConfig.armUpAngle);
 		}
 		else if(OI.operatorController.getXButton()){
-			armPositionController.setArmPosition(60);
+			armPositionController.setArmPosition(70);
 		}
 		if(OI.operatorController.getBumper(Hand.kLeft)){
 			RobotMap.arm.pushOutHatch();

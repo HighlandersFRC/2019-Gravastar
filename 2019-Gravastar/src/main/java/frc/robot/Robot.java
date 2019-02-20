@@ -8,11 +8,15 @@
 package frc.robot;
 
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -42,9 +46,11 @@ public class Robot extends TimedRobot {
 	private RobotConfig robotConfig = new RobotConfig();
 	public static StopMotors stopMotors = new StopMotors();
 	private UsbCamera camera;
-	private ChangeLightColor changeLightColor = new ChangeLightColor(255,255, 255);
-	//public static VisionCamera visionCamera = new VisionCamera(RobotMap.jevois1);
-	private boolean hasNavx;
+	private UsbCamera camera2;
+	public static boolean hasCamera;
+	private ChangeLightColor changeLightColor = new ChangeLightColor(0,0, 150, RobotMap.canifier1);
+	public static VisionCamera visionCamera;
+	public static SerialPort jevois1;
 	//this odometry is used to provide reference data for the start of paths, it should only be used in autonomous
 	public static Odometry autoOdometry = new Odometry(false);
 	//private VisionCamera visionCamera = new VisionCamera(RobotMap.jevois1);
@@ -60,8 +66,18 @@ public class Robot extends TimedRobot {
 	public void robotInit() {
 		
 		robotConfig.setStartingConfig();
-		// chooser.addOption("My Auto", new MyAutoCommand());
-		//camera = CameraServer.getInstance().startAutomaticCapture();
+		try {
+			jevois1 = new SerialPort(115200, Port.kUSB);
+			hasCamera = true;
+		} catch (Exception e) {
+			hasCamera = false;
+		}
+		if(hasCamera){
+			visionCamera= new VisionCamera(Robot.jevois1);
+		}
+		//camera = CameraServer.getInstance().startAutomaticCapture(0);
+		//camera = CameraServer.getInstance().startAutomaticCapture(1);
+
 	}
 
 	/**
@@ -80,8 +96,16 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber("armPosit",RobotMap.mainArmEncoder.getAngle());
 		SmartDashboard.putNumber("leftPos",RobotMap.leftMainDrive.getDistance());
 		SmartDashboard.putNumber("rightpos",RobotMap.rightMaindrive.getDistance());
-		//SmartDashboard.putNumber("visionAngle", visionCamera.getAngle());
-		//SmartDashboard.putNumber("visionDistance", visionCamera.getDistance());
+		if(hasCamera){
+			visionCamera.updateVision();
+
+			SmartDashboard.putNumber("timeSinceGoodValue", Timer.getFPGATimestamp()-visionCamera.lastParseTime);
+			SmartDashboard.putString("visionString", visionCamera.getString());
+			SmartDashboard.putNumber("visionAngle", visionCamera.getAngle());
+			SmartDashboard.putNumber("visionDistance", visionCamera.getDistance());
+			
+		}
+		SmartDashboard.putNumber("rawArmValue", RobotMap.armMaster.getSelectedSensorPosition());
 		SmartDashboard.putNumber("ultraSonic1",RobotMap.mainUltrasonicSensor1.getDistance());
 		SmartDashboard.putNumber("ultraSonic2", RobotMap.mainUltrasonicSensor2.getDistance());
 
@@ -123,14 +147,31 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopPeriodic() {
-	
+		// if(Math.abs(OI.operatorController.getRawAxis(1))>0.15){
+		// 	RobotMap.armMaster.set(ControlMode.PercentOutput, OI.operatorController.getRawAxis(1)*-0.50);
+		// 	System.out.println(RobotMap.armMaster.getMotorOutputPercent());
+		// 	System.out.println(RobotMap.armMaster.getSensorCollection().isRevLimitSwitchClosed() + "reverse");
+		// 	System.out.println(RobotMap.armMaster.getSensorCollection().isFwdLimitSwitchClosed() + "forward");
 
-	//	System.out.println(RobotMap.jevois1.readString());
+		// }
+		// else{
+		// 	RobotMap.armMaster.set(ControlMode.PercentOutput, 0);
+		// }
+		// if(OI.operatorController.getTriggerAxis(Hand.kLeft)>0.1){
+		// 	RobotMap.intake.set(ControlMode.PercentOutput, -1.0);
+		// }
+		// else if(OI.operatorController.getTriggerAxis(Hand.kRight)>0.1){
+		// 	RobotMap.intake.set(ControlMode.PercentOutput, 1.0);
+		// }
+		// else{
+		// 	RobotMap.intake.set(ControlMode.PercentOutput, 0);
+		// }
+		
 		SmartDashboard.putNumber("navxValue", RobotMap.mainNavx.currentYaw());
 		Scheduler.getInstance().run();
 	}
-
 	@Override
 	public void testPeriodic() {
 	}
+	
 }

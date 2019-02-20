@@ -310,9 +310,6 @@ public class PurePursuitController extends Command {
         if(distToEndVector.length()<endError){
             return true;
         } 
-        else if(distToEndVector.length()<0.15 && this.leftDriveTrainVelocityPID.getSpeed() ==0&&this.rightDriveTrainVelocityPID.getSpeed() ==0){
-            return true;
-        } 
         else{
             return shouldEnd;
         }   

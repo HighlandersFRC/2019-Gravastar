@@ -19,8 +19,8 @@ public class VisionCamera {
     public double lastParseTime;
    public double distance;
    public double angle;
-   private double badAngle = -3000.0;
-   private double badDistance = -12.0;
+   private double badAngle = -100.0;
+   private double badDistance = -11.0;
     public VisionCamera(SerialPort jevois) {
        port = jevois;
     }
@@ -92,7 +92,7 @@ public class VisionCamera {
              if (jsonObject != null){ 
 
              double distString = (double) jsonObject.get("Distance");
-             return Double.valueOf(distString);
+             return (Double.valueOf(distString)-28)/12;
 
              }
  
