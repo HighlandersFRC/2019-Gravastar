@@ -54,51 +54,27 @@ class TapeDetect:
 		return sortedArray
 	
 	def isLeft(self, contour, hsv):
-		rotatedRect = cv2.minAreaRect(contour)
-		box = cv2.boxPoints(rotatedRect)
-		box = np.int0(box)
-		
-		angle = rotatedRect[2]
-		#angle = angle * 180
-		#angle = angle/3.14
-		if angle >= -85 and angle <= -65:
-			boxColor = (0, 0, 255)
-			cv2.drawContours(hsv,[box],0,boxColor,2)
+		rows,cols = hsv.shape[:2]
+		[vx,vy,x,y] = cv2.fitLine(contour, cv2.DIST_L2,0,0.01,0.01)
+		lefty = int((-x*vy/vx) + y)
+		righty = int(((cols-x)*vy/vx)+y)
+		cv2.line(hsv,(cols-1,righty),(0,lefty),(0,255,255),2)
+		slope = (vy)/(vx)
+		if slope < 0:
 			return True
-
-		
-		
-		
-		#angle = str(angle)
-		#jevois.sendSerial("Angle One" + angle)
-		
-		#if targetAngle >= -80 and targetAngle <= -65:
-		#	return True
-		#else:
-		#	return False
 		return False
-		
+
 	def isRight(self, contour, hsv):
-		rotatedRect = cv2.minAreaRect(contour)
-		box = cv2.boxPoints(rotatedRect)
-		box = np.int0(box)
-		
-		angle = rotatedRect[2]
-		#angle = angle * 180
-		#angle = angle/3.14
-		if angle >= -25 and angle <= -5:
-			boxColor = (0, 0, 255)
-			cv2.drawContours(hsv,[box],0,boxColor,2)
+		rows,cols = hsv.shape[:2]
+		[vx,vy,x,y] = cv2.fitLine(contour, cv2.DIST_L2,0,0.01,0.01)
+		lefty = int((-x*vy/vx) + y)
+		righty = int(((cols-x)*vy/vx)+y)
+		cv2.line(hsv,(cols-1,righty),(0,lefty),(0,255,0),2)
+		slope = (vy)/(vx)
+		if slope > 0:
 			return True
-
-		
-		#cv2.drawContours(hsv,box,0,boxColor,2)
-		
-		#angle = str(angle)
-		#jevois.sendSerial("Angle Two" + angle)
-		
 		return False
-	
+
 	def UniversalProcess(self, inframe):
 		#jevois.sendSerial("Hello World")
 		#jevois.sendSerial("Hello World")
@@ -192,8 +168,9 @@ class TapeDetect:
 			if self.isLeft(sortedArray[len(sortedArray) - 1], hsv):
 				sortedArray.pop(len(sortedArray) - 1)
 		
-		if len(sortedArray) < 2 or (len(sortedArray) % 2) != 0:
+		if len(sortedArray) < 2 or len(sortedArray) % 2 != 0:
 			outimg = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
+			jevois.sendSerial('{"Distance":' + "-11.0" + ', "Angle":' + "-100.0" + '}')
 			#jevois.sendSerial("Hello")
 			return outimg
 		
@@ -202,19 +179,20 @@ class TapeDetect:
 		xArray = []
 		
 		for index in range(0, len(sortedArray), 2):
-			leftRect = cv2.minAreaRect(sortedArray[index])
-			rightRect = cv2.minAreaRect(sortedArray[index + 1])
-			points_A = cv2.boxPoints(leftRect)
-			points_1 = np.int0(points_A)
-			points_B = cv2.boxPoints(rightRect)
-			points_2 = np.int0(points_B)
-			leftX = leftRect[0][0]
-			rightX = rightRect[0][0]
-			cv2.drawContours(hsv, [points_1], 0, boxColor, 2)
-			cv2.drawContours(hsv, [points_2], 0, boxColor, 2)
-			centerX = (leftX + rightX)/2
-			centerX = math.fabs(centerX - 160)
-			xArray.append(centerX)
+			if index != len(sortedArray):
+				leftRect = cv2.minAreaRect(sortedArray[index])
+				rightRect = cv2.minAreaRect(sortedArray[index + 1])
+				points_A = cv2.boxPoints(leftRect)
+				points_1 = np.int0(points_A)
+				points_B = cv2.boxPoints(rightRect)
+				points_2 = np.int0(points_B)
+				leftX = leftRect[0][0]
+				rightX = rightRect[0][0]
+				cv2.drawContours(hsv, [points_1], 0, boxColor, 2)
+				cv2.drawContours(hsv, [points_2], 0, boxColor, 2)
+				centerX = (leftX + rightX)/2
+				centerX = math.fabs(centerX - 160)
+				xArray.append(centerX)
 		
 		minX = np.argmin(xArray)
 		
@@ -223,8 +201,18 @@ class TapeDetect:
 		centerPairLeft = sortedArray[minX * 2]
 		centerPairRight = sortedArray[(minX * 2) + 1]
 		
+		boxColor = (120, 255, 255)
+		
 		rightRect = cv2.minAreaRect(centerPairRight)
 		leftRect = cv2.minAreaRect(centerPairLeft)
+		
+		pointsLeft = cv2.boxPoints(leftRect)
+		pointsRight = cv2.boxPoints(rightRect)
+		pointsLeft = np.int0(pointsLeft)
+		pointsRight = np.int0(pointsRight)
+		
+		cv2.drawContours(hsv, [pointsLeft], 0, boxColor, 2)
+		cv2.drawContours(hsv, [pointsRight], 0, boxColor, 2)
 		
 		leftY = leftRect[0][1]
 		rightY = rightRect[0][1]
