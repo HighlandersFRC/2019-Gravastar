@@ -103,7 +103,7 @@ public class RobotConfig {
 	}
 	public void autoConfig() {
 		for(TalonSRX talon:RobotMap.driveMotors){
-			talon.configOpenloopRamp(0.25);
+			talon.configOpenloopRamp(0.125);
 		}
 		for(TalonSRX talon:RobotMap.driveMotors){
 			talon.configVoltageCompSaturation(RobotConfig.voltageControlMaxAuto);
