@@ -18,7 +18,7 @@ import frc.robot.Robot;
 import frc.robot.RobotMap;
 
 public class TankDrive extends Command {
-	private double deadZone = 0.1;
+	private double deadZone = 0.0;
 	public TankDrive() {
 		requires(RobotMap.drive);
 		// Use requires() here to declare subsystem dependencies

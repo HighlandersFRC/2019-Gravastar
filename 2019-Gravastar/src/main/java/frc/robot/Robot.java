@@ -129,7 +129,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 		robotConfig.autoConfig();
-		autoSuite.startAutoCommandsRobotControl();
+		autoSuite.startAutoCommandsDriverControl();
 	}
 	@Override
 	public void autonomousPeriodic() {

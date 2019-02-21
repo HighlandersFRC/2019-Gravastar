@@ -10,18 +10,18 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.Ultrasonic;
 
 public class RobotConfig {
-	public static double gearRatio = 1;//7.5
+	public static double gearRatio =7.5;//1
     public static double encoderTicsPerShaftRotation = 4096;
     public static double encoderTicsPerWheelRotation = gearRatio*encoderTicsPerShaftRotation;
     public static double wheelDiam = 7.75;
 	public static double wheelCircum = Math.PI * wheelDiam;
 	public static double robotBaseDist = 1.8;
     public static double openLoopRampRate = 0.0;
-	public static double voltageControlMaxAuto = 12.0;
-	public static double voltageControlMaxTeleop = 11.0;
+	public static double voltageControlMaxAuto = 11.0;
+	public static double voltageControlMaxTeleop = 14.0;
 	public static double robotMaxAcceleration = 10.0;
 	public static double robotMaxVelocity = 14.5;
-	public static double armTicksToAngleConversion = 0.02470588;//-0.02857143;
+	public static double armTicksToAngleConversion = -0.02857143;//0.02470588;//
 	public static double armUpAngle = 105;
 	public static double armRestingAngle = 0;
 	public static double armKfFactor = 0;
@@ -103,15 +103,12 @@ public class RobotConfig {
 	}
 	public void autoConfig() {
 		for(TalonSRX talon:RobotMap.driveMotors){
-			talon.configOpenloopRamp(0.00);
+			talon.configOpenloopRamp(0.25);
 		}
 		for(TalonSRX talon:RobotMap.driveMotors){
 			talon.configVoltageCompSaturation(RobotConfig.voltageControlMaxAuto);
 			talon.configVoltageMeasurementFilter(32);
 			talon.enableVoltageCompensation(true); 
-		}
-		for(TalonSRX talon:RobotMap.driveMotors){
-			talon.configOpenloopRamp(0, 0);
 		}
 		for(TalonSRX talon:RobotMap.driveMotors) {
     		talon.configContinuousCurrentLimit(RobotConfig.driveMotorContinuousCurrentLowGear, RobotConfig.timeOut);

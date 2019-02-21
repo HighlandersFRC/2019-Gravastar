@@ -36,7 +36,8 @@ public class AutoSuite {
         //visionToGetToTarget = new VisionToGetToTarget();
     }
     public void startAutoCommandsDriverControl() {
-        arcadeDrive.start();
+        //arcadeDrive.start();
+        tankDrive.start();
 		driveTrainStallProtectionController.start();
 		teleopArmControl.start();
     }
