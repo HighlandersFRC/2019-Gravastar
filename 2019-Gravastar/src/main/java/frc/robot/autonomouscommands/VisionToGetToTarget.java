@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-/*package frc.robot.autonomouscommands;
+package frc.robot.autonomouscommands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
@@ -20,6 +20,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotState;
+import edu.wpi.first.wpilibj.Timer;
 
 public class VisionToGetToTarget extends Command {
   private Notifier camNotifier;
@@ -35,6 +36,7 @@ public class VisionToGetToTarget extends Command {
   private boolean shouldEnd;
   private double previousAngle;
   private double previousDistance;
+  private double startTime;
   public VisionToGetToTarget() {
     requires(RobotMap.drive);
     // Use requires() here to declare subsystem dependencies
@@ -44,32 +46,42 @@ public class VisionToGetToTarget extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    startTime = Timer.getFPGATimestamp();
     shouldEnd = false;
     xDeltaArrayList = new ArrayList<>();
     xDeltaArrayList.clear();
     yDeltaArrayList = new ArrayList<>();
     yDeltaArrayList.clear();
-    visionCamera = new VisionCamera(RobotMap.jevois1);
+    
+		if(Robot.hasCamera){
+			visionCamera= new VisionCamera(Robot.jevois1);
+		}
     camNotifier = new Notifier(new CamRunnable());
     succesfulRunCounter = 0;
+    runCounter = 0;
     firstRun = false;
     camNotifier.startPeriodic(0.05);
-  
+    visionCamera.updateVision();
+
   }
   private class CamRunnable implements Runnable{
   
     public void run(){
-      double distance = visionCamera.getDistance();
-      double angle = Pathfinder.d2r(visionCamera.getAngle());
+      visionCamera.updateVision();
+
+      double distance = Robot.visionCamera.getDistance();
+      double angle = Pathfinder.d2r(Robot.visionCamera.getAngle());
+      System.out.println(distance);
+      System.out.println(angle);
+      System.out.println(Robot.visionCamera.getString());
       if(succesfulRunCounter==0){
         previousAngle = angle;
         previousDistance = distance;
       }
       if(Math.abs(angle)< 0.2879793 && distance>1.5){
-        if(Math.abs(previousDistance-distance)<0.3&&Math.abs(previousAngle-angle)<1){
           if(succesfulRunCounter<10&&!firstRun&&!isFinished()){
             double xDelta = Math.cos(angle)*distance;
-            double yDelta = Math.sin(2*angle)*distance;
+            double yDelta = Math.sin(angle)*distance;
             if(xDelta>1&&xDelta<6){
               succesfulRunCounter++;
               xDeltaArrayList.add(xDelta);
@@ -78,7 +90,7 @@ public class VisionToGetToTarget extends Command {
               previousAngle = distance;
             }  
           }
-        }
+        
        
       }
       else{
@@ -92,6 +104,7 @@ public class VisionToGetToTarget extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    visionCamera.updateVision();
     if(succesfulRunCounter>5&&!firstRun){
       double xSum = 0;
       double ySum = 0;
@@ -106,7 +119,8 @@ public class VisionToGetToTarget extends Command {
       xAverage = xSum/xDeltaArrayList.size();
       yAverage = ySum/yDeltaArrayList.size();
       System.out.println(xAverage + " " + yAverage);
-      shortPathToAngle = new ShortPathToAngle(xAverage-0.25, yAverage+0.75, Pathfinder.d2r(0));
+
+      shortPathToAngle = new ShortPathToAngle(xAverage, yAverage, Pathfinder.d2r(0));
       shortPathToAngle.start();
       firstRun = true;
     }
@@ -124,9 +138,11 @@ public class VisionToGetToTarget extends Command {
     if(firstRun == true){
       return true;
     }
-    if(runCounter>30){
+    if(runCounter>5000){
       return true;
     }
+   
+
     return false;
   }
 
@@ -134,6 +150,8 @@ public class VisionToGetToTarget extends Command {
   @Override
   protected void end() {
     camNotifier.stop();
+    System.out.println("done");
+
     RobotMap.leftDriveLead.set(ControlMode.PercentOutput, 0);
     RobotMap.rightDriveLead.set(ControlMode.PercentOutput, 0);
 
@@ -145,4 +163,4 @@ public class VisionToGetToTarget extends Command {
   protected void interrupted() {
     this.end();
   }
-}*/
+}

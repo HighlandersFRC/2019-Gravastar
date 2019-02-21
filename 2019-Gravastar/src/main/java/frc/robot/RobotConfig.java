@@ -1,3 +1,4 @@
+
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -6,24 +7,29 @@ import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.wpilibj.Ultrasonic;
+
 public class RobotConfig {
-	public static double gearRatio = 7.5;
+	public static double gearRatio =7.5;//1
     public static double encoderTicsPerShaftRotation = 4096;
     public static double encoderTicsPerWheelRotation = gearRatio*encoderTicsPerShaftRotation;
     public static double wheelDiam = 7.75;
 	public static double wheelCircum = Math.PI * wheelDiam;
-	public static double robotBaseDist = 2.0;
+	public static double robotBaseDist = 1.8;
     public static double openLoopRampRate = 0.0;
 	public static double voltageControlMaxAuto = 11.0;
-	public static double voltageControlMaxTeleop = 11.0;
+	public static double voltageControlMaxTeleop = 14.0;
 	public static double robotMaxAcceleration = 10.0;
 	public static double robotMaxVelocity = 14.5;
-	public static double armTicksToAngleConversion = -0.02857143;
+	public static double armTicksToAngleConversion = -0.02857143;//0.02470588;//
+	public static double armUpAngle = 105;
+	public static double armRestingAngle = 0;
+	public static double armKfFactor = 0;
 	public static double ultraSonicConversionFactor = 0.00427807;
-	public static int armAngleToTicksConversion = -35;
-	public static int driveMotorContinuousCurrentHighGear = 22;
+	public static double armAngleToTicksConversion = 40.5;//-35;
+	public static int driveMotorContinuousCurrentHighGear = 30;
 	public static int driveMotorContinuousCurrentLowGear = 40;
-	public static int driveMotorPeakCurrentHighGear= 22;		
+	public static int driveMotorPeakCurrentHighGear= 30;		
 	public static int driveMotorPeakCurrentLowGear = 60;
 	public static int driveMotorPeakCurrentDurationLowGear = 100;
 	public static int driveMotorPeakCurrentDurationHighGear = 0;
@@ -63,7 +69,7 @@ public class RobotConfig {
 
     	RobotMap.leftDriveLead.setSelectedSensorPosition(0, 0,0);
 		RobotMap.rightDriveLead.setSelectedSensorPosition(0, 0, 0);
-		RobotMap.armMaster.setSelectedSensorPosition(90*RobotConfig.armAngleToTicksConversion, 0, 0);
+        RobotMap.armMaster.setSelectedSensorPosition((int)(105*RobotConfig.armAngleToTicksConversion));
 		
 		RobotMap.leftDriveLead.setSensorPhase(false);
 		RobotMap.rightDriveLead.setSensorPhase(false);
@@ -97,20 +103,17 @@ public class RobotConfig {
 	}
 	public void autoConfig() {
 		for(TalonSRX talon:RobotMap.driveMotors){
-			talon.configOpenloopRamp(0.00);
+			talon.configOpenloopRamp(0.125);
 		}
 		for(TalonSRX talon:RobotMap.driveMotors){
 			talon.configVoltageCompSaturation(RobotConfig.voltageControlMaxAuto);
 			talon.configVoltageMeasurementFilter(32);
 			talon.enableVoltageCompensation(true); 
 		}
-		for(TalonSRX talon:RobotMap.driveMotors){
-			talon.configOpenloopRamp(0, 0);
-		}
 		for(TalonSRX talon:RobotMap.driveMotors) {
-    		talon.configContinuousCurrentLimit(RobotConfig.driveMotorContinuousCurrentHighGear, RobotConfig.timeOut);
-    		talon.configPeakCurrentLimit(RobotConfig.driveMotorPeakCurrentHighGear, RobotConfig.timeOut);
-    		talon.configPeakCurrentDuration(RobotConfig.driveMotorPeakCurrentDurationHighGear, RobotConfig.timeOut);
+    		talon.configContinuousCurrentLimit(RobotConfig.driveMotorContinuousCurrentLowGear, RobotConfig.timeOut);
+    		talon.configPeakCurrentLimit(RobotConfig.driveMotorPeakCurrentLowGear, RobotConfig.timeOut);
+    		talon.configPeakCurrentDuration(RobotConfig.driveMotorPeakCurrentDurationLowGear, RobotConfig.timeOut);
     		talon.enableCurrentLimit(true);
 		}
 		this.setAllMotorsBreak();
@@ -119,7 +122,7 @@ public class RobotConfig {
 	public void teleopConfig() {
 		RobotMap.shifters.set(RobotMap.highGear);
 		for(TalonSRX talon:RobotMap.driveMotors){
-			talon.configOpenloopRamp(0.15);
+			talon.configOpenloopRamp(0.25);
 		}
 		for(TalonSRX talon:RobotMap.driveMotors){
 			talon.configVoltageCompSaturation(RobotConfig.voltageControlMaxTeleop);

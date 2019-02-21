@@ -13,14 +13,17 @@ public class ChangeLightColor{
 	private double red;
 	private double green;
 	private double blue;
+	private CANifier canifier;
 
-    public ChangeLightColor(double R, double G, double B) {
+    public ChangeLightColor(double R, double G, double B, CANifier chosenCANifier) {
     	red=R;
     	green = G;
-    	blue = B;
-    	RobotMap.canifier.setLEDOutput(green,CANifier.LEDChannel.LEDChannelA);
-		RobotMap.canifier.setLEDOutput(blue,CANifier.LEDChannel.LEDChannelB);
-		RobotMap.canifier.setLEDOutput(red,CANifier.LEDChannel.LEDChannelC);
+		blue = B;
+		canifier = chosenCANifier;
+		
+    	canifier.setLEDOutput(green,CANifier.LEDChannel.LEDChannelA);
+		canifier.setLEDOutput(blue,CANifier.LEDChannel.LEDChannelB);
+		canifier.setLEDOutput(red,CANifier.LEDChannel.LEDChannelC);
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
     }
@@ -28,9 +31,9 @@ public class ChangeLightColor{
     	red=R;
     	green = G;
     	blue = B;
-    	RobotMap.canifier.setLEDOutput(green,CANifier.LEDChannel.LEDChannelA);
-		RobotMap.canifier.setLEDOutput(blue,CANifier.LEDChannel.LEDChannelB);
-		RobotMap.canifier.setLEDOutput(red,CANifier.LEDChannel.LEDChannelC);
+    	canifier.setLEDOutput(green,CANifier.LEDChannel.LEDChannelA);
+		canifier.setLEDOutput(blue,CANifier.LEDChannel.LEDChannelB);
+		canifier.setLEDOutput(red,CANifier.LEDChannel.LEDChannelC);
     	
     }
 }

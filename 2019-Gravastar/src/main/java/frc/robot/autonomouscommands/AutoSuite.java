@@ -25,21 +25,26 @@ public class AutoSuite {
     private Command autoCommand;
     private CascadingPIDUltrasonicAlignment cascadingPIDUltrasonicAlignment;
     private UltrasoundAlineandGetTo ultrasoundAlineandGetTo;
+    //private ShortPathToAngle shortPathToAngle = new ShortPathToAngle(5, 3, 0);
+    //private VisionToGetToTarget visionToGetToTarget;
+    private PurePursuitController purePursuitController = new PurePursuitController(RobotMap.universalPathList.pathSetup, 0.9, 2.25, 0.05);
     public AutoSuite() {
         arcadeDrive = new ArcadeDrive();
 		tankDrive = new TankDrive();
 		driveTrainStallProtectionController = new DriveTrainStallProtectionController();
-		teleopArmControl = new TeleopArmControl();	
+        teleopArmControl = new TeleopArmControl();	
+        //visionToGetToTarget = new VisionToGetToTarget();
     }
     public void startAutoCommandsDriverControl() {
-        arcadeDrive.start();
+        //arcadeDrive.start();
+        tankDrive.start();
 		driveTrainStallProtectionController.start();
 		teleopArmControl.start();
     }
     public void startAutoCommandsRobotControl() {
-       ultrasoundAlineandGetTo = new UltrasoundAlineandGetTo();
-       ultrasoundAlineandGetTo.start();
-       
+      // visionToGetToTarget.start();
+      purePursuitController.start();
+      //shortPathToAngle.start();
     }
 
     public void endAutoCommands(){

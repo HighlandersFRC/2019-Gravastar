@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class ArcadeDrive extends Command {
-	private double deadZone = 0.01;
+	private double deadZone = 0.00;
 	private double turn =0;
 	private double throttel = 0;
 	private double ratio = 0;
