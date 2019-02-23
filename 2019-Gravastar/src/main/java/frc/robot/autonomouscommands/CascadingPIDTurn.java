@@ -10,7 +10,6 @@ package frc.robot.autonomouscommands;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.OI;
 import frc.robot.Robot;
 import frc.robot.RobotConfig;
@@ -69,7 +68,6 @@ public class CascadingPIDTurn extends Command {
     turnPID.updatePID(navx.currentAngle());
     leftDriveTrainVelocityPID.changeDesiredSpeed(turnPID.getResult());
     rightDriveTrainVelocityPID.changeDesiredSpeed(-turnPID.getResult());
-    SmartDashboard.putNumber("error", desiredAngle-navx.currentYaw());
   }
   public void forceFinish(){
     shouldEnd = true;

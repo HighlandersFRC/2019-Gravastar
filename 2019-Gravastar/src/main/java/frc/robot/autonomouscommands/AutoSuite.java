@@ -2,8 +2,7 @@ package frc.robot.autonomouscommands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import frc.robot.RobotMap;
 import frc.robot.autoRoutines.OffHabToLeftSideHatchOne;
 import frc.robot.sensors.VisionCamera;
@@ -26,14 +25,14 @@ public class AutoSuite {
     private CascadingPIDUltrasonicAlignment cascadingPIDUltrasonicAlignment;
     private UltrasoundAlineandGetTo ultrasoundAlineandGetTo;
     //private ShortPathToAngle shortPathToAngle = new ShortPathToAngle(5, 3, 0);
-    //private VisionToGetToTarget visionToGetToTarget;
+    private VisionToGetToTarget visionToGetToTarget;
     private PurePursuitController purePursuitController = new PurePursuitController(RobotMap.universalPathList.pathSetup, 0.9, 2.25, 0.05);
     public AutoSuite() {
         arcadeDrive = new ArcadeDrive();
 		tankDrive = new TankDrive();
 		driveTrainStallProtectionController = new DriveTrainStallProtectionController();
         teleopArmControl = new TeleopArmControl();	
-        //visionToGetToTarget = new VisionToGetToTarget();
+        visionToGetToTarget = new VisionToGetToTarget();
     }
     public void startAutoCommandsDriverControl() {
         //arcadeDrive.start();
@@ -42,8 +41,8 @@ public class AutoSuite {
 		teleopArmControl.start();
     }
     public void startAutoCommandsRobotControl() {
-      // visionToGetToTarget.start();
-      purePursuitController.start();
+       visionToGetToTarget.start();
+      //purePursuitController.start();
       //shortPathToAngle.start();
     }
 

@@ -92,7 +92,7 @@ public class VisionCamera {
              if (jsonObject != null){ 
 
              double distString = (double) jsonObject.get("Distance");
-             return (Double.valueOf(distString)-28)/12;
+             return (Double.valueOf(distString))/12;
 
              }
  

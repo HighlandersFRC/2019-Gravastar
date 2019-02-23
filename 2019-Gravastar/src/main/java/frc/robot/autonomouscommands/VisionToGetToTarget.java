@@ -31,7 +31,6 @@ public class VisionToGetToTarget extends Command {
 
 
   private boolean firstRun = false;
-  private VisionCamera visionCamera;
   private ShortPathToAngle shortPathToAngle;
   private boolean shouldEnd;
   private double previousAngle;
@@ -53,58 +52,48 @@ public class VisionToGetToTarget extends Command {
     yDeltaArrayList = new ArrayList<>();
     yDeltaArrayList.clear();
     
-		if(Robot.hasCamera){
-			visionCamera= new VisionCamera(Robot.jevois1);
-		}
+	
     camNotifier = new Notifier(new CamRunnable());
     succesfulRunCounter = 0;
     runCounter = 0;
     firstRun = false;
     camNotifier.startPeriodic(0.05);
-    visionCamera.updateVision();
+    Robot.visionCamera.updateVision();
 
   }
   private class CamRunnable implements Runnable{
   
     public void run(){
-      visionCamera.updateVision();
+     // Robot.visionCamera.updateVision();
 
-      double distance = Robot.visionCamera.getDistance();
-      double angle = Pathfinder.d2r(Robot.visionCamera.getAngle());
-      System.out.println(distance);
-      System.out.println(angle);
-      System.out.println(Robot.visionCamera.getString());
-      if(succesfulRunCounter==0){
-        previousAngle = angle;
-        previousDistance = distance;
-      }
-      if(Math.abs(angle)< 0.2879793 && distance>1.5){
-          if(succesfulRunCounter<10&&!firstRun&&!isFinished()){
-            double xDelta = Math.cos(angle)*distance;
-            double yDelta = Math.sin(angle)*distance;
-            if(xDelta>1&&xDelta<6){
-              succesfulRunCounter++;
-              xDeltaArrayList.add(xDelta);
-              yDeltaArrayList.add(yDelta);
-              previousAngle = angle;
-              previousAngle = distance;
-            }  
-          }
-        
-       
-      }
-      else{
-       
-        camNotifier.stop();
-      }
-     
+    
 			
 		}
   }
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    visionCamera.updateVision();
+   // Robot.visionCamera.updateVision();
+   double distance = Robot.visionCamera.getDistance();
+   double angle = Pathfinder.d2r(Robot.visionCamera.getAngle());
+   System.out.println(distance);
+   System.out.println(angle);
+   System.out.println(Robot.visionCamera.getString());
+  
+    if(succesfulRunCounter<10&&!firstRun&&!isFinished()){
+         double xDelta = Math.cos(angle)*distance;
+         double yDelta = Math.sin(angle)*distance;
+         if(xDelta>0.1&&xDelta<6){
+           succesfulRunCounter++;
+           xDeltaArrayList.add(xDelta);
+           yDeltaArrayList.add(yDelta);
+           previousAngle = angle;
+           previousAngle = distance;
+         }  
+    }
+     
+    
+   
     if(succesfulRunCounter>5&&!firstRun){
       double xSum = 0;
       double ySum = 0;
@@ -120,7 +109,7 @@ public class VisionToGetToTarget extends Command {
       yAverage = ySum/yDeltaArrayList.size();
       System.out.println(xAverage + " " + yAverage);
 
-      shortPathToAngle = new ShortPathToAngle(xAverage, yAverage, Pathfinder.d2r(0));
+      shortPathToAngle = new ShortPathToAngle(xAverage-0.2, yAverage, Pathfinder.d2r(0));
       shortPathToAngle.start();
       firstRun = true;
     }

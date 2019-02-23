@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -51,6 +52,9 @@ public class Robot extends TimedRobot {
 	private ChangeLightColor changeLightColor = new ChangeLightColor(0,0, 150, RobotMap.canifier1);
 	public static VisionCamera visionCamera;
 	public static SerialPort jevois1;
+	public static Notifier smartDashboardNotifier;
+	private int runCounter = 0;
+
 	//this odometry is used to provide reference data for the start of paths, it should only be used in autonomous
 	public static Odometry autoOdometry = new Odometry(false);
 	//private VisionCamera visionCamera = new VisionCamera(RobotMap.jevois1);
@@ -62,6 +66,7 @@ public class Robot extends TimedRobot {
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
 	 */
+	
 	@Override
 	public void robotInit() {
 		
@@ -75,8 +80,16 @@ public class Robot extends TimedRobot {
 		if(hasCamera){
 			visionCamera= new VisionCamera(Robot.jevois1);
 		}
-		//camera = CameraServer.getInstance().startAutomaticCapture(0);
-		//camera = CameraServer.getInstance().startAutomaticCapture(1);
+
+		camera = CameraServer.getInstance().startAutomaticCapture(0);
+		camera.setResolution(320, 240);
+		camera.setFPS(15);
+
+		camera2= CameraServer.getInstance().startAutomaticCapture(1);
+		camera2.setResolution(320, 240);
+		camera2.setFPS(15);
+		Shuffleboard.update();
+		SmartDashboard.updateValues();
 
 	}
 
@@ -90,24 +103,40 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void robotPeriodic() {
-		double pressure = ((250*RobotMap.preassureSensor.getAverageVoltage())/4.53)-25;
-		SmartDashboard.putNumber("pressure", pressure);
-		SmartDashboard.putBoolean("hasNavx", RobotMap.navx.isConnected());
-		SmartDashboard.putNumber("armPosit",RobotMap.mainArmEncoder.getAngle());
-		SmartDashboard.putNumber("leftPos",RobotMap.leftMainDrive.getDistance());
-		SmartDashboard.putNumber("rightpos",RobotMap.rightMaindrive.getDistance());
 		if(hasCamera){
-			visionCamera.updateVision();
+			visionCamera.updateVision();			
+		}
+		runCounter++;
+		if(runCounter%7==0){
+			if(hasCamera){
+				visionCamera.updateVision();
 
-			SmartDashboard.putNumber("timeSinceGoodValue", Timer.getFPGATimestamp()-visionCamera.lastParseTime);
-			SmartDashboard.putString("visionString", visionCamera.getString());
-			SmartDashboard.putNumber("visionAngle", visionCamera.getAngle());
-			SmartDashboard.putNumber("visionDistance", visionCamera.getDistance());
+				SmartDashboard.putNumber("timeSinceGoodValue", Timer.getFPGATimestamp()-visionCamera.lastParseTime);
+				SmartDashboard.putString("visionString", visionCamera.getString());
+				SmartDashboard.putNumber("visionAngle", visionCamera.getAngle());
+				SmartDashboard.putNumber("visionDistance", visionCamera.getDistance());
+				
+			}
+			
+			else{
+				SmartDashboard.putString("visionString", "doesn't have Camera");
+
+			}
+			SmartDashboard.putNumber("armPosit",RobotMap.mainArmEncoder.getAngle());
 			
 		}
-		SmartDashboard.putNumber("rawArmValue", RobotMap.armMaster.getSelectedSensorPosition());
-		SmartDashboard.putNumber("ultraSonic1",RobotMap.mainUltrasonicSensor1.getDistance());
-		SmartDashboard.putNumber("ultraSonic2", RobotMap.mainUltrasonicSensor2.getDistance());
+		if(runCounter%20==0){
+			double pressure = ((250*RobotMap.preassureSensor.getAverageVoltage())/4.53)-25;
+			SmartDashboard.putNumber("pressure", pressure);
+			SmartDashboard.putBoolean("hasNavx", RobotMap.navx.isConnected());
+			SmartDashboard.putNumber("leftPos",RobotMap.leftMainDrive.getDistance());
+			SmartDashboard.putNumber("rightpos",RobotMap.rightMaindrive.getDistance());
+			
+			SmartDashboard.putNumber("ultraSonic1",RobotMap.mainUltrasonicSensor1.getDistance());
+			SmartDashboard.putNumber("ultraSonic2", RobotMap.mainUltrasonicSensor2.getDistance());
+
+		}
+		
 
 	
 	}
@@ -129,7 +158,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 		robotConfig.autoConfig();
-		autoSuite.startAutoCommandsDriverControl();
+		autoSuite.startAutoCommandsRobotControl();
 	}
 	@Override
 	public void autonomousPeriodic() {
@@ -147,27 +176,8 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopPeriodic() {
-		// if(Math.abs(OI.operatorController.getRawAxis(1))>0.15){
-		// 	RobotMap.armMaster.set(ControlMode.PercentOutput, OI.operatorController.getRawAxis(1)*-0.50);
-		// 	System.out.println(RobotMap.armMaster.getMotorOutputPercent());
-		// 	System.out.println(RobotMap.armMaster.getSensorCollection().isRevLimitSwitchClosed() + "reverse");
-		// 	System.out.println(RobotMap.armMaster.getSensorCollection().isFwdLimitSwitchClosed() + "forward");
-
-		// }
-		// else{
-		// 	RobotMap.armMaster.set(ControlMode.PercentOutput, 0);
-		// }
-		// if(OI.operatorController.getTriggerAxis(Hand.kLeft)>0.1){
-		// 	RobotMap.intake.set(ControlMode.PercentOutput, -1.0);
-		// }
-		// else if(OI.operatorController.getTriggerAxis(Hand.kRight)>0.1){
-		// 	RobotMap.intake.set(ControlMode.PercentOutput, 1.0);
-		// }
-		// else{
-		// 	RobotMap.intake.set(ControlMode.PercentOutput, 0);
-		// }
+	
 		
-		SmartDashboard.putNumber("navxValue", RobotMap.mainNavx.currentYaw());
 		Scheduler.getInstance().run();
 	}
 	@Override

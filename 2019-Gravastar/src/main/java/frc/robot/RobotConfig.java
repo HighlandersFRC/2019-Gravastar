@@ -18,7 +18,7 @@ public class RobotConfig {
 	public static double robotBaseDist = 1.8;
     public static double openLoopRampRate = 0.0;
 	public static double voltageControlMaxAuto = 11.0;
-	public static double voltageControlMaxTeleop = 14.0;
+	public static double voltageControlMaxTeleop = 12.3;
 	public static double robotMaxAcceleration = 10.0;
 	public static double robotMaxVelocity = 14.5;
 	public static double armTicksToAngleConversion = -0.02857143;//0.02470588;//
@@ -126,7 +126,7 @@ public class RobotConfig {
 		}
 		for(TalonSRX talon:RobotMap.driveMotors){
 			talon.configVoltageCompSaturation(RobotConfig.voltageControlMaxTeleop);
-			talon.enableVoltageCompensation(false); 
+			talon.enableVoltageCompensation(true); 
 			talon.configVoltageMeasurementFilter(32);
 		}
 		for(TalonSRX talon:RobotMap.driveMotors){

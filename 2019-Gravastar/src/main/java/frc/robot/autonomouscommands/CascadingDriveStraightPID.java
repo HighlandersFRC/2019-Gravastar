@@ -11,7 +11,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.sensors.Navx;
@@ -51,8 +50,7 @@ public class CascadingDriveStraightPID extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    SmartDashboard.putNumber("yaw", straightNavx.currentYaw());
-    SmartDashboard.putNumber("i",1);
+    
     stayStraightPID.updatePID(straightNavx.currentYaw());
     leftVelocityPID.changeDesiredSpeed(desiredSpeed - stayStraightPID.getResult());
     rightVelocityPID.changeDesiredSpeed(desiredSpeed + stayStraightPID.getResult());

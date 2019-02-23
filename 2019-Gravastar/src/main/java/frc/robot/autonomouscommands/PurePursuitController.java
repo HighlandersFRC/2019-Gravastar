@@ -230,17 +230,17 @@ public class PurePursuitController extends Command {
         }
         distToEndVector.setX(chosenPath.getMainPath().get(chosenPath.getMainPath().length()-1).x-odometry.getX());
         distToEndVector.setY(chosenPath.getMainPath().get(chosenPath.getMainPath().length()-1).y-odometry.getY());
-        SmartDashboard.putNumber("distoend", distToEndVector.length()*12);
-        SmartDashboard.putNumber("x", odometry.getX());
-        SmartDashboard.putNumber("y",odometry.getY());
-        SmartDashboard.putNumber("theta", odometry.gettheta());
+        // SmartDashboard.putNumber("distoend", distToEndVector.length()*12);
+        // SmartDashboard.putNumber("x", odometry.getX());
+        // SmartDashboard.putNumber("y",odometry.getY());
+        // SmartDashboard.putNumber("theta", odometry.gettheta());
         startingNumberLA = (int)partialPointIndex;
         lastLookAheadPoint = lookAheadPoint;
         findRobotCurvature();
         curveAdjustedVelocity = Math.min(Math.abs(k/desiredRobotCurvature),chosenPath.getMainPath().get(closestSegment).velocity);
         setWheelVelocities(curveAdjustedVelocity, desiredRobotCurvature);
         endThetaError = Pathfinder.boundHalfDegrees((Pathfinder.r2d(chosenPath.getMainPath().get(chosenPath.getMainPath().length()-1).heading)-odometry.gettheta()));
-        SmartDashboard.putNumber("thetaError", endThetaError);
+        //SmartDashboard.putNumber("thetaError", endThetaError);
   } 
   public void setOdometryX(double X){
         double desiredX= X;
@@ -284,8 +284,8 @@ public class PurePursuitController extends Command {
             leftDriveTrainVelocityPID.changeDesiredSpeed(leftVelocity);
             rightDriveTrainVelocityPID.changeDesiredSpeed(rightVelocity);
         }
-        SmartDashboard.putNumber("left", leftVelocity);
-        SmartDashboard.putNumber("right",rightVelocity);  
+       // SmartDashboard.putNumber("left", leftVelocity);
+        //SmartDashboard.putNumber("right",rightVelocity);  
     }
     private void findRobotCurvature(){
         double a = -Math.tan(Pathfinder.d2r(odometry.gettheta()));
