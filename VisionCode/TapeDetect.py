@@ -154,13 +154,15 @@ class TapeDetect:
 				#cv2.drawContours(outimg,[boxArray],0,boxColor,2)
 		#jevois.sendSerial(" ")
 		
+		#call function to sort contours
 		sortedArray = self.sortContours(cntArray)
 				
 		
 		
+		
 		#time.sleep(0.25)
 
-
+		#take out contours if in wrong position
 		if len(sortedArray) > 0:
 			if self.isRight(sortedArray[0], hsv):
 				sortedArray.pop(0)
@@ -168,6 +170,7 @@ class TapeDetect:
 			if self.isLeft(sortedArray[len(sortedArray) - 1], hsv):
 				sortedArray.pop(len(sortedArray) - 1)
 		
+		#if sortedArray has 2 contours or less, exit
 		if len(sortedArray) < 2 or len(sortedArray) % 2 != 0:
 			outimg = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
 			jevois.sendSerial('{"Distance":' + "-11.0" + ', "Angle":' + "-100.0" + '}')
@@ -178,6 +181,7 @@ class TapeDetect:
 		
 		xArray = []
 		
+		#chose center pair
 		for index in range(0, len(sortedArray), 2):
 			if index != len(sortedArray):
 				leftRect = cv2.minAreaRect(sortedArray[index])
@@ -203,17 +207,32 @@ class TapeDetect:
 		
 		boxColor = (120, 255, 255)
 		
+		#draw center pair
 		rightRect = cv2.minAreaRect(centerPairRight)
 		leftRect = cv2.minAreaRect(centerPairLeft)
-		
 		pointsLeft = cv2.boxPoints(leftRect)
 		pointsRight = cv2.boxPoints(rightRect)
 		pointsLeft = np.int0(pointsLeft)
 		pointsRight = np.int0(pointsRight)
-		
 		cv2.drawContours(hsv, [pointsLeft], 0, boxColor, 2)
 		cv2.drawContours(hsv, [pointsRight], 0, boxColor, 2)
 		
+		#new UNTESTED code for object tracking - DO NOT DELETE
+		#tracker = cv2.TrackerKCF_create()
+		#bbox = (287, 23, 86, 320)
+		#ok, bbox = tracker.update(hsv)
+		#bbox = cv2.selectROI(hsv, False)
+		#ok = tracker.init(hsv, bbox)
+		
+		#while True:
+		#	ok, bbox = tracker.update(hsv)
+		#	if ok:
+			# Tracking success
+		#		p1 = (int(bbox[0]), int(bbox[1]))
+		#		p2 = (int(bbox[0] + bbox[2]), int(bbox[1] + bbox[3]))
+		#		cv2.rectangle(hsv, p1, p2, (255,0,0), 2, 1)
+			
+		#define different x and y vals
 		leftY = leftRect[0][1]
 		rightY = rightRect[0][1]
 		leftX = leftRect[0][0]
@@ -246,6 +265,8 @@ class TapeDetect:
 		#send vals over serial
 		jevois.sendSerial(JSON)
 		#jevois.sendSerial("Hello World")
+		
+		#return outimg
 		outimg = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)		
 		#opening2 = cv2.cvtColor(opening, cv2.COLOR_GRAY2BGR)
 		#outimg = opening2
