@@ -47,7 +47,7 @@ public class Robot extends TimedRobot {
 	private RobotConfig robotConfig = new RobotConfig();
 	public static StopMotors stopMotors = new StopMotors();
 	private UsbCamera camera;
-	private UsbCamera camera2;
+	//private UsbCamera camera2;
 	public static boolean hasCamera;
 	private ChangeLightColor changeLightColor = new ChangeLightColor(0,0, 150, RobotMap.canifier1);
 	public static VisionCamera visionCamera;
@@ -85,9 +85,9 @@ public class Robot extends TimedRobot {
 		camera.setResolution(320, 240);
 		camera.setFPS(15);
 
-		camera2= CameraServer.getInstance().startAutomaticCapture(1);
-		camera2.setResolution(320, 240);
-		camera2.setFPS(15);
+		//camera2= CameraServer.getInstance().startAutomaticCapture(1);
+		//camera2.setResolution(320, 240);
+		//camera2.setFPS(15);
 		Shuffleboard.update();
 		SmartDashboard.updateValues();
 

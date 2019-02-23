@@ -15,18 +15,18 @@ public class RobotConfig {
     public static double encoderTicsPerWheelRotation = gearRatio*encoderTicsPerShaftRotation;
     public static double wheelDiam = 7.75;
 	public static double wheelCircum = Math.PI * wheelDiam;
-	public static double robotBaseDist = 1.8;
+	public static double robotBaseDist = 2.0;
     public static double openLoopRampRate = 0.0;
 	public static double voltageControlMaxAuto = 11.0;
 	public static double voltageControlMaxTeleop = 12.3;
 	public static double robotMaxAcceleration = 10.0;
 	public static double robotMaxVelocity = 14.5;
-	public static double armTicksToAngleConversion = -0.02857143;//0.02470588;//
-	public static double armUpAngle = 105;
+	public static double armTicksToAngleConversion =-0.02857143;//OnComp0.02470588;//
+	public static double armUpAngle = 90;//OnComp105;
 	public static double armRestingAngle = 0;
-	public static double armKfFactor = 0;
+	public static double armKfFactor = 0.0;//0;
 	public static double ultraSonicConversionFactor = 0.00427807;
-	public static double armAngleToTicksConversion = 40.5;//-35;
+	public static double armAngleToTicksConversion =-35;//on comp40.5;
 	public static int driveMotorContinuousCurrentHighGear = 30;
 	public static int driveMotorContinuousCurrentLowGear = 40;
 	public static int driveMotorPeakCurrentHighGear= 30;		
@@ -69,11 +69,12 @@ public class RobotConfig {
 
     	RobotMap.leftDriveLead.setSelectedSensorPosition(0, 0,0);
 		RobotMap.rightDriveLead.setSelectedSensorPosition(0, 0, 0);
-        RobotMap.armMaster.setSelectedSensorPosition((int)(105*RobotConfig.armAngleToTicksConversion));
-		
+        //On CompRobotMap.armMaster.setSelectedSensorPosition((int)(105*RobotConfig.armAngleToTicksConversion));
+		RobotMap.armMaster.setSelectedSensorPosition((int)(90*RobotConfig.armAngleToTicksConversion), 0, 0);
+
 		RobotMap.leftDriveLead.setSensorPhase(false);
 		RobotMap.rightDriveLead.setSensorPhase(false);
-		RobotMap.armMaster.setSensorPhase(true);
+		RobotMap.armMaster.setSensorPhase(true);//onCompTrue
 
     	for(TalonSRX talon:RobotMap.driveMotors) {
     		talon.configContinuousCurrentLimit(RobotConfig.driveMotorContinuousCurrentHighGear, RobotConfig.timeOut);
