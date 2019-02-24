@@ -64,7 +64,6 @@ public class VisionToGetToTarget extends Command {
   private class CamRunnable implements Runnable{
   
     public void run(){
-     // Robot.visionCamera.updateVision();
 
     
 			
@@ -73,15 +72,19 @@ public class VisionToGetToTarget extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-   // Robot.visionCamera.updateVision();
-   double distance = Robot.visionCamera.getDistance();
-   double angle = Pathfinder.d2r(Robot.visionCamera.getAngle());
- 
+    double distance = Robot.visionCamera.getDistance();
+    double angle = Pathfinder.d2r(Robot.visionCamera.getAngle());
+    double ultraSonic1Distance = RobotMap.mainUltrasonicSensor1.getDistance();
+    double totalUltraSonicDistance = (RobotMap.mainUltrasonicSensor1.getDistance() + RobotMap.mainUltrasonicSensor2.getDistance())/2;
+    if(RobotMap.mainUltrasonicSensor2.getDistance()<8&&RobotMap.mainUltrasonicSensor2.getDistance()>0&&RobotMap.mainUltrasonicSensor1.getDistance()<8&&RobotMap.mainUltrasonicSensor1.getDistance()>0){
+    
+      distance = (distance + totalUltraSonicDistance)/2;
+    }
   
     if(succesfulRunCounter<10&&!firstRun&&!isFinished()){
       double xDelta = Math.cos(angle)*distance;
       double yDelta = Math.sin(angle)*distance;
-      if(xDelta>0.1&&xDelta<20&&Math.abs(angle)<0.36397){
+      if(xDelta>0.1&&xDelta<20&&Math.abs(angle)<0.78539){
         succesfulRunCounter++;
         xDeltaArrayList.add(xDelta);
         yDeltaArrayList.add(yDelta);
@@ -107,7 +110,7 @@ public class VisionToGetToTarget extends Command {
       yAverage = ySum/yDeltaArrayList.size();
       System.out.println(xAverage + " " + yAverage);
 
-      shortPathToAngle = new ShortPathToAngle(xAverage-0.4, yAverage, Pathfinder.d2r(0));
+      shortPathToAngle = new ShortPathToAngle(xAverage, yAverage, Pathfinder.d2r(0));
       shortPathToAngle.start();
       firstRun = true;
     }
@@ -122,14 +125,6 @@ public class VisionToGetToTarget extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    if(firstRun == true){
-      return true;
-    }
-    if(runCounter>5000){
-      return true;
-    }
-   
-
     return false;
   }
 

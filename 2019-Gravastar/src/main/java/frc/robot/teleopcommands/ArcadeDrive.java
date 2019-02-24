@@ -47,14 +47,14 @@ public class ArcadeDrive extends Command {
 		else {
 			turn = 0;
 		}
-		if(Math.abs(OI.pilotController.getRawAxis(1))>0.2){
+		if(Math.abs(throttel)>0.1){
 			leftPower = (throttel - (sensitivity*turn*ratio));
 			rightPower = (throttel + (sensitivity*turn*ratio));
 		}
 	
 		else{
-			leftPower = (-turn);
-			rightPower = (turn); 
+			leftPower = (-turn)*sensitivity;
+			rightPower = (turn)*sensitivity; 
 		}
 		if(OI.pilotController.getRawAxis(3)>0.5) {
 			leftPower = throttel +(-turn);
@@ -89,7 +89,7 @@ public class ArcadeDrive extends Command {
 	// Make this return true when this Command no longer needs to run execute()
 	@Override
 	protected boolean isFinished() {
-		return false;
+		return RobotState.isDisabled();
 	}
 
 	// Called once after isFinished returns true

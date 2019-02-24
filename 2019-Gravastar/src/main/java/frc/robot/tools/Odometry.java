@@ -32,7 +32,8 @@ public class Odometry extends Command {
   private double y;
   private double yNext;
   private double xNext;
-  private Notifier odometryrunner;
+  private Notifier odometryrunner  = new Notifier(new OdometryRunnable());
+ 
   private double dt;
   private boolean isReversed;
   private boolean finish;
@@ -93,7 +94,6 @@ public class Odometry extends Command {
     navx.softResetYaw();
     leftDriveEncoder.softReset();
     rightDriveEncoder.softReset();
-    odometryrunner = new Notifier(new OdometryRunnable());
     dt = 0.005;
     odometryrunner.startPeriodic(dt);
     finish = false;
