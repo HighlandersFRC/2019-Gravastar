@@ -73,13 +73,13 @@ public class ArmPositionController extends Command {
         desiredValue = armEncoder.getAngle();
       }
       else if(armPID.getSetPoint() == RobotConfig.armUpAngle&&armEncoder.getAngle()>80){
-        RobotMap.armMaster.set(ControlMode.PercentOutput, 0.2 +Math.cos(Pathfinder.d2r(armEncoder.getAngle()))*RobotConfig.armKfFactor);
+        RobotMap.armMaster.set(ControlMode.PercentOutput, 0.2 +Math.cos(Math.toRadians(armEncoder.getAngle()))*RobotConfig.armKfFactor);
       }
       else if(armPID.getSetPoint() == RobotConfig.armRestingAngle&&armEncoder.getAngle()<10){
         RobotMap.armMaster.set(ControlMode.PercentOutput, 0);
       }
       else{
-        RobotMap.armMaster.set(ControlMode.PercentOutput, armPID.getResult()+Math.cos(Pathfinder.d2r(armEncoder.getAngle()))*RobotConfig.armKfFactor);
+        RobotMap.armMaster.set(ControlMode.PercentOutput, armPID.getResult()+Math.cos(Math.toRadians(armEncoder.getAngle()))*RobotConfig.armKfFactor);
       }
      
 

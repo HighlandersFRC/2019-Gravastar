@@ -73,7 +73,7 @@ public class VisionToGetToTarget extends Command {
   @Override
   protected void execute() {
     double distance = Robot.visionCamera.getDistance();
-    double angle = Pathfinder.d2r(Robot.visionCamera.getAngle());
+    double angle = Math.toRadians(Robot.visionCamera.getAngle());
     double ultraSonic1Distance = RobotMap.mainUltrasonicSensor1.getDistance();
     double totalUltraSonicDistance = (RobotMap.mainUltrasonicSensor1.getDistance() + RobotMap.mainUltrasonicSensor2.getDistance())/2;
     if(RobotMap.mainUltrasonicSensor2.getDistance()<8&&RobotMap.mainUltrasonicSensor2.getDistance()>0&&RobotMap.mainUltrasonicSensor1.getDistance()<8&&RobotMap.mainUltrasonicSensor1.getDistance()>0){
@@ -110,7 +110,7 @@ public class VisionToGetToTarget extends Command {
       yAverage = ySum/yDeltaArrayList.size();
       System.out.println(xAverage + " " + yAverage);
 
-      shortPathToAngle = new ShortPathToAngle(xAverage, yAverage, Pathfinder.d2r(0));
+      shortPathToAngle = new ShortPathToAngle(xAverage, yAverage, Math.toRadians(0));
       shortPathToAngle.start();
       firstRun = true;
     }

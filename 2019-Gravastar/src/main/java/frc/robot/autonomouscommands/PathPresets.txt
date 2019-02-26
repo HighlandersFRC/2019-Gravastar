@@ -5,5 +5,5 @@
     private PurePursuitController smallPath;
     private QuickPathGeneration quickPathGeneration;
     private CascadingPIDTurn turn = new CascadingPIDTurn(20.0,0.08,0.00085,0.00006);\
-     quickPathGeneration = new QuickPathGeneration(3, Pathfinder.d2r(0), Pathfinder.d2r(0));
+     quickPathGeneration = new QuickPathGeneration(3, Math.toRadians(0), Math.toRadians(0));
         smallPath = new PurePursuitController(quickPathGeneration.GeneratePath(), 0.2, 1, 0.05);

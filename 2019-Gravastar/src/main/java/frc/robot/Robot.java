@@ -50,7 +50,8 @@ public class Robot extends TimedRobot {
 	public static StopMotors stopMotors = new StopMotors();
 	private UsbCamera camera;
 	private UsbCamera camera2;
-	//private VideoSink server;
+	private UsbCamera camera3;
+	private VideoSink server;
 	public static boolean hasCamera;
 	public static boolean driveAssistAvaliable;
 	public static ChangeLightColor changeLightColor = new ChangeLightColor(0,0, 150, RobotMap.canifier1);
@@ -60,7 +61,6 @@ public class Robot extends TimedRobot {
 
 	//this odometry is used to provide reference data for the start of paths, it should only be used in autonomous
 	public static Odometry autoOdometry = new Odometry(false);
-	//private VisionCamera visionCamera = new VisionCamera(RobotMap.jevois1);
 		
 	
 	SendableChooser<Command> m_chooser = new SendableChooser<>();
@@ -92,7 +92,13 @@ public class Robot extends TimedRobot {
 		camera2.setResolution(320, 240);
 		camera2.setConnectionStrategy(ConnectionStrategy.kAutoManage);
 		camera2.setFPS(15);
-		//server = CameraServer.getInstance().getServer();
+
+		camera3= CameraServer.getInstance().startAutomaticCapture(1);
+		camera3.setResolution(320, 240);
+		camera3.setConnectionStrategy(ConnectionStrategy.kAutoManage);
+		camera3.setFPS(15);
+
+		server = CameraServer.getInstance().getServer();
 		Shuffleboard.update();
 		SmartDashboard.updateValues(); 
 
@@ -110,7 +116,11 @@ public class Robot extends TimedRobot {
 	public void robotPeriodic() {
 		try {
 			if(!hasCamera){
+				
 				jevois1 = new SerialPort(115200, Port.kUSB);
+				if(jevois1.getBytesReceived()>2){
+					hasCamera = false;
+				}
 				hasCamera = true;
 			}
 			
@@ -129,12 +139,12 @@ public class Robot extends TimedRobot {
 			SmartDashboard.putNumber("ultraSonic2", RobotMap.mainUltrasonicSensor2.getDistance());
 
 		}
-		/*if(OI.operatorController.getStartButton()){
-			server.setSource(camera2);
+		if(OI.operatorController.getPOV() == 90){
+			server.setSource(camera3);
 		}
-		else if(OI.operatorController.getBackButton()){
+		else if(OI.operatorController.getPOV() ==0){
 			server.setSource(camera);
-		}*/
+		}
 	}
 	@Override
 	public void disabledInit() {
@@ -150,11 +160,13 @@ public class Robot extends TimedRobot {
 	
 
 		Scheduler.getInstance().run();
+		
 	}
 	@Override
 	public void autonomousInit() {
 		robotConfig.autoConfig();
 		autoSuite.startAutoCommandsRobotControl();
+		
 	}
 	@Override
 	public void autonomousPeriodic() {

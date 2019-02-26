@@ -38,8 +38,8 @@ public class PurePursuitController extends Command {
   private double minDistanceToPoint;
   private Point closestPoint;
   private double lookAheadDistance;
-  private DriveTrainVelocityPID leftDriveTrainVelocityPID;
-  private DriveTrainVelocityPID rightDriveTrainVelocityPID;
+  private DriveTrainVelocityPID leftDriveTrainVelocityPID = new DriveTrainVelocityPID(0, RobotMap.leftDriveLead, 1, 0.04430683771, 0.18, 0.0009, 1.80);
+  private DriveTrainVelocityPID rightDriveTrainVelocityPID = new DriveTrainVelocityPID(0, RobotMap.rightDriveLead, 1, 0.04430683771, 0.18, 0.0009, 1.80);
   private double desiredRobotCurvature;
   private Point startingPointOfLineSegment;
   private boolean firstLookAheadFound;
@@ -102,12 +102,11 @@ public class PurePursuitController extends Command {
   protected void initialize() {
         shouldEnd = false;
         odometry = new Odometry(chosenPath.getReversed());
-        leftDriveTrainVelocityPID = new DriveTrainVelocityPID(0, RobotMap.leftDriveLead, 1, 0.04430683771, 0.18, 0.0009, 1.80);
-        rightDriveTrainVelocityPID = new DriveTrainVelocityPID(0, RobotMap.rightDriveLead, 1, 0.04430683771, 0.18, 0.0009, 1.80);
+      
         leftDriveTrainVelocityPID.start();
         rightDriveTrainVelocityPID.start();
-        odometry.start();
         odometry.zero();
+        odometry.start();
         if(startingX !=0 && startingY!=0){
             odometry.setX(startingX);
             odometry.setY(startingY);
@@ -140,7 +139,7 @@ public class PurePursuitController extends Command {
             robotPosVector = new Vector(0,0);
             lastLookAheadPoint = new Point(0,0);
             closestSegment = 0;
-            minDistanceToPoint = 100;
+            minDistanceToPoint = 10000;
             startingNumber = 0;
             startingNumberLA  = 0;
             lastPointIndex = 0;
@@ -173,9 +172,9 @@ public class PurePursuitController extends Command {
             deltaY = chosenPath.getMainPath().get(i).y-odometry.getY();
             distToPoint = Math.sqrt(Math.pow(deltaX, 2)+Math.pow(deltaY, 2));
             if(distToPoint<minDistanceToPoint){
-            minDistanceToPoint = distToPoint;
-            closestSegment = i;
-            closestPoint.setLocation(chosenPath.getMainPath().get(i).x, chosenPath.getMainPath().get(i).y);
+                minDistanceToPoint = distToPoint;
+                closestSegment = i;
+                closestPoint.setLocation(chosenPath.getMainPath().get(i).x, chosenPath.getMainPath().get(i).y);
             }
         }
         startingNumber = closestSegment;
@@ -194,34 +193,34 @@ public class PurePursuitController extends Command {
             double c = robotPosVector.dot(robotPosVector)-lookAheadDistance*lookAheadDistance;
             double discriminant = b*b - 4*a*c;
             if(discriminant<0){
-            lookAheadPoint.setLocation(lastLookAheadPoint.getXPos(), lastLookAheadPoint.getYPos()); 
+                lookAheadPoint.setLocation(lastLookAheadPoint.getXPos(), lastLookAheadPoint.getYPos()); 
             }
             else{
-            discriminant = Math.sqrt(discriminant);
-            lookAheadIndexT1 = (-b-discriminant)/(2*a);
-            lookAheadIndexT2 = (-b+discriminant)/(2*a);
-            if(lookAheadIndexT1>=0&&lookAheadIndexT1<=1){
-                partialPointIndex = i+lookAheadIndexT1;
-                if(partialPointIndex>lastPointIndex){
-                lookAheadPoint.setLocation(startingPointOfLineSegment.getXPos()+ lookAheadIndexT1*lineSegVector.getxVec() , startingPointOfLineSegment.getYPos() + lookAheadIndexT1*lineSegVector.getyVec());
-                firstLookAheadFound = true;
+                discriminant = Math.sqrt(discriminant);
+                lookAheadIndexT1 = (-b-discriminant)/(2*a);
+                lookAheadIndexT2 = (-b+discriminant)/(2*a);
+                if(lookAheadIndexT1>=0&&lookAheadIndexT1<=1){
+                    partialPointIndex = i+lookAheadIndexT1;
+                    if(partialPointIndex>lastPointIndex){
+                    lookAheadPoint.setLocation(startingPointOfLineSegment.getXPos()+ lookAheadIndexT1*lineSegVector.getxVec() , startingPointOfLineSegment.getYPos() + lookAheadIndexT1*lineSegVector.getyVec());
+                    firstLookAheadFound = true;
+                    }
                 }
-            }
-            
-            else if(lookAheadIndexT2>=0&&lookAheadIndexT2<=1){
-                partialPointIndex = i+lookAheadIndexT2;
-                if(partialPointIndex>lastPointIndex){
-                lookAheadPoint.setLocation(startingPointOfLineSegment.getXPos() + lookAheadIndexT2*lineSegVector.getxVec() , startingPointOfLineSegment.getYPos() + lookAheadIndexT2*lineSegVector.getyVec());
-                firstLookAheadFound = true;
+                
+                else if(lookAheadIndexT2>=0&&lookAheadIndexT2<=1){
+                    partialPointIndex = i+lookAheadIndexT2;
+                    if(partialPointIndex>lastPointIndex){
+                    lookAheadPoint.setLocation(startingPointOfLineSegment.getXPos() + lookAheadIndexT2*lineSegVector.getxVec() , startingPointOfLineSegment.getYPos() + lookAheadIndexT2*lineSegVector.getyVec());
+                    firstLookAheadFound = true;
 
+                    }
                 }
-            }
             }
             if(firstLookAheadFound){
-            i = chosenPath.getMainPath().length();
+                i = chosenPath.getMainPath().length();
             }
             else if(!firstLookAheadFound && i==chosenPath.getMainPath().length()-1){
-            lookAheadPoint.setLocation(lastLookAheadPoint.getXPos(), lastLookAheadPoint.getYPos());
+                lookAheadPoint.setLocation(lastLookAheadPoint.getXPos(), lastLookAheadPoint.getYPos());
             }
         }
         lastLookAheadPoint.setLocation(lookAheadPoint.getXPos(), lookAheadPoint.getYPos());
@@ -239,7 +238,8 @@ public class PurePursuitController extends Command {
         findRobotCurvature();
         curveAdjustedVelocity = Math.min(Math.abs(k/desiredRobotCurvature),chosenPath.getMainPath().get(closestSegment).velocity);
         setWheelVelocities(curveAdjustedVelocity, desiredRobotCurvature);
-        endThetaError = Pathfinder.boundHalfDegrees((Pathfinder.r2d(chosenPath.getMainPath().get(chosenPath.getMainPath().length()-1).heading)-odometry.gettheta()));
+        endThetaError = Pathfinder.boundHalfDegrees((Math.toDegrees
+(chosenPath.getMainPath().get(chosenPath.getMainPath().length()-1).heading)-odometry.gettheta()));
         //SmartDashboard.putNumber("thetaError", endThetaError);
   } 
   public void setOdometryX(double X){
@@ -272,6 +272,7 @@ public class PurePursuitController extends Command {
             v = -v;
             c = -c;
         }
+        Math.toDegrees
         leftVelocity = v*(2-(c*RobotConfig.robotBaseDist))/2;
         rightVelocity = v*(2+(c*RobotConfig.robotBaseDist))/2;
 
@@ -288,11 +289,11 @@ public class PurePursuitController extends Command {
         //SmartDashboard.putNumber("right",rightVelocity);  
     }
     private void findRobotCurvature(){
-        double a = -Math.tan(Pathfinder.d2r(odometry.gettheta()));
+        double a = -Math.tan(Math.toRadians(odometry.gettheta()));
         double b = 1;
-        double c = Math.tan(Pathfinder.d2r(odometry.gettheta())) * odometry.getX() - odometry.getY();
+        double c = Math.tan(Math.toRadians(odometry.gettheta())) * odometry.getX() - odometry.getY();
         double x = Math.abs( a * lookAheadPoint.getXPos()+ b * lookAheadPoint.getYPos() + c) /Math.sqrt(Math.pow(a, 2)+Math.pow(b, 2));
-        double side = Math.signum(Math.sin(Pathfinder.d2r(odometry.gettheta())) * (lookAheadPoint.getXPos()-odometry.getX())-Math.cos(Pathfinder.d2r(odometry.gettheta()))*(lookAheadPoint.getYPos()-odometry.getY())); 
+        double side = Math.signum(Math.sin(Math.toRadians(odometry.gettheta())) * (lookAheadPoint.getXPos()-odometry.getX())-Math.cos(Math.toRadians(odometry.gettheta()))*(lookAheadPoint.getYPos()-odometry.getY())); 
         double curvature = ((2*x)/Math.pow(lookAheadDistance,2))*side;
         desiredRobotCurvature = curvature;
    }

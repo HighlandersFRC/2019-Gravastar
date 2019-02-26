@@ -43,7 +43,8 @@ public class ShortPathToAngle extends Command {
     navx = new Navx(RobotMap.navx);
     startingAngle = navx.currentAngle();
     firstRun = false;
-    degreeEndAngle = Pathfinder.r2d(eAngle);
+    degreeEndAngle = Math.toDegrees
+(eAngle);
     purePursuitController.start();
     shouldEnd = false;
   }

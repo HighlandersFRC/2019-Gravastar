@@ -32,6 +32,7 @@ public class Odometry extends Command {
   private double y;
   private double yNext;
   private double xNext;
+  private boolean shouldRun;
   private Notifier odometryrunner  = new Notifier(new OdometryRunnable());
  
   private double dt;
@@ -53,43 +54,50 @@ public class Odometry extends Command {
   private class OdometryRunnable implements Runnable{
     //this is a sperate section of code that runs at a different update rate than the rest, this is necessary to match the dt
      public void run(){
-      if(isReversed){
-        leftSideNext = leftDriveEncoder.getDistance();
-        rightSideNext = rightDriveEncoder.getDistance();
-        thetaNext = navx.currentReverseYaw();
-        leftDelta = -(leftSideNext-leftSide);
-        rightDelta = -(rightSideNext-rightSide);
-        centerDelta = (leftDelta+rightDelta)/2;
-        xNext = x-centerDelta*Math.cos(Pathfinder.d2r(thetaNext));
-        yNext = y-centerDelta*Math.sin(Pathfinder.d2r(thetaNext));
-        x = xNext;
-        y = yNext;
-        theta = thetaNext;
-        leftSide = leftSideNext;
-        rightSide = rightSideNext;
+      if(shouldRun){
+        if(isReversed){
+          leftSideNext = leftDriveEncoder.getDistance();
+          rightSideNext = rightDriveEncoder.getDistance();
+          thetaNext = navx.currentReverseYaw();
+          leftDelta = -(leftSideNext-leftSide);
+          rightDelta = -(rightSideNext-rightSide);
+          centerDelta = (leftDelta+rightDelta)/2;
+          xNext = x-centerDelta*Math.cos(Math.toRadians(thetaNext));
+          yNext = y-centerDelta*Math.sin(Math.toRadians(thetaNext));
+          x = xNext;
+          y = yNext;
+          theta = thetaNext;
+          leftSide = leftSideNext;
+          rightSide = rightSideNext;
+        }
+        else{
+          leftSideNext = leftDriveEncoder.getDistance();
+          rightSideNext = rightDriveEncoder.getDistance();
+          thetaNext = navx.currentYaw();
+          leftDelta = (leftSideNext-leftSide);
+          rightDelta = (rightSideNext-rightSide);
+          centerDelta = (leftDelta+rightDelta)/2;
+          xNext = x+centerDelta*Math.cos(Math.toRadians(thetaNext));
+          yNext = y+centerDelta*Math.sin(Math.toRadians(thetaNext));
+          x = xNext;
+          y = yNext;
+          theta = thetaNext;
+          leftSide = leftSideNext;
+          rightSide = rightSideNext;
+        }
+        
       }
       else{
-        leftSideNext = leftDriveEncoder.getDistance();
-        rightSideNext = rightDriveEncoder.getDistance();
-        thetaNext = navx.currentYaw();
-        leftDelta = (leftSideNext-leftSide);
-        rightDelta = (rightSideNext-rightSide);
-        centerDelta = (leftDelta+rightDelta)/2;
-        xNext = x+centerDelta*Math.cos(Pathfinder.d2r(thetaNext));
-        yNext = y+centerDelta*Math.sin(Pathfinder.d2r(thetaNext));
-        x = xNext;
-        y = yNext;
-        theta = thetaNext;
-        leftSide = leftSideNext;
-        rightSide = rightSideNext;
+        odometryrunner.stop();
       }
+     
      }
    }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-   
+    shouldRun = true;
     navx.softResetAngle();
     navx.softResetYaw();
     leftDriveEncoder.softReset();
@@ -114,6 +122,10 @@ public class Odometry extends Command {
     leftSideNext = 0;
     rightSide = 0;
     rightSideNext= 0;
+    centerDelta = 0;
+    rightDelta = 0;
+    leftDelta = 0;
+    theta = 0;
   }
   public double getX(){
     return x;
@@ -155,6 +167,7 @@ public class Odometry extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    shouldRun = false;
     odometryrunner.stop();
   }
 
