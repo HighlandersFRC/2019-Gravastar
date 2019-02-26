@@ -272,7 +272,6 @@ public class PurePursuitController extends Command {
             v = -v;
             c = -c;
         }
-        Math.toDegrees
         leftVelocity = v*(2-(c*RobotConfig.robotBaseDist))/2;
         rightVelocity = v*(2+(c*RobotConfig.robotBaseDist))/2;
 
