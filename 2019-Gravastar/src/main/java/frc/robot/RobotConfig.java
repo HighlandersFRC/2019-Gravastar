@@ -26,6 +26,7 @@ public class RobotConfig {
 	public static double armRestingAngle = 0;
 	public static double armKfFactor = 0.0;//0;
 	public static double ultraSonicConversionFactor = 0.00427807;
+	public static double forwardUltraSonicDisplacementDistance = 0.5;
 	public static double armAngleToTicksConversion =-35;//on comp40.5;
 	public static int driveMotorContinuousCurrentHighGear = 30;
 	public static int driveMotorContinuousCurrentLowGear = 40;

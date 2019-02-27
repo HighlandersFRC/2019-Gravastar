@@ -52,6 +52,8 @@ public class Robot extends TimedRobot {
 	private UsbCamera camera2;
 	private UsbCamera camera3;
 	private VideoSink server;
+	public static double ultraSonicAngle;
+	public static double ultraSonicAverage;
 	public static boolean hasCamera;
 	public static boolean driveAssistAvaliable;
 	public static ChangeLightColor changeLightColor = new ChangeLightColor(0,0, 150, RobotMap.canifier1);
@@ -73,7 +75,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 		try {
-			jevois1 = new SerialPort(115200, Port.kUSB);
+			jevois1 = new SerialPort(115200, Port.kUSB2);
 			hasCamera = true;
 		} catch (Exception e) {
 			hasCamera = false;
@@ -90,8 +92,7 @@ public class Robot extends TimedRobot {
 		camera2= CameraServer.getInstance().startAutomaticCapture(1);
 		camera2.setResolution(320, 240);
 		camera2.setFPS(15);
-
-		camera3= CameraServer.getInstance().startAutomaticCapture(1);
+		camera3= CameraServer.getInstance().startAutomaticCapture(2);
 		camera3.setResolution(320, 240);
 		camera3.setFPS(15);
 
@@ -114,7 +115,7 @@ public class Robot extends TimedRobot {
 		try {
 			if(!hasCamera){
 				
-				jevois1 = new SerialPort(115200, Port.kUSB);
+				jevois1 = new SerialPort(115200, Port.kUSB2);
 				if(jevois1.getBytesReceived()>2){
 					hasCamera = false;
 				}
@@ -132,15 +133,14 @@ public class Robot extends TimedRobot {
 			SmartDashboard.putNumber("leftPos",RobotMap.leftMainDrive.getDistance());
 			SmartDashboard.putNumber("rightpos",RobotMap.rightMaindrive.getDistance());
 			SmartDashboard.putBoolean("hasCamera", hasCamera);
-			SmartDashboard.putNumber("ultraSonic1",RobotMap.mainUltrasonicSensor1.getDistance());
-			SmartDashboard.putNumber("ultraSonic2", RobotMap.mainUltrasonicSensor2.getDistance());
+			
 
 		}
-		if(OI.operatorController.getPOV() == 90){
-			server.setSource(camera3);
-		}
-		else if(OI.operatorController.getPOV() ==0){
+		if(OI.pilotController.getPOV() == 180){
 			server.setSource(camera);
+		}
+		else if(OI.pilotController.getPOV() ==0){
+			server.setSource(camera3);
 		}
 	}
 	@Override
@@ -165,26 +165,31 @@ public class Robot extends TimedRobot {
 		autoSuite.startAutoCommandsRobotControl();
 		
 	}
+	private void visionDecisionAlgorithm(){
+		visionCamera.updateVision();
+		ultraSonicAverage = (RobotMap.mainUltrasonicSensor1.getDistance()+RobotMap.mainUltrasonicSensor2.getDistance())/2;
+		ultraSonicAngle = Math.toDegrees(Math.atan(RobotConfig.forwardUltraSonicDisplacementDistance/(RobotMap.mainUltrasonicSensor1.getDistance()-RobotMap.mainUltrasonicSensor2.getDistance())));
+		if(Timer.getFPGATimestamp()-visionCamera.lastParseTime<0.25&&RobotMap.mainUltrasonicSensor1.getDistance()>1&&RobotMap.mainUltrasonicSensor2.getDistance()>1&&Math.abs(ultraSonicAngle)<22.5&&Math.abs(ultraSonicAverage-visionCamera.getDistance())<0.4){
+			driveAssistAvaliable = true;
+			changeLightColor.changeLedColor(255,0, 0);
+		}	
+		else if(Timer.getFPGATimestamp()-visionCamera.lastParseTime<0.5&&RobotMap.mainUltrasonicSensor1.getDistance()>1&&RobotMap.mainUltrasonicSensor2.getDistance()>1){
+			driveAssistAvaliable = true;
+			changeLightColor.changeLedColor(0, 255, 0);
+		}	
+		else{
+			changeLightColor.changeLedColor(0, 0, 255);
+			driveAssistAvaliable = false;
+		}		
+
+	}
 	@Override
 	public void autonomousPeriodic() {
 		if(OI.pilotController.getTriggerAxis(Hand.kLeft)>0.5&&OI.pilotController.getTriggerAxis(Hand.kRight)>0.5&&OI.pilotController.getStartButton()&&OI.pilotController.getBackButton()){
 			autoSuite.startAutoCommandsDriverControl();
 		}
 		if(hasCamera){
-			visionCamera.updateVision();
-			if(Timer.getFPGATimestamp()-visionCamera.lastParseTime<0.25&&RobotMap.mainUltrasonicSensor1.getDistance()>1&&RobotMap.mainUltrasonicSensor2.getDistance()>1){
-				driveAssistAvaliable = true;
-				changeLightColor.changeLedColor(255,0, 0);
-			}	
-			else if(Timer.getFPGATimestamp()-visionCamera.lastParseTime<0.5&&RobotMap.mainUltrasonicSensor1.getDistance()>1&&RobotMap.mainUltrasonicSensor2.getDistance()>1){
-				driveAssistAvaliable = true;
-				changeLightColor.changeLedColor(0, 255, 0);
-			}	
-			else{
-				changeLightColor.changeLedColor(0, 0, 255);
-
-				driveAssistAvaliable = false;
-			}		
+			visionDecisionAlgorithm();
 		}
 		if(runCounter%5==0){
 			if(hasCamera){
@@ -209,35 +214,19 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopPeriodic() {	
 		if(hasCamera){
-			visionCamera.updateVision();
-			if(Timer.getFPGATimestamp()-visionCamera.lastParseTime<0.25&&RobotMap.mainUltrasonicSensor1.getDistance()>1&&RobotMap.mainUltrasonicSensor2.getDistance()>1){
-				driveAssistAvaliable = true;
-				changeLightColor.changeLedColor(255,0, 0);
-			}	
-			else if(Timer.getFPGATimestamp()-visionCamera.lastParseTime<0.5&&RobotMap.mainUltrasonicSensor1.getDistance()>1&&RobotMap.mainUltrasonicSensor2.getDistance()>1){
-				driveAssistAvaliable = true;
-				changeLightColor.changeLedColor(0, 255, 0);
-			}	
-			else{
-				changeLightColor.changeLedColor(0, 0, 255);
-
-				driveAssistAvaliable = false;
-			}		
+			visionDecisionAlgorithm();
 		}
 		if(runCounter%5==0){
+			SmartDashboard.putNumber("ultraSonic1",RobotMap.mainUltrasonicSensor1.getDistance());
+			SmartDashboard.putNumber("ultraSonic2", RobotMap.mainUltrasonicSensor2.getDistance());
+			SmartDashboard.putNumber("ultraSonicAngle", ultraSonicAngle);
 			if(hasCamera){
 				SmartDashboard.putBoolean("driveAssistAvaliable", driveAssistAvaliable);
 				SmartDashboard.putString("visionString", visionCamera.getString());
 				
 			}
-			
 			SmartDashboard.putNumber("armPosit",RobotMap.mainArmEncoder.getAngle());
-			
 		}
-		
-		
-	
-		
 		Scheduler.getInstance().run();
 	}
 	@Override
