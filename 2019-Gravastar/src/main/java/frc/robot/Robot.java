@@ -85,18 +85,19 @@ public class Robot extends TimedRobot {
 		}
 		
 		robotConfig.setStartingConfig();
-		camera = CameraServer.getInstance().startAutomaticCapture(0);
+		camera = CameraServer.getInstance().startAutomaticCapture("VisionCamera1", "/dev/video0");
 		camera.setResolution(320, 240);
 		camera.setFPS(15);
 
-		camera2= CameraServer.getInstance().startAutomaticCapture(1);
+		camera2 = CameraServer.getInstance().startAutomaticCapture("VisionCamera2", "/dev/video1");
 		camera2.setResolution(320, 240);
 		camera2.setFPS(15);
-		camera3= CameraServer.getInstance().startAutomaticCapture(2);
+
+		camera3= CameraServer.getInstance().startAutomaticCapture("VisionCamera3", "/dev/video2");
 		camera3.setResolution(320, 240);
 		camera3.setFPS(15);
 
-		server = CameraServer.getInstance().getServer();
+		server = CameraServer.getInstance().addSwitchedCamera("driverVisionCameras");
 		Shuffleboard.update();
 		SmartDashboard.updateValues(); 
 
@@ -112,21 +113,10 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void robotPeriodic() {
-		try {
-			if(!hasCamera){
-				
-				jevois1 = new SerialPort(115200, Port.kUSB2);
-				if(jevois1.getBytesReceived()>2){
-					hasCamera = false;
-				}
-				hasCamera = true;
-			}
-			
-		} catch (Exception e) {
-			hasCamera = false;
-		}
+
 		runCounter++;
 		if(runCounter%100==0){
+
 			double pressure = ((250*RobotMap.preassureSensor.getAverageVoltage())/4.53)-25;
 			SmartDashboard.putNumber("pressure", pressure);
 			SmartDashboard.putBoolean("hasNavx", RobotMap.navx.isConnected());
@@ -136,8 +126,27 @@ public class Robot extends TimedRobot {
 			
 
 		}
+		try {
+			if(!hasCamera){
+				
+				jevois1 = new SerialPort(115200, Port.kUSB2);
+				if(jevois1.getBytesReceived()<2){
+					hasCamera = false;
+				}
+				else{
+					hasCamera = true;
+				}
+				
+			}
+			
+		} catch (Exception e) {
+			hasCamera = false;
+		}
+	
+		
+	
 		if(OI.pilotController.getPOV() == 180){
-			server.setSource(camera);
+			server.setSource(camera2);
 		}
 		else if(OI.pilotController.getPOV() ==0){
 			server.setSource(camera3);
@@ -213,6 +222,8 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopPeriodic() {	
+	
+
 		if(hasCamera){
 			visionDecisionAlgorithm();
 		}
