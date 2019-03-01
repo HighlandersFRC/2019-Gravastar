@@ -53,22 +53,14 @@ public class VisionToGetToTarget extends Command {
     yDeltaArrayList.clear();
     
 	
-    camNotifier = new Notifier(new CamRunnable());
     succesfulRunCounter = 0;
     runCounter = 0;
     firstRun = false;
-    camNotifier.startPeriodic(0.05);
+   
     Robot.visionCamera.updateVision();
 
   }
-  private class CamRunnable implements Runnable{
   
-    public void run(){
-
-    
-			
-		}
-  }
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
@@ -78,7 +70,7 @@ public class VisionToGetToTarget extends Command {
     double totalUltraSonicDistance = (RobotMap.mainUltrasonicSensor1.getDistance() + RobotMap.mainUltrasonicSensor2.getDistance())/2;
     if(RobotMap.mainUltrasonicSensor2.getDistance()<8&&RobotMap.mainUltrasonicSensor2.getDistance()>0&&RobotMap.mainUltrasonicSensor1.getDistance()<8&&RobotMap.mainUltrasonicSensor1.getDistance()>0){
     
-      distance = (distance + totalUltraSonicDistance)/2;
+      //distance = (distance + totalUltraSonicDistance)/2;
     }
   
     if(succesfulRunCounter<10&&!firstRun&&!isFinished()){
@@ -110,10 +102,10 @@ public class VisionToGetToTarget extends Command {
       yAverage = ySum/yDeltaArrayList.size();
       System.out.println(xAverage + " " + yAverage);
       if(Math.abs(Robot.ultraSonicAngle)<22.5){
-        shortPathToAngle = new ShortPathToAngle(xAverage, yAverage+0.25, Math.toRadians(Robot.ultraSonicAngle));
+        shortPathToAngle = new ShortPathToAngle(xAverage-0.2, yAverage+0.25, Math.toRadians(Robot.ultraSonicAngle));
       }
       else{
-        shortPathToAngle = new ShortPathToAngle(xAverage, yAverage+0.25, angle);
+        shortPathToAngle = new ShortPathToAngle(xAverage-0.2, yAverage+0.25, angle);
       }
      
       shortPathToAngle.start();
@@ -136,7 +128,7 @@ public class VisionToGetToTarget extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    camNotifier.stop();
+ 
     System.out.println("done");
 
     RobotMap.leftDriveLead.set(ControlMode.PercentOutput, 0);

@@ -38,8 +38,9 @@ public class ShortPathToAngle extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    RobotMap.drive.setHighGear();
     quickPathGeneration = new QuickPathGeneration(xDist, yDist, eAngle);
-    purePursuitController = new PurePursuitController(quickPathGeneration.GeneratePath(),1.9, 2.25, 0.05);
+    purePursuitController = new PurePursuitController(quickPathGeneration.GeneratePath(),0.9, 4.25, 0.05);
     navx = new Navx(RobotMap.navx);
     startingAngle = navx.currentAngle();
     firstRun = false;
@@ -60,8 +61,8 @@ public class ShortPathToAngle extends Command {
       if(!firstRun){
         angleError = degreeEndAngle-navx.currentAngle();
       
-        CascadingPIDTurn cascadingPIDTurn= new CascadingPIDTurn(angleError,0.12,0.00085,0.06);;
-        //cascadingPIDTurn.start();
+        CascadingPIDTurn cascadingPIDTurn= new CascadingPIDTurn(angleError,0.12,0.00085,0.06);
+        cascadingPIDTurn.start();
         firstRun = true;
       }
     }

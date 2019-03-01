@@ -45,8 +45,8 @@ public class CascadingPIDTurn extends Command {
   @Override
   protected void initialize() {
     shouldEnd = false;
-    leftDriveTrainVelocityPID = new DriveTrainVelocityPID(0, RobotMap.leftDriveLead, 0,0.0402026, 0.18, 0.0004, 0.8);
-    rightDriveTrainVelocityPID = new DriveTrainVelocityPID(0, RobotMap.rightDriveLead, 0,0.0406258, 0.18, 0.0004, 0.8);
+     leftDriveTrainVelocityPID = new DriveTrainVelocityPID(0, RobotMap.leftDriveLead, 1, 0.33230122, 0.7, 0.008, 18.0);
+     rightDriveTrainVelocityPID = new DriveTrainVelocityPID(0, RobotMap.rightDriveLead, 1, 0.33230122, 0.7, 0.008, 18.0);
     turnPID =  new PID(p,i,d );
     navx = new Navx(RobotMap.navx);
     leftSideDriveEncoder = new DriveEncoder(RobotMap.leftDriveLead, RobotMap.leftDriveLead.getSelectedSensorPosition(0));

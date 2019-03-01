@@ -15,6 +15,8 @@ import edu.wpi.cscore.VideoSink;
 import edu.wpi.cscore.VideoSource.ConnectionStrategy;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Notifier;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -54,7 +56,7 @@ public class Robot extends TimedRobot {
 	private VideoSink server;
 	public static double ultraSonicAngle;
 	public static double ultraSonicAverage;
-	public static boolean hasCamera;
+	public static boolean hasCamera = false;
 	public static boolean driveAssistAvaliable;
 	public static ChangeLightColor changeLightColor = new ChangeLightColor(0,0, 150, RobotMap.canifier1);
 	public static VisionCamera visionCamera;
@@ -76,13 +78,17 @@ public class Robot extends TimedRobot {
 	public void robotInit() {
 		try {
 			jevois1 = new SerialPort(115200, Port.kUSB2);
-			hasCamera = true;
+			if(jevois1.getBytesReceived()>2){
+				hasCamera = true;
+			}
+			else{
+				hasCamera = false;
+			}
 		} catch (Exception e) {
 			hasCamera = false;
 		}
-		if(hasCamera){
-			visionCamera= new VisionCamera(Robot.jevois1);
-		}
+		visionCamera= new VisionCamera(Robot.jevois1);
+
 		
 		robotConfig.setStartingConfig();
 		camera = CameraServer.getInstance().startAutomaticCapture("VisionCamera1", "/dev/video0");
@@ -97,7 +103,8 @@ public class Robot extends TimedRobot {
 		camera3.setResolution(320, 240);
 		camera3.setFPS(15);
 
-		server = CameraServer.getInstance().addSwitchedCamera("driverVisionCameras");
+		//server = CameraServer.getInstance().addSwitchedCamera("driverVisionCameras");
+		
 		Shuffleboard.update();
 		SmartDashboard.updateValues(); 
 
@@ -123,13 +130,13 @@ public class Robot extends TimedRobot {
 			SmartDashboard.putNumber("leftPos",RobotMap.leftMainDrive.getDistance());
 			SmartDashboard.putNumber("rightpos",RobotMap.rightMaindrive.getDistance());
 			SmartDashboard.putBoolean("hasCamera", hasCamera);
-			
+			SmartDashboard.putNumber("ultraSonic1",RobotMap.mainUltrasonicSensor1.getDistance());
+			SmartDashboard.putNumber("ultraSonic2", RobotMap.mainUltrasonicSensor2.getDistance());
+			SmartDashboard.putNumber("ultraSonicAngle", ultraSonicAngle);
 
 		}
 		try {
 			if(!hasCamera){
-				
-				jevois1 = new SerialPort(115200, Port.kUSB2);
 				if(jevois1.getBytesReceived()<2){
 					hasCamera = false;
 				}
@@ -146,10 +153,10 @@ public class Robot extends TimedRobot {
 		
 	
 		if(OI.pilotController.getPOV() == 180){
-			server.setSource(camera2);
+			//server.setSource(camera2);
 		}
 		else if(OI.pilotController.getPOV() ==0){
-			server.setSource(camera3);
+			//server.setSource(camera3);
 		}
 	}
 	@Override
@@ -175,28 +182,31 @@ public class Robot extends TimedRobot {
 		
 	}
 	private void visionDecisionAlgorithm(){
-		visionCamera.updateVision();
-		ultraSonicAverage = (RobotMap.mainUltrasonicSensor1.getDistance()+RobotMap.mainUltrasonicSensor2.getDistance())/2;
-		ultraSonicAngle = Math.toDegrees(Math.atan(RobotConfig.forwardUltraSonicDisplacementDistance/(RobotMap.mainUltrasonicSensor1.getDistance()-RobotMap.mainUltrasonicSensor2.getDistance())));
-		if(Timer.getFPGATimestamp()-visionCamera.lastParseTime<0.25&&RobotMap.mainUltrasonicSensor1.getDistance()>1&&RobotMap.mainUltrasonicSensor2.getDistance()>1&&Math.abs(ultraSonicAngle)<22.5&&Math.abs(ultraSonicAverage-visionCamera.getDistance())<0.4){
-			driveAssistAvaliable = true;
-			changeLightColor.changeLedColor(255,0, 0);
-		}	
-		else if(Timer.getFPGATimestamp()-visionCamera.lastParseTime<0.5&&RobotMap.mainUltrasonicSensor1.getDistance()>1&&RobotMap.mainUltrasonicSensor2.getDistance()>1){
-			driveAssistAvaliable = true;
-			changeLightColor.changeLedColor(0, 255, 0);
-		}	
-		else{
-			changeLightColor.changeLedColor(0, 0, 255);
-			driveAssistAvaliable = false;
-		}		
+		try{
+			visionCamera.updateVision();
+			ultraSonicAverage = (RobotMap.mainUltrasonicSensor1.getDistance()+RobotMap.mainUltrasonicSensor2.getDistance())/2;
+			ultraSonicAngle = Math.toDegrees(Math.atan(RobotConfig.forwardUltraSonicDisplacementDistance/(RobotMap.mainUltrasonicSensor1.getDistance()-RobotMap.mainUltrasonicSensor2.getDistance())));
+			if(Timer.getFPGATimestamp()-visionCamera.lastParseTime<0.25&&RobotMap.mainUltrasonicSensor1.getDistance()>1&&RobotMap.mainUltrasonicSensor2.getDistance()>1&&Math.abs(ultraSonicAngle)<22.5&&Math.abs(ultraSonicAverage-visionCamera.getDistance())<0.4){
+				driveAssistAvaliable = true;
+				changeLightColor.changeLedColor(255,0, 0);
+			}	
+			else if(Timer.getFPGATimestamp()-visionCamera.lastParseTime<0.5&&RobotMap.mainUltrasonicSensor1.getDistance()>1&&RobotMap.mainUltrasonicSensor2.getDistance()>1){
+				driveAssistAvaliable = true;
+				changeLightColor.changeLedColor(0, 255, 0);
+			}	
+			else{
+				changeLightColor.changeLedColor(0, 0, 255);
+				driveAssistAvaliable = false;
+			}	
+		}
+		catch(Exception e){
+			hasCamera = false;
+		}
+			
 
 	}
 	@Override
 	public void autonomousPeriodic() {
-		if(OI.pilotController.getTriggerAxis(Hand.kLeft)>0.5&&OI.pilotController.getTriggerAxis(Hand.kRight)>0.5&&OI.pilotController.getStartButton()&&OI.pilotController.getBackButton()){
-			autoSuite.startAutoCommandsDriverControl();
-		}
 		if(hasCamera){
 			visionDecisionAlgorithm();
 		}
@@ -222,15 +232,13 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopPeriodic() {	
-	
-
+		//System.out.println(RobotMap.counter2.get());
 		if(hasCamera){
 			visionDecisionAlgorithm();
 		}
 		if(runCounter%5==0){
-			SmartDashboard.putNumber("ultraSonic1",RobotMap.mainUltrasonicSensor1.getDistance());
-			SmartDashboard.putNumber("ultraSonic2", RobotMap.mainUltrasonicSensor2.getDistance());
-			SmartDashboard.putNumber("ultraSonicAngle", ultraSonicAngle);
+			ultraSonicAngle = Math.toDegrees(Math.atan((RobotMap.mainUltrasonicSensor1.getDistance()-RobotMap.mainUltrasonicSensor2.getDistance())/RobotConfig.forwardUltraSonicDisplacementDistance));
+			
 			if(hasCamera){
 				SmartDashboard.putBoolean("driveAssistAvaliable", driveAssistAvaliable);
 				SmartDashboard.putString("visionString", visionCamera.getString());
