@@ -101,12 +101,8 @@ public class VisionToGetToTarget extends Command {
       xAverage = xSum/xDeltaArrayList.size();
       yAverage = ySum/yDeltaArrayList.size();
       System.out.println(xAverage + " " + yAverage);
-      if(Math.abs(Robot.ultraSonicAngle)<22.5){
-        shortPathToAngle = new ShortPathToAngle(xAverage-0.2, yAverage+0.25, Math.toRadians(Robot.ultraSonicAngle));
-      }
-      else{
-        shortPathToAngle = new ShortPathToAngle(xAverage-0.2, yAverage+0.25, angle);
-      }
+      shortPathToAngle = new ShortPathToAngle(xAverage-0.2, yAverage+0.5*(distance/6), 0);
+      
      
       shortPathToAngle.start();
       firstRun = true;
@@ -129,7 +125,6 @@ public class VisionToGetToTarget extends Command {
   @Override
   protected void end() {
  
-    System.out.println("done");
 
     RobotMap.leftDriveLead.set(ControlMode.PercentOutput, 0);
     RobotMap.rightDriveLead.set(ControlMode.PercentOutput, 0);

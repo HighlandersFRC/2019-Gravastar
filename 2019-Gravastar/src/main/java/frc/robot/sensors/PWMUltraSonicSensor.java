@@ -7,27 +7,19 @@
 
 package frc.robot.sensors;
 
-import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.Counter;
 import frc.robot.RobotConfig;
 
 /**
  * Add your docs here.
  */
-public class UltrasonicSensor {
-    AnalogInput ultraSonic;
-    public UltrasonicSensor(AnalogInput input){
-        ultraSonic = input;
+public class PWMUltraSonicSensor {
+    private Counter counter;
+    public PWMUltraSonicSensor(Counter counter){
+
     }
     public double getDistance(){
-        if(ultraSonic.getAverageValue()*RobotConfig.ultraSonicConversionFactor>0.95){
-            return ultraSonic.getValue()*RobotConfig.ultraSonicConversionFactor;
-        }  
-        else{
-            return -1;
-        }
-        
-    }
-    public double getVoltage(){
-        return ultraSonic.getVoltage();
+        return counter.getPeriod() * RobotConfig.pwmUltraSonicConversionFactor;
+
     }
 }

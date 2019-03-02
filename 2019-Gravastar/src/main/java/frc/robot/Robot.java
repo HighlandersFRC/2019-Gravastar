@@ -6,21 +6,12 @@
 /*----------------------------------------------------------------------------*/
 
 package frc.robot;
-
-
-import com.ctre.phoenix.motorcontrol.ControlMode;
-
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.cscore.VideoSink;
-import edu.wpi.cscore.VideoSource.ConnectionStrategy;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.wpilibj.Notifier;
-import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -28,14 +19,11 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.autonomouscommands.AutoSuite;
-import frc.robot.autonomouscommands.EnableDriverControl;
 import frc.robot.sensors.VisionCamera;
 import frc.robot.teleopcommands.TeleopSuite;
 import frc.robot.tools.Odometry;
-import frc.robot.universalcommands.ActuateAllHatchPistons;
 import frc.robot.universalcommands.ChangeLightColor;
 import frc.robot.universalcommands.StopMotors;
-import jaci.pathfinder.Pathfinder;
 //import org.json.simple.parser.JSONParser;
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -103,7 +91,7 @@ public class Robot extends TimedRobot {
 		camera3.setResolution(320, 240);
 		camera3.setFPS(15);
 
-		//server = CameraServer.getInstance().addSwitchedCamera("driverVisionCameras");
+		server = CameraServer.getInstance().addSwitchedCamera("driverVisionCameras");
 		
 		Shuffleboard.update();
 		SmartDashboard.updateValues(); 
@@ -153,10 +141,10 @@ public class Robot extends TimedRobot {
 		
 	
 		if(OI.pilotController.getPOV() == 180){
-			//server.setSource(camera2);
+			server.setSource(camera2);
 		}
 		else if(OI.pilotController.getPOV() ==0){
-			//server.setSource(camera3);
+			server.setSource(camera3);
 		}
 	}
 	@Override
@@ -219,6 +207,8 @@ public class Robot extends TimedRobot {
 			}
 			SmartDashboard.putNumber("armPosit",RobotMap.mainArmEncoder.getAngle());
 			
+			
+			
 		}
 
 		Scheduler.getInstance().run();
@@ -243,6 +233,13 @@ public class Robot extends TimedRobot {
 				SmartDashboard.putBoolean("driveAssistAvaliable", driveAssistAvaliable);
 				SmartDashboard.putString("visionString", visionCamera.getString());
 				
+			}
+			if(Math.abs((RobotMap.mainUltrasonicSensor1.getDistance()+RobotMap.mainUltrasonicSensor2.getDistance())/2-1.4)<0.2){
+				SmartDashboard.putBoolean("isGoodPositionRocket", true);
+			}
+			else{
+				SmartDashboard.putBoolean("isGoodPositionRocket", false);
+
 			}
 			SmartDashboard.putNumber("armPosit",RobotMap.mainArmEncoder.getAngle());
 		}

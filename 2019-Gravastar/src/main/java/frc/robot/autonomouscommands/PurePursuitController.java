@@ -38,8 +38,8 @@ public class PurePursuitController extends Command {
   private double minDistanceToPoint;
   private Point closestPoint;
   private double lookAheadDistance;
-  private DriveTrainVelocityPID leftDriveTrainVelocityPID = new DriveTrainVelocityPID(0, RobotMap.leftDriveLead, 1, 0.33230122, 0.7, 0.008, 18.0);
-  private DriveTrainVelocityPID rightDriveTrainVelocityPID = new DriveTrainVelocityPID(0, RobotMap.rightDriveLead, 1, 0.33230122, 0.7, 0.008, 18.0);
+  private DriveTrainVelocityPID leftDriveTrainVelocityPID = new DriveTrainVelocityPID(0, RobotMap.leftDriveLead, 1, 0.33230122, 0.7, 0.006, 15.0);
+  private DriveTrainVelocityPID rightDriveTrainVelocityPID = new DriveTrainVelocityPID(0, RobotMap.rightDriveLead, 1, 0.33230122, 0.7, 0.006, 15.0);
   private double desiredRobotCurvature;
   private Point startingPointOfLineSegment;
   private boolean firstLookAheadFound;
@@ -229,10 +229,10 @@ public class PurePursuitController extends Command {
         }
         distToEndVector.setX(chosenPath.getMainPath().get(chosenPath.getMainPath().length()-1).x-odometry.getX());
         distToEndVector.setY(chosenPath.getMainPath().get(chosenPath.getMainPath().length()-1).y-odometry.getY());
-         SmartDashboard.putNumber("distoend", distToEndVector.length()*12);
-         SmartDashboard.putNumber("x", odometry.getX());
-         SmartDashboard.putNumber("y",odometry.getY());
-         SmartDashboard.putNumber("theta", odometry.gettheta());
+         //SmartDashboard.putNumber("distoend", distToEndVector.length()*12);
+         //SmartDashboard.putNumber("x", odometry.getX());
+         //SmartDashboard.putNumber("y",odometry.getY());
+         //SmartDashboard.putNumber("theta", odometry.gettheta());
         startingNumberLA = (int)partialPointIndex;
         lastLookAheadPoint = lookAheadPoint;
         findRobotCurvature();

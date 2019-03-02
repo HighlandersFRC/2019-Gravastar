@@ -77,11 +77,11 @@ public class ArcadeDrive extends Command {
 			RobotMap.drive.setHighGear();
 		}
 		if(RobotMap.shifters.get() == RobotMap.highGear) {
-				sensitivity =1.0;
+				sensitivity =1.5;
 
 		}
 		else if(RobotMap.shifters.get() == RobotMap.lowGear) {
-				sensitivity =0.5;
+				sensitivity =0.75;
 		}
 	 }
 	

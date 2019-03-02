@@ -22,7 +22,7 @@ public class ArmPositionController extends Command {
   private double desiredValue;
   private PID armPID;
   private double armkF = RobotConfig.armKfFactor;
-  private double p = 0.02;
+  private double p = 0.05;
   private double i;
   private double d;
   private ArmEncoder armEncoder;
@@ -40,8 +40,8 @@ public class ArmPositionController extends Command {
   protected void initialize() {
     armEncoder = new ArmEncoder(RobotMap.armMaster);
     armPID = new PID(p, i, d);
-    armPID.setMaxOutput(0.35);
-    armPID.setMinOutput(-0.35);
+    armPID.setMaxOutput(0.45);
+    armPID.setMinOutput(-0.45);
     armPID.setSetPoint(desiredValue);
     shouldRun = true;
     shouldEnd = false;

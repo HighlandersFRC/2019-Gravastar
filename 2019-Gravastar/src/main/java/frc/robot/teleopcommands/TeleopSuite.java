@@ -23,7 +23,7 @@ public class TeleopSuite {
 		teleopArmControl.start();
 	}
 	public void endTeleopCommands(){
-		arcadeDrive.cancel();
+		//arcadeDrive.cancel();
 		//tankDrive.cancel();
 		driveTrainStallProtectionController.cancel();
 		driveTrainController.cancel();

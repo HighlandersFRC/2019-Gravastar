@@ -52,7 +52,7 @@ public class TeleopArmControl extends Command {
 			armPositionController.setArmPosition(RobotConfig.armUpAngle);
 		}
 		else if(OI.operatorController.getXButton()){
-		  armPositionController.setArmPosition(70);
+		  armPositionController.setArmPosition(55);
 		}
 		if(OI.operatorController.getBumper(Hand.kLeft)){
 			RobotMap.arm.pushOutHatch();
@@ -63,7 +63,10 @@ public class TeleopArmControl extends Command {
 		if(OI.operatorController.getTriggerAxis(Hand.kLeft)>0.1){
       RobotMap.arm.intakeBall();
 		}
-		else if(OI.operatorController.getTriggerAxis(Hand.kRight)>0.1){
+		else if(OI.operatorController.getTriggerAxis(Hand.kRight)>0.1&&armPositionController.getArmAngle()<80){
+      RobotMap.arm.outTakeBall();
+    }
+    else if(OI.operatorController.getTriggerAxis(Hand.kRight)>0.1&&armPositionController.getArmAngle()>80){
       RobotMap.arm.shootBall();
 		}
 		else{

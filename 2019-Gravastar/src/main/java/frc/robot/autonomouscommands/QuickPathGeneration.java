@@ -31,7 +31,7 @@ public class QuickPathGeneration {
       new Waypoint(0,0, heading), 
     };
 
-    returnPath = new PathSetup(returnPathPoints, 6, false);
+    returnPath = new PathSetup(returnPathPoints, 7, false);
     returnPath.generateMainPath();
     
     return returnPath;

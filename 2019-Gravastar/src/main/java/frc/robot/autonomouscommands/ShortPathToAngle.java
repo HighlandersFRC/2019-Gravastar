@@ -40,7 +40,7 @@ public class ShortPathToAngle extends Command {
   protected void initialize() {
     RobotMap.drive.setHighGear();
     quickPathGeneration = new QuickPathGeneration(xDist, yDist, eAngle);
-    purePursuitController = new PurePursuitController(quickPathGeneration.GeneratePath(),0.9, 4.25, 0.05);
+    purePursuitController = new PurePursuitController(quickPathGeneration.GeneratePath(),0.8, 4.25, 0.05);
     navx = new Navx(RobotMap.navx);
     startingAngle = navx.currentAngle();
     firstRun = false;
