@@ -7,10 +7,12 @@
 
 package frc.robot.universalcommands;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.OI;
 import frc.robot.Robot;
+import frc.robot.RobotMap;
 import frc.robot.autonomouscommands.VisionToGetToTarget;
 import frc.robot.teleopcommands.ArcadeDrive;
 
@@ -18,6 +20,7 @@ public class DriveTrainController extends Command {
   private VisionToGetToTarget visionToGetToTarget;
   private ArcadeDrive arcadeDrive;
   private Boolean run;
+  private DoubleSolenoid.Value value = RobotMap.highGear;
   public DriveTrainController() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
@@ -34,12 +37,14 @@ public class DriveTrainController extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    if(Robot.driveAssistAvaliable&&OI.pilotController.getStartButtonPressed()&&!visionToGetToTarget.isRunning()){
-     
+    if(Robot.driveAssistAvaliable&&OI.pilotController.getStartButtonPressed()&&!visionToGetToTarget.isRunning()&&!visionToGetToTarget.isRunning()){
+      value = RobotMap.shifters.get();
       visionToGetToTarget.start();
     }
     else if(!OI.pilotController.getStartButton()){
-      
+      if(OI.pilotController.getStartButtonReleased()){
+        RobotMap.shifters.set(value);
+      }
       if(!arcadeDrive.isRunning()){
         arcadeDrive.start();
       }

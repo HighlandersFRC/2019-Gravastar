@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.Timer;
@@ -36,6 +37,7 @@ public class VisionToGetToTarget extends Command {
   private double previousAngle;
   private double previousDistance;
   private double startTime;
+  private DoubleSolenoid.Value value;
   public VisionToGetToTarget() {
     requires(RobotMap.drive);
     // Use requires() here to declare subsystem dependencies
@@ -51,7 +53,7 @@ public class VisionToGetToTarget extends Command {
     xDeltaArrayList.clear();
     yDeltaArrayList = new ArrayList<>();
     yDeltaArrayList.clear();
-    
+ 
 	
     succesfulRunCounter = 0;
     runCounter = 0;
@@ -66,15 +68,13 @@ public class VisionToGetToTarget extends Command {
   protected void execute() {
     double distance = Robot.visionCamera.getDistance();
     double angle = Math.toRadians(Robot.visionCamera.getAngle());
-    double ultraSonic1Distance = RobotMap.mainUltrasonicSensor1.getDistance();
     double totalUltraSonicDistance = (RobotMap.mainUltrasonicSensor1.getDistance() + RobotMap.mainUltrasonicSensor2.getDistance())/2;
     if(RobotMap.mainUltrasonicSensor2.getDistance()<8&&RobotMap.mainUltrasonicSensor2.getDistance()>0&&RobotMap.mainUltrasonicSensor1.getDistance()<8&&RobotMap.mainUltrasonicSensor1.getDistance()>0){
-    
-      //distance = (distance + totalUltraSonicDistance)/2;
+      distance = (distance + totalUltraSonicDistance)/2;
     }
   
     if(succesfulRunCounter<10&&!firstRun&&!isFinished()){
-      double xDelta = Math.cos(angle)*distance;
+      double xDelta = distance;
       double yDelta = Math.sin(angle)*distance;
       if(xDelta>0.1&&xDelta<20&&Math.abs(angle)<0.78539){
         succesfulRunCounter++;
@@ -100,8 +100,7 @@ public class VisionToGetToTarget extends Command {
       }
       xAverage = xSum/xDeltaArrayList.size();
       yAverage = ySum/yDeltaArrayList.size();
-      System.out.println(xAverage + " " + yAverage);
-      shortPathToAngle = new ShortPathToAngle(xAverage-0.2, yAverage+0.5*(distance/6), 0);
+      shortPathToAngle = new ShortPathToAngle(xAverage, yAverage, 0);
       
      
       shortPathToAngle.start();
@@ -124,11 +123,7 @@ public class VisionToGetToTarget extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
- 
-
-    RobotMap.leftDriveLead.set(ControlMode.PercentOutput, 0);
-    RobotMap.rightDriveLead.set(ControlMode.PercentOutput, 0);
-
+    Robot.stopMotors.stopDriveTrainMotors();
   }
 
   // Called when another command which requires one or more of the same

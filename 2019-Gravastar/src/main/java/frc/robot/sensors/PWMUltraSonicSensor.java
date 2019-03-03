@@ -8,18 +8,23 @@
 package frc.robot.sensors;
 
 import edu.wpi.first.wpilibj.Counter;
-import frc.robot.RobotConfig;
 
 /**
  * Add your docs here.
  */
 public class PWMUltraSonicSensor {
-    private Counter counter;
-    public PWMUltraSonicSensor(Counter counter){
-
+    private Counter sensor;
+    public PWMUltraSonicSensor(Counter counter) {
+        sensor = counter;
+        sensor.setSemiPeriodMode(true);
     }
     public double getDistance(){
-        return counter.getPeriod() * RobotConfig.pwmUltraSonicConversionFactor;
-
+        double distance = sensor.getPeriod()*3200.19047619;
+        if(distance>0.95){
+            return distance;
+        }
+        else{
+            return -1;
+        }
     }
 }

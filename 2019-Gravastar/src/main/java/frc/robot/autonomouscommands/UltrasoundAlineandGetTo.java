@@ -15,8 +15,8 @@ public class UltrasoundAlineandGetTo extends CommandGroup {
    * Add your docs here.
    */
   public UltrasoundAlineandGetTo() {
-    addSequential(new CascadingPIDUltrasonicAlignment(0.12,0.0585,0.06, RobotMap.mainUltrasonicSensor1, RobotMap.mainUltrasonicSensor2));
-    addSequential(new UltrasoundGetToTarget(RobotMap.mainUltrasonicSensor1,RobotMap.mainUltrasonicSensor2));
+    //dSequential(new CascadingPIDUltrasonicAlignment(0.12,0.0585,0.06, RobotMap.mainUltrasonicSensor1, RobotMap.mainUltrasonicSensor2));
+    //addSequential(new UltrasoundGetToTarget(RobotMap.mainUltrasonicSensor1,RobotMap.mainUltrasonicSensor2));
     // Add Commands here:
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());

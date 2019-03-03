@@ -23,6 +23,7 @@ import frc.robot.autonomouscommands.PathList;
 import frc.robot.sensors.ArmEncoder;
 import frc.robot.sensors.DriveEncoder;
 import frc.robot.sensors.Navx;
+import frc.robot.sensors.PWMUltraSonicSensor;
 import frc.robot.sensors.UltrasonicSensor;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveBase;
@@ -71,11 +72,11 @@ public class RobotMap {
 	public static DoubleSolenoid hatchPiston3 = new DoubleSolenoid(6, 7);
 	public static DoubleSolenoid.Value pushOut = DoubleSolenoid.Value.kForward;
 	public static DoubleSolenoid.Value in = DoubleSolenoid.Value.kReverse;
-	public static AnalogInput ultraSonic1 = new AnalogInput(2);
-	public static Counter counter = new Counter(0);
-	public static Counter counter2 = new Counter(1);
+	public static Counter ultraSonic1 = new Counter(9);
+	public static Counter ultraSonic2 = new Counter(8);
+	//public static Counter ultraSonic3 = new Counter(7);
+	//public static Counter ultraSonic4 = new Counter(6);
 
-	public static AnalogInput ultraSonic2 = new AnalogInput(3);
 
 	public static AnalogInput preassureSensor = new AnalogInput(1);
 
@@ -83,9 +84,10 @@ public class RobotMap {
 	public static DriveEncoder rightMaindrive = new DriveEncoder(rightDriveLead,RobotMap.rightDriveLead.getSelectedSensorPosition(0));
 	public static ArmEncoder mainArmEncoder	 = new ArmEncoder(armMaster);
 	
-	public static UltrasonicSensor mainUltrasonicSensor1=new UltrasonicSensor(ultraSonic1);
-	
-	public static UltrasonicSensor mainUltrasonicSensor2= new UltrasonicSensor(ultraSonic2);
+	public static PWMUltraSonicSensor mainUltrasonicSensor1=new PWMUltraSonicSensor(ultraSonic1);
+	public static PWMUltraSonicSensor mainUltrasonicSensor2= new PWMUltraSonicSensor(ultraSonic2);
+	//public static PWMUltraSonicSensor mainUltrasonicSensor3=new PWMUltraSonicSensor(ultraSonic3);
+	//public static PWMUltraSonicSensor mainUltrasonicSensor4= new PWMUltraSonicSensor(ultraSonic4);
 
 
 

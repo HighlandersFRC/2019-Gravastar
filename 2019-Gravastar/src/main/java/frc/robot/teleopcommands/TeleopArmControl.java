@@ -35,7 +35,7 @@ public class TeleopArmControl extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    if(Math.abs(OI.operatorController.getRawAxis(1))>0.15){
+    if(Math.abs(OI.operatorController.getRawAxis(1))>0.25){
       RobotMap.armMaster.set(ControlMode.PercentOutput, OI.operatorController.getRawAxis(1)*-0.60+ Math.cos(Math.toRadians(RobotMap.mainArmEncoder.getAngle()))*RobotConfig.armKfFactor);
       armPositionController.disablePID();
       armPositionController.setArmPosition(armPositionController.getArmAngle());
@@ -45,13 +45,13 @@ public class TeleopArmControl extends Command {
       
 		}
   
-    if(OI.operatorController.getAButton()){
+    if(OI.operatorController.getAButtonPressed()){
       armPositionController.setArmPosition(RobotConfig.armRestingAngle);
 		}
-		else if (OI.operatorController.getYButton()){
+		else if (OI.operatorController.getYButtonPressed()){
 			armPositionController.setArmPosition(RobotConfig.armUpAngle);
 		}
-		else if(OI.operatorController.getXButton()){
+		else if(OI.operatorController.getXButtonPressed()){
 		  armPositionController.setArmPosition(55);
 		}
 		if(OI.operatorController.getBumper(Hand.kLeft)){
