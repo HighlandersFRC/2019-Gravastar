@@ -217,27 +217,27 @@ class TapeDetect:
 		cv2.drawContours(hsv, [pointsLeft], 0, boxColor, 2)
 		cv2.drawContours(hsv, [pointsRight], 0, boxColor, 2)
 		
-		#new UNTESTED code for object tracking - DO NOT DELETE
-		#tracker = cv2.TrackerKCF_create()
-		#bbox = (287, 23, 86, 320)
-		#ok, bbox = tracker.update(hsv)
-		#bbox = cv2.selectROI(hsv, False)
-		#ok = tracker.init(hsv, bbox)
-		
-		#while True:
-		#	ok, bbox = tracker.update(hsv)
-		#	if ok:
-			# Tracking success
-		#		p1 = (int(bbox[0]), int(bbox[1]))
-		#		p2 = (int(bbox[0] + bbox[2]), int(bbox[1] + bbox[3]))
-		#		cv2.rectangle(hsv, p1, p2, (255,0,0), 2, 1)
-			
 		#define different x and y vals
 		leftY = leftRect[0][1]
 		rightY = rightRect[0][1]
 		leftX = leftRect[0][0]
 		rightX = rightRect[0][0]
 		
+		#new UNTESTED code for object tracking - DO NOT DELETE
+		tracker = cv2.TrackerKCF_create()
+		leftBBox = (leftX, leftY, 0, 0)
+		ok, leftBBox = tracker.update(hsv)
+		#leftBBox = cv2.selectROI(hsv, False)
+		ok = tracker.init(hsv, leftBBox)
+		
+		while True:
+			ok, leftBBox = tracker.update(hsv)
+			if ok:
+				# Tracking success
+				p1 = (int(leftBBox[0]), int(leftBBox[1]))
+				p2 = (int(leftBBox[0] + leftBBox[2]), int(leftBBox[1] + leftBBox[3]))
+				cv2.rectangle(hsv, p1, p2, (255,0,0), 2, 1)
+			
 		
 		centerY = (leftY + rightY)/2
 		centerX = (leftX + rightX)/2
@@ -246,6 +246,7 @@ class TapeDetect:
 		
 		
 		realWorldPointY = (centerX - 159.5)/251
+		
 		realWorldPointY = realWorldPointY * distance
 		
 		
@@ -267,7 +268,7 @@ class TapeDetect:
 		#jevois.sendSerial("Hello World")
 		
 		#return outimg
-		outimg = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)		
-		#opening2 = cv2.cvtColor(opening, cv2.COLOR_GRAY2BGR)
-		#outimg = opening2
+		#outimg = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)		
+		opening2 = cv2.cvtColor(opening, cv2.COLOR_GRAY2BGR)
+		outimg = opening2
 		return outimg
