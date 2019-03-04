@@ -40,15 +40,19 @@ public class Arm extends Subsystem {
   public void intakeWheelsResting(){
     RobotMap.intake.set(ControlMode.PercentOutput, 0);
   }
-  public void pushOutHatch(){
-    RobotMap.hatchPiston1.set(RobotMap.pushOut);
-    RobotMap.hatchPiston2.set(RobotMap.pushOut);
-    RobotMap.hatchPiston3.set(RobotMap.pushOut);
+  public void pushOutHatchMech(){
+    RobotMap.hatchPushOutPiston.set(RobotMap.hatchMechIn);
   }
-  public void pullInAllHatchPistons(){
-    RobotMap.hatchPiston1.set(RobotMap.in);
-    RobotMap.hatchPiston2.set(RobotMap.in);
-    RobotMap.hatchPiston3.set(RobotMap.in);
+  public void pullInHatchMech(){
+    RobotMap.hatchPushOutPiston.set(RobotMap.hatchMechIn);
+   
   }
+  public void grabHatch(){
+    RobotMap.hatchGrabberPiston.set(RobotMap.hatchMechGrab);
+  }
+  public void releaseHatch(){
+    RobotMap.hatchGrabberPiston.set(RobotMap.hatchMechRelease);
+  }
+
 
 }

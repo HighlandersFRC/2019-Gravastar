@@ -28,6 +28,7 @@ public class RobotConfig {
 	public static double ultraSonicConversionFactor = 0.00427807;
 	public static double pwmUltraSonicConversionFactor = 0;
 	public static double forwardUltraSonicDisplacementDistance = 0.5;
+	public static double reverseUltraSonicDisplacementDistance = 0.5;
 	public static double armAngleToTicksConversion =-35;//on comp40.5;
 	public static int driveMotorContinuousCurrentHighGear = 30;
 	public static int driveMotorContinuousCurrentLowGear = 40;
@@ -35,9 +36,9 @@ public class RobotConfig {
 	public static int driveMotorPeakCurrentLowGear = 60;
 	public static int driveMotorPeakCurrentDurationLowGear = 100;
 	public static int driveMotorPeakCurrentDurationHighGear = 0;
-	public static int armMotorContinuousCurrent = 10;
-	public static int armMotorPeakCurrent = 10;
-	public static int armMotorPeakCurrentDuration = 100;
+	public static int armMotorContinuousCurrent = 20;
+	public static int armMotorPeakCurrent = 30;
+	public static int armMotorPeakCurrentDuration = 500;
 	public static int timeOut = 0;//Milliseconds
 	public RobotConfig() {
 		setStartingConfig();

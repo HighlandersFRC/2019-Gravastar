@@ -37,9 +37,11 @@ public class VisionToGetToTarget extends Command {
   private double previousAngle;
   private double previousDistance;
   private double startTime;
+  private boolean isReversed;
   private DoubleSolenoid.Value value;
-  public VisionToGetToTarget() {
+  public VisionToGetToTarget(boolean reverse) {
     requires(RobotMap.drive);
+    isReversed = reverse;
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
   }
@@ -100,7 +102,7 @@ public class VisionToGetToTarget extends Command {
       }
       xAverage = xSum/xDeltaArrayList.size();
       yAverage = ySum/yDeltaArrayList.size();
-      shortPathToAngle = new ShortPathToAngle(xAverage, yAverage, 0);
+      shortPathToAngle = new ShortPathToAngle(xAverage, yAverage, angle,RobotMap.mainNavx.currentAngle(), true, isReversed);
       
      
       shortPathToAngle.start();

@@ -22,6 +22,7 @@ public class TeleopArmControl extends Command {
   public TeleopArmControl() {
     requires(RobotMap.arm);
     armPositionController = new ArmPositionController(RobotConfig.armUpAngle);
+    
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
   }
@@ -29,6 +30,7 @@ public class TeleopArmControl extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    RobotMap.hatchGrabberPiston.set(RobotMap.hatchMechGrab);
     armPositionController.start();
   }
 
@@ -55,11 +57,18 @@ public class TeleopArmControl extends Command {
 		  armPositionController.setArmPosition(55);
 		}
 		if(OI.operatorController.getBumper(Hand.kLeft)){
-			RobotMap.arm.pushOutHatch();
+			RobotMap.hatchPushOutPiston.set(RobotMap.hatchMechOut);
 		}	
 		else{
-      RobotMap.arm.pullInAllHatchPistons();
-		}
+      RobotMap.hatchPushOutPiston.set(RobotMap.hatchMechIn);
+    }
+    if(OI.operatorController.getBumperPressed(Hand.kRight)&&RobotMap.hatchGrabberPiston.get()==RobotMap.hatchMechRelease){
+      RobotMap.hatchGrabberPiston.set(RobotMap.hatchMechGrab);
+    }
+    else if(OI.operatorController.getBumperPressed(Hand.kRight)&&RobotMap.hatchGrabberPiston.get()==RobotMap.hatchMechGrab){
+      RobotMap.hatchGrabberPiston.set(RobotMap.hatchMechRelease);
+    }
+
 		if(OI.operatorController.getTriggerAxis(Hand.kLeft)>0.1){
       RobotMap.arm.intakeBall();
 		}

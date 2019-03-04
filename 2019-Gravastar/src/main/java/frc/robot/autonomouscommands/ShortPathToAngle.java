@@ -25,12 +25,17 @@ public class ShortPathToAngle extends Command {
   private double startingAngle;
   private boolean firstRun;
   private boolean shouldEnd;
+  private double startAngle;
+  private boolean shouldSnap;
+  private boolean isReversed;
   
-  public ShortPathToAngle(double xDisplacement, double yDisplacement, double endAngle) {
+  public ShortPathToAngle(double xDisplacement, double yDisplacement, double endAngle, double startingAngle, boolean snapToAngle, boolean reverse) {
     xDist = xDisplacement;
     yDist = yDisplacement;
     eAngle = endAngle;
-
+    startAngle = startingAngle;
+    shouldSnap = snapToAngle;
+    isReversed = reverse;
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
   }
@@ -39,13 +44,11 @@ public class ShortPathToAngle extends Command {
   @Override
   protected void initialize() {
     RobotMap.drive.setHighGear();
-    quickPathGeneration = new QuickPathGeneration(xDist, yDist, eAngle);
+    quickPathGeneration = new QuickPathGeneration(xDist, yDist, eAngle, isReversed);
     purePursuitController = new PurePursuitController(quickPathGeneration.GeneratePath(),0.8, 4.25, 0.05);
     navx = new Navx(RobotMap.navx);
     startingAngle = navx.currentAngle();
     firstRun = false;
-    degreeEndAngle = Math.toDegrees
-(eAngle);
     purePursuitController.start();
     shouldEnd = false;
   }
@@ -59,10 +62,14 @@ public class ShortPathToAngle extends Command {
   protected void execute() {
     if(purePursuitController.isCompleted()){
       if(!firstRun){
+        degreeEndAngle = 45*Math.round(startingAngle/45);
+        System.out.println(degreeEndAngle);
         angleError = degreeEndAngle-navx.currentAngle();
-      
-        CascadingPIDTurn cascadingPIDTurn= new CascadingPIDTurn(angleError,0.12,0.00085,0.06);
-        cascadingPIDTurn.start();
+        
+        CascadingPIDTurn cascadingPIDTurn= new CascadingPIDTurn(angleError,0.2,0.00095,0.06);
+        if(shouldSnap){
+          cascadingPIDTurn.start();
+        }
         firstRun = true;
       }
     }
@@ -78,7 +85,10 @@ public class ShortPathToAngle extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    if(Math.abs(navx.currentAngle()-eAngle)<5&&purePursuitController.isCompleted()){
+    if(Math.abs(navx.currentAngle()-eAngle)<0.5&&purePursuitController.isCompleted()){
+      return true;
+    }
+    else if(!shouldSnap&&purePursuitController.isCompleted()){
       return true;
     }
    

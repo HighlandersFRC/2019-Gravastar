@@ -15,6 +15,7 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Counter;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.SPI.Port;
@@ -67,15 +68,20 @@ public class RobotMap {
 	public static DoubleSolenoid.Value lowGear = DoubleSolenoid.Value.kReverse;//TODO directions must be assigned
 	public static DoubleSolenoid.Value highGear = DoubleSolenoid.Value.kForward;//TODO directions mut be assinged
 		
-	public static DoubleSolenoid hatchPiston1 = new DoubleSolenoid(2, 3);
-	public static DoubleSolenoid hatchPiston2 = new DoubleSolenoid(4,5);
-	public static DoubleSolenoid hatchPiston3 = new DoubleSolenoid(6, 7);
-	public static DoubleSolenoid.Value pushOut = DoubleSolenoid.Value.kForward;
-	public static DoubleSolenoid.Value in = DoubleSolenoid.Value.kReverse;
+	public static DoubleSolenoid hatchPushOutPiston = new DoubleSolenoid(2, 3);
+	public static DoubleSolenoid.Value hatchMechOut = DoubleSolenoid.Value.kReverse;
+	public static DoubleSolenoid.Value hatchMechIn = DoubleSolenoid.Value.kForward;
+	public static DoubleSolenoid hatchGrabberPiston = new DoubleSolenoid(4,5);
+	public static DoubleSolenoid.Value hatchMechRelease = DoubleSolenoid.Value.kForward;
+	public static DoubleSolenoid.Value hatchMechGrab = DoubleSolenoid.Value.kReverse;
+
+	public static Relay visionRelay1 = new Relay(0);
+	public static Relay visionRelay2 = new Relay(1);
+
 	public static Counter ultraSonic1 = new Counter(9);
 	public static Counter ultraSonic2 = new Counter(8);
-	//public static Counter ultraSonic3 = new Counter(7);
-	//public static Counter ultraSonic4 = new Counter(6);
+	public static Counter ultraSonic3 = new Counter(7);
+	public static Counter ultraSonic4 = new Counter(6);
 
 
 	public static AnalogInput preassureSensor = new AnalogInput(1);
@@ -86,8 +92,8 @@ public class RobotMap {
 	
 	public static PWMUltraSonicSensor mainUltrasonicSensor1=new PWMUltraSonicSensor(ultraSonic1);
 	public static PWMUltraSonicSensor mainUltrasonicSensor2= new PWMUltraSonicSensor(ultraSonic2);
-	//public static PWMUltraSonicSensor mainUltrasonicSensor3=new PWMUltraSonicSensor(ultraSonic3);
-	//public static PWMUltraSonicSensor mainUltrasonicSensor4= new PWMUltraSonicSensor(ultraSonic4);
+	public static PWMUltraSonicSensor mainUltrasonicSensor3=new PWMUltraSonicSensor(ultraSonic3);
+	public static PWMUltraSonicSensor mainUltrasonicSensor4= new PWMUltraSonicSensor(ultraSonic4);
 
 
 

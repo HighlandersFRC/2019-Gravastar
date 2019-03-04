@@ -17,7 +17,9 @@ import frc.robot.autonomouscommands.VisionToGetToTarget;
 import frc.robot.teleopcommands.ArcadeDrive;
 
 public class DriveTrainController extends Command {
-  private VisionToGetToTarget visionToGetToTarget;
+  private VisionToGetToTarget forwardVisionToGetToTarget;
+  private VisionToGetToTarget reverseVisionToGetToTarget;
+
   private ArcadeDrive arcadeDrive;
   private Boolean run;
   private DoubleSolenoid.Value value = RobotMap.highGear;
@@ -25,7 +27,9 @@ public class DriveTrainController extends Command {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
     arcadeDrive = new ArcadeDrive();
-    visionToGetToTarget = new VisionToGetToTarget();
+    forwardVisionToGetToTarget = new VisionToGetToTarget(false);
+    reverseVisionToGetToTarget = new VisionToGetToTarget(true);
+
   }
 
   // Called just before this Command runs the first time
@@ -37,12 +41,16 @@ public class DriveTrainController extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    if(Robot.driveAssistAvaliable&&OI.pilotController.getStartButtonPressed()&&!visionToGetToTarget.isRunning()&&!visionToGetToTarget.isRunning()){
+    if(Robot.forwardDriveAssistAvaliable&&OI.pilotController.getStartButtonPressed()&&!forwardVisionToGetToTarget.isRunning()&&!reverseVisionToGetToTarget.isRunning()){
       value = RobotMap.shifters.get();
-      visionToGetToTarget.start();
+      forwardVisionToGetToTarget.start();
     }
-    else if(!OI.pilotController.getStartButton()){
-      if(OI.pilotController.getStartButtonReleased()){
+    if(Robot.reverseDriveAssistAvaliable&&OI.pilotController.getStartButtonPressed()&&!forwardVisionToGetToTarget.isRunning()&&!reverseVisionToGetToTarget.isRunning()){
+      value = RobotMap.shifters.get();
+      reverseVisionToGetToTarget.start();
+    }
+    else if(!OI.pilotController.getStartButton()&&!OI.pilotController.getBackButton()){
+      if(OI.pilotController.getStartButtonReleased()||OI.pilotController.getBackButtonReleased()){
         RobotMap.shifters.set(value);
       }
       if(!arcadeDrive.isRunning()){

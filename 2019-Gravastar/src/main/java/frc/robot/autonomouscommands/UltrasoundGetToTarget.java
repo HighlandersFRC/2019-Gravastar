@@ -10,6 +10,7 @@ package frc.robot.autonomouscommands;
 import java.util.ArrayList;
 
 import edu.wpi.first.wpilibj.command.Command;
+import frc.robot.RobotMap;
 import frc.robot.sensors.UltrasonicSensor;
 
 public class UltrasoundGetToTarget extends Command {
@@ -44,7 +45,7 @@ public class UltrasoundGetToTarget extends Command {
     if(runCounter>=10&&!firstRun){
       distanceAverage = distanceSum/10;
       System.out.println(distanceAverage);
-      shortPathToAngle = new ShortPathToAngle(distanceAverage, 0, 0);
+      shortPathToAngle = new ShortPathToAngle(distanceAverage, 0, 0,RobotMap.mainNavx.currentAngle(), false, false);
       shortPathToAngle.start();
       firstRun = true;
     }

@@ -18,12 +18,14 @@ public class QuickPathGeneration {
   private double ypos; 
   private double heading;
   private PathSetup returnPath;
+  private boolean isReversed;
   private Waypoint[] returnPathPoints;
   //for small quick paths with short distances. Useful for variable paths
-  public QuickPathGeneration(double xdist, double ydist, double targetAngle){
+  public QuickPathGeneration(double xdist, double ydist, double targetAngle, boolean reverse){
     xpos = xdist;
     ypos = ydist;
     heading = targetAngle;
+    isReversed = reverse;
   }
   public PathSetup GeneratePath(){
     returnPathPoints = new Waypoint[] {
@@ -31,7 +33,7 @@ public class QuickPathGeneration {
       new Waypoint(0,0, heading), 
     };
 
-    returnPath = new PathSetup(returnPathPoints, 4, false);
+    returnPath = new PathSetup(returnPathPoints, 4, isReversed);
     returnPath.generateMainPath();
     
     return returnPath;
