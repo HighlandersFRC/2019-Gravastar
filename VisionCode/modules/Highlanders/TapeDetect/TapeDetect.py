@@ -101,8 +101,8 @@ class TapeDetect:
 		
 		
 		#threshold colors to detect - Green: First value decides color, second val determines intensity, third val decides brightness
-		lowerThreshold = np.array([55, 50, 15])
-		upperThreshold = np.array([85, 255, 255])
+		lowerThreshold = np.array([65, 150, 150])
+		upperThreshold = np.array([105, 255, 255])
 		
 		#check if color in range
 		mask = cv2.inRange(hsv, lowerThreshold, upperThreshold)
@@ -224,20 +224,19 @@ class TapeDetect:
 		rightX = rightRect[0][0]
 		
 		#new UNTESTED code for object tracking - DO NOT DELETE
-		tracker = cv2.TrackerKCF_create()
-		leftBBox = (leftX, leftY, 0, 0)
-		ok, leftBBox = tracker.update(hsv)
+		#tracker = cv2.TrackerKCF_create()
+		#leftBBox = (leftX, leftY, 0, 0)
+		#ok, leftBBox = tracker.update(hsv)
 		#leftBBox = cv2.selectROI(hsv, False)
-		ok = tracker.init(hsv, leftBBox)
+		#ok = tracker.init(hsv, leftBBox)
 		
-		while True:
-			ok, leftBBox = tracker.update(hsv)
-			if ok:
-				# Tracking success
-				p1 = (int(leftBBox[0]), int(leftBBox[1]))
-				p2 = (int(leftBBox[0] + leftBBox[2]), int(leftBBox[1] + leftBBox[3]))
-				cv2.rectangle(hsv, p1, p2, (255,0,0), 2, 1)
-			
+		#ok, leftBBox = tracker.update(hsv)
+		#if ok:
+			# Tracking success
+		#	p1 = (int(leftBBox[0]), int(leftBBox[1]))
+		#	p2 = (int(leftBBox[0] + leftBBox[2]), int(leftBBox[1] + leftBBox[3]))
+		#	cv2.rectangle(hsv, p1, p2, (255,0,0), 2, 1)
+		
 		
 		centerY = (leftY + rightY)/2
 		centerX = (leftX + rightX)/2
@@ -246,7 +245,6 @@ class TapeDetect:
 		
 		
 		realWorldPointY = (centerX - 159.5)/251
-		
 		realWorldPointY = realWorldPointY * distance
 		
 		
