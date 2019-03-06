@@ -26,7 +26,6 @@ public class ArmPositionController extends Command {
   private double i;
   private double d;
   private ArmEncoder armEncoder;
-  private boolean shouldRun;
   private boolean shouldEnd;
   
   public ArmPositionController(double startingAngle) {
@@ -43,7 +42,6 @@ public class ArmPositionController extends Command {
     armPID.setMaxOutput(0.45);
     armPID.setMinOutput(-0.45);
     armPID.setSetPoint(desiredValue);
-    shouldRun = true;
     shouldEnd = false;
   }
   public void setArmPosition(double newValue){
@@ -69,7 +67,7 @@ public class ArmPositionController extends Command {
       armPID.updatePID(armEncoder.getAngle());
     
       
-      if(Math.abs(OI.operatorController.getRawAxis(1))>0.1){
+      if(Math.abs(OI.operatorController.getRawAxis(1))>0.25){
         desiredValue = armEncoder.getAngle();
       }
       else if(armPID.getSetPoint() == RobotConfig.armUpAngle&&armEncoder.getAngle()>80){
@@ -84,13 +82,7 @@ public class ArmPositionController extends Command {
      
 
   }
-  public void disablePID(){
-    shouldRun = false;
-      
-  }
-  public void endablePID(){
-    shouldRun = true;
-  }
+ 
   public double getArmAngle(){
     return armEncoder.getAngle();
   }

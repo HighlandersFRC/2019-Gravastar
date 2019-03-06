@@ -21,15 +21,15 @@ public class RobotConfig {
 	public static double voltageControlMaxTeleop = 12.3;
 	public static double robotMaxAcceleration = 10.0;
 	public static double robotMaxVelocity = 14.5;
-	public static double armTicksToAngleConversion =-0.02857143;//OnComp0.02470588;//
-	public static double armUpAngle = 90;//OnComp105;
+	public static double armTicksToAngleConversion =0.02470588;
+	public static double armUpAngle = 105;
 	public static double armRestingAngle = 0;
 	public static double armKfFactor = 0.0;//0;
 	public static double ultraSonicConversionFactor = 0.00427807;
 	public static double pwmUltraSonicConversionFactor = 0;
 	public static double forwardUltraSonicDisplacementDistance = 0.5;
 	public static double reverseUltraSonicDisplacementDistance = 0.5;
-	public static double armAngleToTicksConversion =-35;//on comp40.5;
+	public static double armAngleToTicksConversion =40.5;
 	public static int driveMotorContinuousCurrentHighGear = 30;
 	public static int driveMotorContinuousCurrentLowGear = 40;
 	public static int driveMotorPeakCurrentHighGear= 30;		
@@ -72,8 +72,8 @@ public class RobotConfig {
 
     	RobotMap.leftDriveLead.setSelectedSensorPosition(0, 0,0);
 		RobotMap.rightDriveLead.setSelectedSensorPosition(0, 0, 0);
-        //On CompRobotMap.armMaster.setSelectedSensorPosition((int)(105*RobotConfig.armAngleToTicksConversion));
-		RobotMap.armMaster.setSelectedSensorPosition((int)(90*RobotConfig.armAngleToTicksConversion), 0, 0);
+        RobotMap.armMaster.setSelectedSensorPosition((int)(105*RobotConfig.armAngleToTicksConversion));
+		//RobotMap.armMaster.setSelectedSensorPosition((int)(90*RobotConfig.armAngleToTicksConversion), 0, 0);
 
 		RobotMap.leftDriveLead.setSensorPhase(false);
 		RobotMap.rightDriveLead.setSensorPhase(false);

@@ -44,7 +44,7 @@ public class Robot extends TimedRobot {
 	public static StopMotors stopMotors = new StopMotors();
 	private UsbCamera camera;
 	private UsbCamera camera2;
-	private UsbCamera camera3;
+	//private UsbCamera camera3;
 	private VideoSink server;
 	public static double forwardUltraSonicAngle;
 	public static double forwardUltraSonicAverage;
@@ -101,9 +101,9 @@ public class Robot extends TimedRobot {
 		camera2 = CameraServer.getInstance().startAutomaticCapture("VisionCamera2", "/dev/video1");
 		camera2.setResolution(320, 240);
 		camera2.setFPS(15);
-		camera3= CameraServer.getInstance().startAutomaticCapture("VisionCamera3", "/dev/video2");
+		/*camera3= CameraServer.getInstance().startAutomaticCapture("VisionCamera3", "/dev/video2");
 		camera3.setResolution(320, 240);
-		camera3.setFPS(15);
+		camera3.setFPS(15);*/
 		server = CameraServer.getInstance().addSwitchedCamera("driverVisionCameras");
 		server.setSource(camera);
 		
@@ -159,7 +159,7 @@ public class Robot extends TimedRobot {
 			hasReverseCamera = false;
 		}
 		if(OI.operatorController.getPOV() == 180){
-			server.setSource(camera3);
+			server.setSource(camera);
 		}
 		else if(OI.operatorController.getPOV() ==0){
 			server.setSource(camera2);

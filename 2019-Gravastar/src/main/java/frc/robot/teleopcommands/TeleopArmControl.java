@@ -9,6 +9,7 @@ package frc.robot.teleopcommands;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.OI;
@@ -39,15 +40,9 @@ public class TeleopArmControl extends Command {
   protected void execute() {
     if(Math.abs(OI.operatorController.getRawAxis(1))>0.25){
       RobotMap.armMaster.set(ControlMode.PercentOutput, OI.operatorController.getRawAxis(1)*-0.60+ Math.cos(Math.toRadians(RobotMap.mainArmEncoder.getAngle()))*RobotConfig.armKfFactor);
-      armPositionController.disablePID();
       armPositionController.setArmPosition(armPositionController.getArmAngle());
-		}
-		else{
-      armPositionController.endablePID();
-      
-		}
-  
-    if(OI.operatorController.getAButtonPressed()){
+    }
+    else if(OI.operatorController.getAButtonPressed()){
       armPositionController.setArmPosition(RobotConfig.armRestingAngle);
 		}
 		else if (OI.operatorController.getYButtonPressed()){
@@ -56,17 +51,19 @@ public class TeleopArmControl extends Command {
 		else if(OI.operatorController.getXButtonPressed()){
 		  armPositionController.setArmPosition(55);
 		}
+		
+  
 		if(OI.operatorController.getBumper(Hand.kLeft)){
 			RobotMap.hatchPushOutPiston.set(RobotMap.hatchMechOut);
 		}	
 		else{
       RobotMap.hatchPushOutPiston.set(RobotMap.hatchMechIn);
     }
-    if(OI.operatorController.getBumperPressed(Hand.kRight)&&RobotMap.hatchGrabberPiston.get()==RobotMap.hatchMechRelease){
-      RobotMap.hatchGrabberPiston.set(RobotMap.hatchMechGrab);
-    }
-    else if(OI.operatorController.getBumperPressed(Hand.kRight)&&RobotMap.hatchGrabberPiston.get()==RobotMap.hatchMechGrab){
+    if(OI.operatorController.getBumper(Hand.kRight)){
       RobotMap.hatchGrabberPiston.set(RobotMap.hatchMechRelease);
+    }
+    else{
+      RobotMap.hatchGrabberPiston.set(RobotMap.hatchMechGrab);
     }
 
 		if(OI.operatorController.getTriggerAxis(Hand.kLeft)>0.1){
@@ -86,7 +83,7 @@ public class TeleopArmControl extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return false;
+    return RobotState.isDisabled();
   }
 
   // Called once after isFinished returns true
