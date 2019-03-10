@@ -43,11 +43,11 @@ public class DriveTrainController extends Command {
   protected void execute() {
     if(Robot.forwardDriveAssistAvaliable&&OI.pilotController.getStartButtonPressed()&&!forwardVisionToGetToTarget.isRunning()&&!reverseVisionToGetToTarget.isRunning()){
       value = RobotMap.shifters.get();
-      forwardVisionToGetToTarget.start();
+      //forwardVisionToGetToTarget.start();
     }
     if(Robot.reverseDriveAssistAvaliable&&OI.pilotController.getStartButtonPressed()&&!forwardVisionToGetToTarget.isRunning()&&!reverseVisionToGetToTarget.isRunning()){
       value = RobotMap.shifters.get();
-      reverseVisionToGetToTarget.start();
+      //reverseVisionToGetToTarget.start();
     }
     else if(!OI.pilotController.getStartButton()&&!OI.pilotController.getBackButton()){
       if(OI.pilotController.getStartButtonReleased()||OI.pilotController.getBackButtonReleased()){

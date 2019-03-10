@@ -22,7 +22,7 @@ public class TeleopArmControl extends Command {
   private ArmPositionController armPositionController;
   public TeleopArmControl() {
     requires(RobotMap.arm);
-    armPositionController = new ArmPositionController(RobotConfig.armUpAngle);
+   
     
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
@@ -32,6 +32,7 @@ public class TeleopArmControl extends Command {
   @Override
   protected void initialize() {
     RobotMap.hatchGrabberPiston.set(RobotMap.hatchMechGrab);
+    armPositionController = new ArmPositionController(RobotConfig.armUpAngle);
     armPositionController.start();
   }
 
@@ -42,14 +43,14 @@ public class TeleopArmControl extends Command {
       RobotMap.armMaster.set(ControlMode.PercentOutput, OI.operatorController.getRawAxis(1)*-0.60+ Math.cos(Math.toRadians(RobotMap.mainArmEncoder.getAngle()))*RobotConfig.armKfFactor);
       armPositionController.setArmPosition(armPositionController.getArmAngle());
     }
-    else if(OI.operatorController.getAButtonPressed()){
+    else if(OI.operatorController.getAButton()){
       armPositionController.setArmPosition(RobotConfig.armRestingAngle);
 		}
-		else if (OI.operatorController.getYButtonPressed()){
+		else if (OI.operatorController.getYButton()){
 			armPositionController.setArmPosition(RobotConfig.armUpAngle);
 		}
-		else if(OI.operatorController.getXButtonPressed()){
-		  armPositionController.setArmPosition(55);
+		else if(OI.operatorController.getXButton()){
+		  armPositionController.setArmPosition(70);
 		}
 		
   
@@ -69,10 +70,10 @@ public class TeleopArmControl extends Command {
 		if(OI.operatorController.getTriggerAxis(Hand.kLeft)>0.1){
       RobotMap.arm.intakeBall();
 		}
-		else if(OI.operatorController.getTriggerAxis(Hand.kRight)>0.1&&armPositionController.getArmAngle()<80){
+		else if(OI.operatorController.getTriggerAxis(Hand.kRight)>0.1&&armPositionController.getArmAngle()<95){
       RobotMap.arm.outTakeBall();
     }
-    else if(OI.operatorController.getTriggerAxis(Hand.kRight)>0.1&&armPositionController.getArmAngle()>80){
+    else if(OI.operatorController.getTriggerAxis(Hand.kRight)>0.1&&armPositionController.getArmAngle()>95){
       RobotMap.arm.shootBall();
 		}
 		else{

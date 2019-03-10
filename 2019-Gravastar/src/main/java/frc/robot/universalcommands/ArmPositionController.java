@@ -39,8 +39,8 @@ public class ArmPositionController extends Command {
   protected void initialize() {
     armEncoder = new ArmEncoder(RobotMap.armMaster);
     armPID = new PID(p, i, d);
-    armPID.setMaxOutput(0.45);
-    armPID.setMinOutput(-0.45);
+    armPID.setMaxOutput(0.4);
+    armPID.setMinOutput(-0.4);
     armPID.setSetPoint(desiredValue);
     shouldEnd = false;
   }
@@ -60,12 +60,10 @@ public class ArmPositionController extends Command {
         armEncoder.setForwardLimitSwitchAngle();
       }
       else if(RobotMap.armMaster.getSensorCollection().isRevLimitSwitchClosed()){
-        
         armEncoder.setReverseLimitSwitchAngle();
       }
       
       armPID.updatePID(armEncoder.getAngle());
-    
       
       if(Math.abs(OI.operatorController.getRawAxis(1))>0.25){
         desiredValue = armEncoder.getAngle();
@@ -74,7 +72,7 @@ public class ArmPositionController extends Command {
         RobotMap.armMaster.set(ControlMode.PercentOutput, 0.2 +Math.cos(Math.toRadians(armEncoder.getAngle()))*RobotConfig.armKfFactor);
       }
       else if(armPID.getSetPoint() == RobotConfig.armRestingAngle&&armEncoder.getAngle()<10){
-        RobotMap.armMaster.set(ControlMode.PercentOutput, 0);
+        RobotMap.armMaster.set(ControlMode.PercentOutput, -0.2);
       }
       else{
         RobotMap.armMaster.set(ControlMode.PercentOutput, armPID.getResult()+Math.cos(Math.toRadians(armEncoder.getAngle()))*RobotConfig.armKfFactor);

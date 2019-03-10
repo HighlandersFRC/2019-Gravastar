@@ -71,10 +71,10 @@ public class VisionToGetToTarget extends Command {
     double distance = Robot.visionCamera.getDistance();
     double angle = Math.toRadians(Robot.visionCamera.getAngle());
     double totalUltraSonicDistance = (RobotMap.mainUltrasonicSensor1.getDistance() + RobotMap.mainUltrasonicSensor2.getDistance())/2;
-    if(RobotMap.mainUltrasonicSensor2.getDistance()<8&&RobotMap.mainUltrasonicSensor2.getDistance()>0&&RobotMap.mainUltrasonicSensor1.getDistance()<8&&RobotMap.mainUltrasonicSensor1.getDistance()>0){
-      distance = (distance + totalUltraSonicDistance)/2;
+    if(RobotMap.mainUltrasonicSensor2.getDistance()<8&&RobotMap.mainUltrasonicSensor2.getDistance()>2&&RobotMap.mainUltrasonicSensor1.getDistance()<8&&RobotMap.mainUltrasonicSensor1.getDistance()>0){
+      //distance = (distance + totalUltraSonicDistance)/2;
     }
-  
+    distance = distance-0.41666;  
     if(succesfulRunCounter<10&&!firstRun&&!isFinished()){
       double xDelta = distance;
       double yDelta = Math.sin(angle)*distance;
@@ -102,7 +102,7 @@ public class VisionToGetToTarget extends Command {
       }
       xAverage = xSum/xDeltaArrayList.size();
       yAverage = ySum/yDeltaArrayList.size();
-      shortPathToAngle = new ShortPathToAngle(xAverage, yAverage, angle,RobotMap.mainNavx.currentAngle(), true, isReversed);
+      shortPathToAngle = new ShortPathToAngle(xAverage, yAverage, angle,RobotMap.mainNavx.currentAngle(), false, isReversed);
       
      
       shortPathToAngle.start();

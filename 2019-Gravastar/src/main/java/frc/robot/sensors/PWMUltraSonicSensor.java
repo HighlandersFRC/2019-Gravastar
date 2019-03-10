@@ -20,7 +20,7 @@ public class PWMUltraSonicSensor {
     }
     public double getDistance(){
         double distance = sensor.getPeriod()*3200.19047619;
-        if(distance>0.95){
+        if(distance>1){
             return distance;
         }
         else{
