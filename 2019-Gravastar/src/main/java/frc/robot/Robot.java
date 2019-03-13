@@ -49,24 +49,24 @@ public class Robot extends TimedRobot {
 	private UsbCamera camera2;
 	//private UsbCamera camera3;
 	private VideoSink server;
-	public static double forwardUltraSonicAngle;
-	public static double forwardUltraSonicAverage;
-	public static double reverseUltraSonicAngle;
-	public static double reverseUltraSonicAverage;
-	public static boolean hasForwardCamera = false;
-	public static boolean hasReverseCamera = false;
+	private double forwardUltraSonicAngle;
+	private double forwardUltraSonicAverage;
+	private double reverseUltraSonicAngle;
+	private double reverseUltraSonicAverage;
+	private boolean hasForwardCamera = false;
+	private boolean hasReverseCamera = false;
 	public static boolean forwardDriveAssistAvaliable;
 	public static boolean reverseDriveAssistAvaliable;
-	public static ChangeLightColor changeLightColor = new ChangeLightColor(255,0, 0, RobotMap.canifier1);
-	public static ChangeLightColor changeLightColor2 = new ChangeLightColor(255,255, 255, RobotMap.canifier2);
+	private ChangeLightColor changeLightColor = new ChangeLightColor(255,0, 0, RobotMap.canifier1);
+	private ChangeLightColor changeLightColor2 = new ChangeLightColor(255,255, 255, RobotMap.canifier2);
 	public static VisionCamera visionCamera;
-	public static VisionCamera visionCamera2;
-	public static SerialPort jevois1;
-	public static SerialPort jevois2;
+	//public static VisionCamera visionCamera2;
+	private SerialPort jevois1;
+	//private SerialPort jevois2;
 	private int runCounter = 0;
 	private boolean shouldSwtich;
 	private boolean whichCamera;
-	SendableChooser<Command> m_chooser = new SendableChooser<>();
+	private SendableChooser<Command> m_chooser = new SendableChooser<>();
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -86,7 +86,7 @@ public class Robot extends TimedRobot {
 		} catch (Exception e) {
 			hasForwardCamera = false;
 		}
-		try {
+		/*try {
 			jevois2 = new SerialPort(115200, Port.kUSB);
 			if(jevois2.getBytesReceived()>0){
 				hasReverseCamera = true;
@@ -96,9 +96,9 @@ public class Robot extends TimedRobot {
 			}
 		} catch (Exception e) {
 			hasReverseCamera = false;
-		}
-		visionCamera= new VisionCamera(Robot.jevois1);
-		visionCamera2 = new VisionCamera(Robot.jevois2);
+		}*/
+		visionCamera= new VisionCamera(jevois1);
+		//visionCamera2 = new VisionCamera(jevois2);
 		robotConfig.setStartingConfig();
 		camera = CameraServer.getInstance().startAutomaticCapture("VisionCamera1", "/dev/video0");
 		camera.setResolution(320, 240);
@@ -146,7 +146,7 @@ public class Robot extends TimedRobot {
 		}
 		try {
 			//TODO fix this so that it actually catches if you don't have a camera
-			if(jevois1.getBytesReceived()<0){
+			if(jevois1.getBytesReceived()<2){
 				hasForwardCamera = false;
 			}
 			else{
@@ -155,9 +155,9 @@ public class Robot extends TimedRobot {
 		} catch (Exception e) {
 			hasForwardCamera = false;	
 		}
-		try {
+		/*try {
 		
-			if(jevois1.getBytesReceived()<0){
+			if(jevois2.getBytesReceived()<2){
 				hasReverseCamera = false;
 			}
 			else{
@@ -165,7 +165,7 @@ public class Robot extends TimedRobot {
 			}
 		} catch (Exception e) {
 			hasReverseCamera = false;
-		}
+		}*/
 		/*if(OI.pilotController.getRawAxis(2)>0.5){
 			if(shouldSwtich){
 				if(server.getSource()==camera){
@@ -214,7 +214,8 @@ public class Robot extends TimedRobot {
 	private void visionDecisionAlgorithm(){
 		try{
 			visionCamera.updateVision();
-			SmartDashboard.putNumber("lastparse", Timer.getFPGATimestamp()-visionCamera.lastParseTime);
+			SmartDashboard.putNumber("lastForwardparse", Timer.getFPGATimestamp()-visionCamera.lastParseTime);
+
 			forwardUltraSonicAverage = (RobotMap.mainUltrasonicSensor1.getDistance()+RobotMap.mainUltrasonicSensor2.getDistance())/2;
 			forwardUltraSonicAngle = Math.toDegrees(Math.atan(RobotConfig.forwardUltraSonicDisplacementDistance/(RobotMap.mainUltrasonicSensor1.getDistance()-RobotMap.mainUltrasonicSensor2.getDistance())));
 			if(Timer.getFPGATimestamp()-visionCamera.lastParseTime<0.25){
@@ -234,12 +235,12 @@ public class Robot extends TimedRobot {
 			forwardDriveAssistAvaliable = false;
 		}
 		try{
-			visionCamera2.updateVision();
-			SmartDashboard.putNumber("lastparse", Timer.getFPGATimestamp()-visionCamera2.lastParseTime);
+			//visionCamera2.updateVision();
+		//	SmartDashboard.putNumber("lastReverseparse", Timer.getFPGATimestamp()-visionCamera2.lastParseTime);
 
 			reverseUltraSonicAverage = (RobotMap.mainUltrasonicSensor3.getDistance()+RobotMap.mainUltrasonicSensor4.getDistance())/2;
 			reverseUltraSonicAngle = Math.toDegrees(Math.atan(RobotConfig.reverseUltraSonicDisplacementDistance/(RobotMap.mainUltrasonicSensor3.getDistance()-RobotMap.mainUltrasonicSensor4.getDistance())));
-			if(Timer.getFPGATimestamp()-visionCamera2.lastParseTime<0.25){
+			/*if(Timer.getFPGATimestamp()-visionCamera2.lastParseTime<0.25){
 				reverseDriveAssistAvaliable = true;
 				//changeLightColor.changeLedColor(255,0, 0);
 			}	
@@ -250,7 +251,7 @@ public class Robot extends TimedRobot {
 			else{
 				//changeLightColor.changeLedColor(0, 0, 255);
 				reverseDriveAssistAvaliable = false;
-			}	
+			}	*/
 		}
 		catch(Exception e){
 			reverseDriveAssistAvaliable = false;
@@ -265,7 +266,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousPeriodic() {
 	
-		//visionDecisionAlgorithm();
+		visionDecisionAlgorithm();
 		if(runCounter%5==0){
 			SmartDashboard.putNumber("ultraSonic1",RobotMap.mainUltrasonicSensor1.getDistance());
 			SmartDashboard.putNumber("ultraSonic2", RobotMap.mainUltrasonicSensor2.getDistance());
@@ -277,7 +278,7 @@ public class Robot extends TimedRobot {
 			}
 			SmartDashboard.putBoolean("reverseDriveAssistAvaliable", reverseDriveAssistAvaliable);
 			if(hasReverseCamera){
-				SmartDashboard.putString("reverseVisionString", visionCamera2.getString());
+			//	SmartDashboard.putString("reverseVisionString", visionCamera2.getString());
 			}
 			SmartDashboard.putNumber("armPosit",RobotMap.mainArmEncoder.getAngle());
 		}
@@ -294,8 +295,8 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopPeriodic() {	
-
-		/*if(hasForwardCamera){
+		System.out.println(jevois1.readString());
+		if(hasForwardCamera){
 			visionDecisionAlgorithm();
 		}
 		else{
@@ -308,7 +309,7 @@ public class Robot extends TimedRobot {
 		else{
 			reverseDriveAssistAvaliable = false;
 			//changeLightColor2.changeLedColor(0, 0, 255);
-		}*/
+		}
 		if(runCounter%5==0){
 			SmartDashboard.putNumber("ultraSonic1",RobotMap.mainUltrasonicSensor1.getDistance());
 			SmartDashboard.putNumber("ultraSonic2", RobotMap.mainUltrasonicSensor2.getDistance());
@@ -320,7 +321,7 @@ public class Robot extends TimedRobot {
 			}
 			SmartDashboard.putBoolean("reverseDriveAssistAvaliable", reverseDriveAssistAvaliable);
 			if(hasReverseCamera){
-				SmartDashboard.putString("reverseVisionString", visionCamera2.getString());
+				//SmartDashboard.putString("reverseVisionString", visionCamera2.getString());
 			}
 			SmartDashboard.putNumber("armPosit",RobotMap.mainArmEncoder.getAngle());
 		}

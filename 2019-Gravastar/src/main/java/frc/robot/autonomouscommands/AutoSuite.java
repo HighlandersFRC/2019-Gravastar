@@ -20,13 +20,11 @@ public class AutoSuite {
     private CascadingPIDUltrasonicAlignment cascadingPIDUltrasonicAlignment;
     private UltrasoundAlineandGetTo ultrasoundAlineandGetTo;
     private ShortPathToAngle shortPathToAngle = new ShortPathToAngle(5, -2, 0, 0, false, false);
-    private VisionToGetToTarget visionToGetToTarget;
     private DriveTrainController driveTrainController;
     public AutoSuite() {
     
 		driveTrainStallProtectionController = new DriveTrainStallProtectionController();
         teleopArmControl = new TeleopArmControl();	
-        visionToGetToTarget = new VisionToGetToTarget(false);
         driveTrainController = new DriveTrainController();
     }
     public void startAutoCommandsDriverControl() {
