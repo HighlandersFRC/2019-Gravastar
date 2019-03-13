@@ -21,8 +21,8 @@ public class RobotConfig {
 	public static double voltageControlMaxTeleop = 12.3;
 	public static double robotMaxAcceleration = 10.0;
 	public static double robotMaxVelocity = 14.5;
-	public static double armTicksToAngleConversion =0.02470588;
-	public static double armUpAngle = 105;
+	public static double armTicksToAngleConversion=-0.02857;//0.02470588;
+	public static double armUpAngle = 90;//105;
 	public static double armRestingAngle = 0;
 	public static double armKfFactor = 0.0;//0;
 	public static double ultraSonicConversionFactor = 0.00427807;
@@ -72,8 +72,8 @@ public class RobotConfig {
 
     	RobotMap.leftDriveLead.setSelectedSensorPosition(0, 0,0);
 		RobotMap.rightDriveLead.setSelectedSensorPosition(0, 0, 0);
-        RobotMap.armMaster.setSelectedSensorPosition((int)(105*RobotConfig.armAngleToTicksConversion));
-		//RobotMap.armMaster.setSelectedSensorPosition((int)(90*RobotConfig.armAngleToTicksConversion), 0, 0);
+        //RobotMap.armMaster.setSelectedSensorPosition((int)(105*RobotConfig.armAngleToTicksConversion));
+		RobotMap.armMaster.setSelectedSensorPosition((int)(90*RobotConfig.armAngleToTicksConversion), 0, 0);
 
 		RobotMap.leftDriveLead.setSensorPhase(false);
 		RobotMap.rightDriveLead.setSensorPhase(false);
@@ -101,13 +101,14 @@ public class RobotConfig {
 			talon.enableVoltageCompensation(true); 
 			talon.configVoltageMeasurementFilter(32);
 		}
+		setAllMotorsBrake();
 	
     	
 
 	}
 	public void autoConfig() {
 		for(TalonSRX talon:RobotMap.driveMotors){
-			talon.configOpenloopRamp(0.125);
+			talon.configOpenloopRamp(0.25);
 		}
 		for(TalonSRX talon:RobotMap.driveMotors){
 			talon.configVoltageCompSaturation(RobotConfig.voltageControlMaxAuto);
@@ -148,13 +149,18 @@ public class RobotConfig {
 		}
 	}
 	public void setAllMotorsBrake() {
-		for(TalonSRX talon:RobotMap.driveMotors){
+		for(TalonSRX talon:RobotMap.allMotors){
             talon.setNeutralMode(NeutralMode.Brake);
         }
 	}
 	public void setDriveMotorsCoast() {
 		for(TalonSRX talon:RobotMap.driveMotors){
             talon.setNeutralMode(NeutralMode.Coast);
+        }
+	}
+	public void setDriveMotorsBrake() {
+		for(TalonSRX talon:RobotMap.driveMotors){
+            talon.setNeutralMode(NeutralMode.Brake);
         }
 	}
 }
