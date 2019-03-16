@@ -7,65 +7,43 @@
 
 package frc.robot.universalcommands;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.RobotState;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.OI;
-import frc.robot.Robot;
 import frc.robot.RobotMap;
-import frc.robot.autonomouscommands.VisionToGetToTarget;
-import frc.robot.teleopcommands.ArcadeDrive;
 
-public class DriveTrainController extends Command {
-  private VisionToGetToTarget visionToGetToTarget;
+public class ClimbMechanismController extends Command {
 
-  private ArcadeDrive arcadeDrive;
-  private Boolean run;
-  private DoubleSolenoid.Value value = RobotMap.highGear;
-  public DriveTrainController() {
+  public ClimbMechanismController() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
-    arcadeDrive = new ArcadeDrive();
-    visionToGetToTarget = new VisionToGetToTarget(false);
-
   }
-
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    run = false;
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    if(Robot.driveAssistAvaliable&&OI.pilotController.getStartButtonPressed()&&!visionToGetToTarget.isRunning()){
-      value = RobotMap.shifters.get();
-      //forwardVisionToGetToTarget.start();
+    if(Math.abs(OI.operatorController.getRawAxis(5))>0.1){
+      RobotMap.climbingMechLeadTalon.set(ControlMode.PercentOutput, OI.operatorController.getRawAxis(5)*0.2);
     }
-    
-    else if(!OI.pilotController.getStartButton()&&!OI.pilotController.getBackButton()){
-      if(OI.pilotController.getStartButtonReleased()||OI.pilotController.getBackButtonReleased()){
-        RobotMap.shifters.set(value);
-      }
-      if(!arcadeDrive.isRunning()){
-        arcadeDrive.start();
-      }
-       
+    else{
+      RobotMap.climbingMechLeadTalon.set(ControlMode.PercentOutput, 0);
     }
-    
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return RobotState.isDisabled();
+    return false;
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Robot.stopMotors.stopDriveTrainMotors();
   }
 
   // Called when another command which requires one or more of the same

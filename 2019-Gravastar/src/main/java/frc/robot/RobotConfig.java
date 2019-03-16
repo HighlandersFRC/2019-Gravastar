@@ -30,6 +30,8 @@ public class RobotConfig {
 	public static double forwardUltraSonicDisplacementDistance = 0.5;
 	public static double reverseUltraSonicDisplacementDistance = 0.5;
 	public static double armAngleToTicksConversion =40.5;
+	public static int climbingMechMaxPosition;
+	public static int climbingMechStartingPosition;
 	public static int driveMotorContinuousCurrentHighGear = 30;
 	public static int driveMotorContinuousCurrentLowGear = 40;
 	public static int driveMotorPeakCurrentHighGear= 30;		
@@ -53,8 +55,10 @@ public class RobotConfig {
 		RobotMap.rightDriveLead.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative,0,0);
 		RobotMap.leftDriveLead.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative,0,0);
 		RobotMap.armMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative,0,0);
+		RobotMap.climbingMechLeadTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 0);
 	 	RobotMap.rightDriveFollowerOne.set(ControlMode.Follower, RobotMap.rightDriveLeadID);
 		RobotMap.leftDriveFollowerOne.set(ControlMode.Follower, RobotMap.leftDriveLeadID);
+		RobotMap.climbingMechFollowerTalon.set(ControlMode.Follower, RobotMap.climbingMechLeadTalonID);
 		
 		RobotMap.armFollower.set(ControlMode.Follower, RobotMap.armMasterID);
     	
@@ -68,12 +72,19 @@ public class RobotConfig {
 		RobotMap.armMaster.setInverted(false);
 		RobotMap.armFollower.setInverted(InvertType.FollowMaster);
 
+		RobotMap.climbingMechLeadTalon.setInverted(false);
+		RobotMap.climbingMechFollowerTalon.setInverted(InvertType.FollowMaster);
+
 		RobotMap.intake.setInverted(false);
 
     	RobotMap.leftDriveLead.setSelectedSensorPosition(0, 0,0);
 		RobotMap.rightDriveLead.setSelectedSensorPosition(0, 0, 0);
         //RobotMap.armMaster.setSelectedSensorPosition((int)(105*RobotConfig.armAngleToTicksConversion));
 		RobotMap.armMaster.setSelectedSensorPosition((int)(90*RobotConfig.armAngleToTicksConversion), 0, 0);
+		RobotMap.climbingMechLeadTalon.setSelectedSensorPosition(climbingMechStartingPosition);
+
+		RobotMap.climbingMechLeadTalon.configForwardSoftLimitEnable(true);
+		RobotMap.climbingMechLeadTalon.configForwardSoftLimitThreshold(climbingMechMaxPosition);
 
 		RobotMap.leftDriveLead.setSensorPhase(false);
 		RobotMap.rightDriveLead.setSensorPhase(false);

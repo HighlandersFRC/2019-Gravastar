@@ -16,15 +16,11 @@ public class TeleopSuite {
 		driveTrainController = new DriveTrainController();
 	}
 	public void startTeleopCommands() {
-		//arcadeDrive.start();
-		//tankDrive.start();
 		driveTrainController.start();
 		driveTrainStallProtectionController.start();
 		teleopArmControl.start();
 	}
 	public void endTeleopCommands(){
-		//arcadeDrive.cancel();
-		//tankDrive.cancel();
 		driveTrainStallProtectionController.cancel();
 		driveTrainController.cancel();
 		teleopArmControl.cancel();

@@ -16,10 +16,12 @@ import frc.robot.OI;
 import frc.robot.RobotConfig;
 import frc.robot.RobotMap;
 import frc.robot.universalcommands.ArmPositionController;
+import frc.robot.universalcommands.ClimbMechanismController;
 import jaci.pathfinder.Pathfinder;
 
 public class TeleopArmControl extends Command {
   private ArmPositionController armPositionController;
+  private ClimbMechanismController climbMechanismController;
   public TeleopArmControl() {
     requires(RobotMap.arm);
    
@@ -33,6 +35,7 @@ public class TeleopArmControl extends Command {
   protected void initialize() {
     RobotMap.hatchGrabberPiston.set(RobotMap.hatchMechGrab);
     armPositionController = new ArmPositionController(RobotConfig.armUpAngle);
+    climbMechanismController = new ClimbMechanismController();
     armPositionController.start();
   }
 
@@ -78,7 +81,10 @@ public class TeleopArmControl extends Command {
 		}
 		else{
       RobotMap.arm.intakeWheelsResting();
-		}
+    }
+    if(OI.operatorController.getBackButton()&&OI.operatorController.getStartButton()){
+      climbMechanismController.start();
+    }
   }
 
   // Make this return true when this Command no longer needs to run execute()

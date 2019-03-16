@@ -50,6 +50,9 @@ public class RobotMap {
 	public static int armFollowerID = 6;
 
 	public static int intakeID = 7;
+
+	public static int climbingMechLeadTalonID = 8;
+	public static int climbingMechFollowerTalonID = 9;
 	//Initialize all TalonsSRX
 	public static TalonSRX rightDriveLead = new TalonSRX(rightDriveLeadID);
 	public static TalonSRX leftDriveLead = new TalonSRX(leftDriveLeadID);
@@ -59,7 +62,12 @@ public class RobotMap {
 
 	public static TalonSRX armMaster = new TalonSRX(armMasterID);
 	public static TalonSRX armFollower = new TalonSRX(armFollowerID);
+
 	public static TalonSRX intake = new TalonSRX(intakeID);
+
+	public static TalonSRX climbingMechLeadTalon = new TalonSRX(climbingMechLeadTalonID);
+	public static TalonSRX climbingMechFollowerTalon = new TalonSRX(climbingMechFollowerTalonID);
+
 
 	public static AHRS 	navx = new AHRS(Port.kMXP);
 	public static Navx mainNavx = new Navx(navx);
@@ -116,12 +124,15 @@ public class RobotMap {
 		RobotMap.armMaster,
 		RobotMap.armFollower,
 		RobotMap.intake,
+		RobotMap.climbingMechLeadTalon,
+		RobotMap.climbingMechFollowerTalon,
 	};
 	public static TalonSRX allMotorLeads[] = {
 		RobotMap.leftDriveLead,
 		RobotMap.rightDriveLead,
 		RobotMap.armMaster,
 		RobotMap.intake,
+		RobotMap.climbingMechLeadTalon,
 	};
 	public static TalonSRX armMotors[] = {
 		RobotMap.armMaster,
@@ -129,6 +140,13 @@ public class RobotMap {
 	};
 	public static TalonSRX armMotorLeads[] = {
 		RobotMap.armMaster,
+	};
+	public static TalonSRX climbingMechMotors[] = {
+		RobotMap.climbingMechLeadTalon,
+		RobotMap.climbingMechFollowerTalon
+	};
+	public static TalonSRX climbingMechLeads[] = {
+		RobotMap.climbingMechLeadTalon,
 	};
 	public static DriveBase drive = new DriveBase();
 	public static Arm arm = new Arm();
