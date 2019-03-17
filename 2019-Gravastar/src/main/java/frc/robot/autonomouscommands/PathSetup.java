@@ -35,7 +35,7 @@ public class PathSetup {
 	}
 	public Trajectory generateMainPath() {
 		// all units are in feet, cause MURICA!, basically the path calculations are assuming 1/20th of a second between updates, and a max velcoity of v ft/sec, a max acceleration of a ft/sec, and a max jerk of 75 feet/sec^3
-		Trajectory.Config config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_FAST, 0.05,velocity,RobotConfig.robotMaxAcceleration, 75.0);
+		Trajectory.Config config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_QUINTIC, Trajectory.Config.SAMPLES_FAST, 0.05,velocity,RobotConfig.robotMaxAcceleration, 75.0);
 		Trajectory trajectory = Pathfinder.generate(points, config);
 		return trajectory;
 	}

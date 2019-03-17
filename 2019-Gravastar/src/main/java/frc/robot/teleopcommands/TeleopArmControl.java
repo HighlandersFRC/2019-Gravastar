@@ -73,10 +73,10 @@ public class TeleopArmControl extends Command {
 		if(OI.operatorController.getTriggerAxis(Hand.kLeft)>0.1){
       RobotMap.arm.intakeBall();
 		}
-		else if(OI.operatorController.getTriggerAxis(Hand.kRight)>0.1&&armPositionController.getArmAngle()<95){
+		else if(OI.operatorController.getTriggerAxis(Hand.kRight)>0.1&&armPositionController.getArmAngle()<80){
       RobotMap.arm.outTakeBall();
     }
-    else if(OI.operatorController.getTriggerAxis(Hand.kRight)>0.1&&armPositionController.getArmAngle()>95){
+    else if(OI.operatorController.getTriggerAxis(Hand.kRight)>0.1&&armPositionController.getArmAngle()>=80){
       RobotMap.arm.shootBall();
 		}
 		else{

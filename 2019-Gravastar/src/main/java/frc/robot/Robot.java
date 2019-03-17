@@ -14,6 +14,7 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -73,7 +74,7 @@ public class Robot extends TimedRobot {
 				hasCamera = true;
 			}
 			else{
-				hasCamera = false;
+				hasCamera = true;
 			}
 		} catch (Exception e) {
 			hasCamera = false;
@@ -89,7 +90,7 @@ public class Robot extends TimedRobot {
 		camera2 = CameraServer.getInstance().startAutomaticCapture("VisionCamera2", "/dev/video1");
 		camera2.setResolution(320, 240);
 		camera2.setFPS(15);
-
+		RobotMap.visionRelay1.set(Value.kOn);
 	
 
 		server = CameraServer.getInstance().addSwitchedCamera("driverVisionCameras");
@@ -124,20 +125,6 @@ public class Robot extends TimedRobot {
 			SmartDashboard.putNumber("ultraSonicAngle", ultraSonicAngle);
 
 		}
-		try {
-		
-			if(jevois1.getBytesReceived()>2){
-				hasCamera = false;
-			}
-			else{
-				hasCamera = true;
-			}
-				
-			
-		} catch (Exception e) {
-			hasCamera = false;
-			
-		}
 	
 		
 	
@@ -147,6 +134,7 @@ public class Robot extends TimedRobot {
 		else if(OI.pilotController.getPOV() ==0||OI.pilotController.getPOV() == 45||OI.pilotController.getPOV() == 315){
 			server.setSource(camera2);
 		}
+		
 		
 	}
 	@Override
@@ -176,11 +164,11 @@ public class Robot extends TimedRobot {
 			visionCamera.updateVision();
 			ultraSonicAverage = (RobotMap.mainUltrasonicSensor1.getDistance()+RobotMap.mainUltrasonicSensor2.getDistance())/2;
 			ultraSonicAngle = Math.toDegrees(Math.atan(RobotConfig.forwardUltraSonicDisplacementDistance/(RobotMap.mainUltrasonicSensor1.getDistance()-RobotMap.mainUltrasonicSensor2.getDistance())));
-			if(Timer.getFPGATimestamp()-visionCamera.lastParseTime<0.25&&RobotMap.mainUltrasonicSensor1.getDistance()>1.5&&RobotMap.mainUltrasonicSensor2.getDistance()>1.5){
+			if(Timer.getFPGATimestamp()-visionCamera.lastParseTime<0.25){
 				driveAssistAvaliable = true;
 				changeLightColor.changeLedColor(255,0, 0);
 			}	
-			else if(Timer.getFPGATimestamp()-visionCamera.lastParseTime<0.5&&RobotMap.mainUltrasonicSensor1.getDistance()>1.5&&RobotMap.mainUltrasonicSensor2.getDistance()>1.5){
+			else if(Timer.getFPGATimestamp()-visionCamera.lastParseTime<0.5){
 				driveAssistAvaliable = true;
 				changeLightColor.changeLedColor(0, 255, 0);
 			}	
@@ -229,8 +217,6 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopPeriodic() {	
-	
-
 		if(hasCamera){
 			visionDecisionAlgorithm();
 		}

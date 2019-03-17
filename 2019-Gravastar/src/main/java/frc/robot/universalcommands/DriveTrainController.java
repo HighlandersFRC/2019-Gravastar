@@ -9,9 +9,11 @@ package frc.robot.universalcommands;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.RobotState;
+import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.OI;
 import frc.robot.Robot;
+import frc.robot.RobotConfig;
 import frc.robot.RobotMap;
 import frc.robot.autonomouscommands.VisionToGetToTarget;
 import frc.robot.teleopcommands.ArcadeDrive;
@@ -26,7 +28,7 @@ public class DriveTrainController extends Command {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
     arcadeDrive = new ArcadeDrive();
-    visionToGetToTarget = new VisionToGetToTarget(false);
+    visionToGetToTarget = new VisionToGetToTarget(true);
 
   }
 
@@ -39,9 +41,18 @@ public class DriveTrainController extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    if(OI.pilotController.getStartButton()||OI.pilotController.getBackButton()&&!visionToGetToTarget.shortPathToAngle.isRunning()){
+			RobotMap.visionRelay1.set(Value.kForward);
+		}
+		else{
+			RobotMap.visionRelay1.set(Value.kReverse);
+			
+		}
+
     if(Robot.driveAssistAvaliable&&OI.pilotController.getStartButtonPressed()&&!visionToGetToTarget.isRunning()){
       value = RobotMap.shifters.get();
-      //forwardVisionToGetToTarget.start();
+      RobotConfig.setDriveMotorsBrake();
+      visionToGetToTarget.start();
     }
     
     else if(!OI.pilotController.getStartButton()&&!OI.pilotController.getBackButton()){
@@ -49,6 +60,7 @@ public class DriveTrainController extends Command {
         RobotMap.shifters.set(value);
       }
       if(!arcadeDrive.isRunning()){
+        RobotConfig.setDriveMotorsCoast();
         arcadeDrive.start();
       }
        
