@@ -10,38 +10,41 @@ package frc.robot.universalcommands;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.OI;
+import frc.robot.RobotConfig;
 import frc.robot.RobotMap;
 
-public class ClimbMechanismController extends Command {
-
-  public ClimbMechanismController() {
+public class ClimbMechanismControllerPositionalControl extends Command {
+  private double f;
+  private double p;
+  private double i;
+  private double d;
+  public ClimbMechanismControllerPositionalControl() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
   }
+
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    RobotMap.climbingMechLeadTalon.selectProfileSlot(0, 0);
+    RobotMap.climbingMechLeadTalon.config_kF(0, f, 0);
+    RobotMap.climbingMechLeadTalon.config_kP(0, p, 0);
+    RobotMap.climbingMechLeadTalon.config_kI(0, i, 0);
+    RobotMap.climbingMechLeadTalon.config_kD(0, d, 0);
+    RobotMap.climbingMechLeadTalon.set(ControlMode.Position, RobotConfig.climbingMechUpPosition);
+    
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    SmartDashboard.putNumber("climbingmechPosition", RobotMap.climbingMechLeadTalon.getSelectedSensorPosition());
-    SmartDashboard.putBoolean("climbingMechControllerActicve",true);
-    if(Math.abs(OI.operatorController.getRawAxis(5))>0.1){
-      RobotMap.climbingMechLeadTalon.set(ControlMode.PercentOutput, OI.operatorController.getRawAxis(5));
-    }
-    else{
-      RobotMap.climbingMechLeadTalon.set(ControlMode.PercentOutput, 0);
-    }
+    
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return false;
+    return RobotMap.climbingMechLeadTalon.getSelectedSensorPosition()-RobotConfig.climbingMechUpPosition<30;
   }
 
   // Called once after isFinished returns true

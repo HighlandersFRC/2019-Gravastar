@@ -14,6 +14,7 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.command.Command;
@@ -44,15 +45,16 @@ public class Robot extends TimedRobot {
 	public static StopMotors stopMotors = new StopMotors();
 	private UsbCamera camera;
 	private UsbCamera camera2;
-	
 	private VideoSink server;
 	private double ultraSonicAngle;
 	private double ultraSonicAverage;
 	private boolean hasCamera = false;
+	private boolean cameraBoolean = false;
 	public static boolean driveAssistAvaliable = false;
 	private ChangeLightColor changeLightColor = new ChangeLightColor(0,0, 150, RobotMap.canifier1);
 	public static VisionCamera visionCamera;
 	public static SerialPort jevois1;
+	private boolean ableToSwitch;
 	private int runCounter = 0;
 
 	//this odometry is used to provide reference data for the start of paths, it should only be used in autonomous
@@ -69,7 +71,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 		try {
-			jevois1 = new SerialPort(115200, Port.kUSB2);
+			jevois1 = new SerialPort(115200, Port.kUSB1);
 			if(jevois1.getBytesReceived()>2){
 				hasCamera = true;
 			}
@@ -80,7 +82,7 @@ public class Robot extends TimedRobot {
 			hasCamera = false;
 		}
 		visionCamera= new VisionCamera(Robot.jevois1);
-
+		ableToSwitch = true;
 		
 		robotConfig.setStartingConfig();
 		camera = CameraServer.getInstance().startAutomaticCapture("VisionCamera1", "/dev/video0");
@@ -113,6 +115,10 @@ public class Robot extends TimedRobot {
 
 		runCounter++;
 		if(runCounter%100==0){
+			if(hasCamera){
+				SmartDashboard.putString("visionString", visionCamera.getString());
+				
+			}
 			ultraSonicAngle = Math.toDegrees(Math.atan((RobotMap.mainUltrasonicSensor1.getDistance()-RobotMap.mainUltrasonicSensor2.getDistance())/RobotConfig.forwardUltraSonicDisplacementDistance));
 			double pressure = ((250*RobotMap.preassureSensor.getAverageVoltage())/4.53)-25;
 			SmartDashboard.putNumber("pressure", pressure);
@@ -128,13 +134,21 @@ public class Robot extends TimedRobot {
 	
 		
 	
-		if(OI.pilotController.getPOV() == 180||OI.pilotController.getPOV() == 225|OI.pilotController.getPOV() == 135){
-			server.setSource(camera);
+	
+		if(OI.pilotController.getTriggerAxis(Hand.kLeft)>0.6&&ableToSwitch){
+			if(cameraBoolean){
+				server.setSource(camera2);
+				cameraBoolean = false;
+			}
+			else if(!cameraBoolean){
+				server.setSource(camera);
+				cameraBoolean = true;
+			}
+			ableToSwitch = false;
 		}
-		else if(OI.pilotController.getPOV() ==0||OI.pilotController.getPOV() == 45||OI.pilotController.getPOV() == 315){
-			server.setSource(camera2);
+		else if(OI.pilotController.getTriggerAxis(Hand.kLeft)<0.5){
+			ableToSwitch = true;
 		}
-		
 		
 	}
 	@Override

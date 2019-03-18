@@ -83,7 +83,7 @@ public class TeleopArmControl extends Command {
       RobotMap.arm.intakeWheelsResting();
     }
     if(OI.operatorController.getBackButton()&&OI.operatorController.getStartButton()){
-      climbMechanismController.start();
+      //climbMechanismController.start();
     }
   }
 

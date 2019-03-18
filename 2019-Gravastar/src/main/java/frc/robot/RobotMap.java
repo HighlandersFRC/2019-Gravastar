@@ -49,7 +49,7 @@ public class RobotMap {
 	public static int armMasterID = 5;
 	public static int armFollowerID = 6;
 
-	public static int intakeID = 7;
+	public static int intakeID =7;
 
 	public static int climbingMechLeadTalonID = 8;
 	public static int climbingMechFollowerTalonID = 9;

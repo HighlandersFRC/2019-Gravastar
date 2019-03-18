@@ -32,6 +32,7 @@ public class RobotConfig {
 	public static double armAngleToTicksConversion =1/armTicksToAngleConversion;
 	public static int climbingMechMaxPosition;
 	public static int climbingMechStartingPosition;
+	public static int climbingMechUpPosition;
 	public static int driveMotorContinuousCurrentHighGear = 30;
 	public static int driveMotorContinuousCurrentLowGear = 40;
 	public static int driveMotorPeakCurrentHighGear= 30;		
@@ -83,8 +84,10 @@ public class RobotConfig {
 		RobotMap.armMaster.setSelectedSensorPosition((int)(90*RobotConfig.armAngleToTicksConversion), 0, 0);
 		RobotMap.climbingMechLeadTalon.setSelectedSensorPosition(climbingMechStartingPosition);
 
-		RobotMap.climbingMechLeadTalon.configForwardSoftLimitEnable(true);
+		RobotMap.climbingMechLeadTalon.configForwardSoftLimitEnable(false);
+		RobotMap.climbingMechLeadTalon.configReverseSoftLimitEnable(false);
 		RobotMap.climbingMechLeadTalon.configForwardSoftLimitThreshold(climbingMechMaxPosition);
+		RobotMap.climbingMechLeadTalon.configReverseSoftLimitThreshold(climbingMechStartingPosition);
 
 		RobotMap.leftDriveLead.setSensorPhase(false);
 		RobotMap.rightDriveLead.setSensorPhase(false);
