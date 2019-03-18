@@ -32,7 +32,7 @@ public class VisionToGetToTarget extends Command {
 
 
   private boolean firstRun = false;
-  private ShortPathToAngle shortPathToAngle;
+  public ShortPathToAngle shortPathToAngle;
   private boolean shouldEnd;
   private double previousAngle;
   private double previousDistance;
@@ -70,12 +70,12 @@ public class VisionToGetToTarget extends Command {
   protected void execute() {
     double distance = Robot.visionCamera.getDistance();
     double angle = Math.toRadians(Robot.visionCamera.getAngle());
-    double totalUltraSonicDistance = (RobotMap.mainUltrasonicSensor1.getDistance() + RobotMap.mainUltrasonicSensor2.getDistance())/2;
-    if(RobotMap.mainUltrasonicSensor2.getDistance()<8&&RobotMap.mainUltrasonicSensor2.getDistance()>2&&RobotMap.mainUltrasonicSensor1.getDistance()<8&&RobotMap.mainUltrasonicSensor1.getDistance()>0){
-      //distance = (distance + totalUltraSonicDistance)/2;
+    double totalUltraSonicDistance = (RobotMap.mainUltrasonicSensor3.getDistance() + RobotMap.mainUltrasonicSensor4.getDistance())/2;
+    if(RobotMap.mainUltrasonicSensor4.getDistance()<8&&RobotMap.mainUltrasonicSensor4.getDistance()>2&&RobotMap.mainUltrasonicSensor3.getDistance()<8&&RobotMap.mainUltrasonicSensor3.getDistance()>0){
+      distance = (distance + totalUltraSonicDistance)/2;
     }
-    distance = distance-0.41666;  
-    if(succesfulRunCounter<10&&!firstRun&&!isFinished()){
+    distance = distance;  
+    if(succesfulRunCounter<20&&!firstRun&&!isFinished()){
       double xDelta = distance;
       double yDelta = Math.sin(angle)*distance;
       if(xDelta>0.1&&xDelta<20&&Math.abs(angle)<0.78539){
@@ -89,7 +89,7 @@ public class VisionToGetToTarget extends Command {
      
     
    
-    if(succesfulRunCounter>5&&!firstRun){
+    if(succesfulRunCounter>10&&!firstRun){
       double xSum = 0;
       double ySum = 0;
       double xAverage = 0;
@@ -102,7 +102,7 @@ public class VisionToGetToTarget extends Command {
       }
       xAverage = xSum/xDeltaArrayList.size();
       yAverage = ySum/yDeltaArrayList.size();
-      shortPathToAngle = new ShortPathToAngle(xAverage, yAverage, angle,RobotMap.mainNavx.currentAngle(), false, isReversed);
+      shortPathToAngle = new ShortPathToAngle(xAverage, yAverage, angle,RobotMap.mainNavx.currentAngle(), true, isReversed);
       
      
       shortPathToAngle.start();

@@ -29,7 +29,7 @@ public class RobotConfig {
 	public static double pwmUltraSonicConversionFactor = 0;
 	public static double forwardUltraSonicDisplacementDistance = 0.5;
 	public static double reverseUltraSonicDisplacementDistance = 0.5;
-	public static double armAngleToTicksConversion =40.5;
+	public static double armAngleToTicksConversion =1/armTicksToAngleConversion;
 	public static int climbingMechMaxPosition;
 	public static int climbingMechStartingPosition;
 	public static int driveMotorContinuousCurrentHighGear = 30;
@@ -159,17 +159,18 @@ public class RobotConfig {
 			talon.set(ControlMode.PercentOutput, 0);
 		}
 	}
-	public void setAllMotorsBrake() {
+	public static void setAllMotorsBrake() {
 		for(TalonSRX talon:RobotMap.allMotors){
             talon.setNeutralMode(NeutralMode.Brake);
         }
 	}
-	public void setDriveMotorsCoast() {
+	public static void setDriveMotorsCoast() {
 		for(TalonSRX talon:RobotMap.driveMotors){
             talon.setNeutralMode(NeutralMode.Coast);
         }
 	}
-	public void setDriveMotorsBrake() {
+
+	public static void setDriveMotorsBrake() {
 		for(TalonSRX talon:RobotMap.driveMotors){
             talon.setNeutralMode(NeutralMode.Brake);
         }
