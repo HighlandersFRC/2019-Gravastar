@@ -153,8 +153,8 @@ public class RobotConfig {
 		}
     	for(TalonSRX talon:RobotMap.driveMotors) {
     		talon.configContinuousCurrentLimit(RobotConfig.driveMotorContinuousCurrentLowGear, RobotConfig.timeOut);
-    	}
-		this.setDriveMotorsCoast();
+		}
+		RobotConfig.setDriveMotorsCoast();
 		RobotMap.navx.resetDisplacement();
 	}
 	public void disabledConfig() {

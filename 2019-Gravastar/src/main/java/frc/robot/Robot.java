@@ -71,7 +71,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 		try {
-			jevois1 = new SerialPort(115200, Port.kUSB1);
+			jevois1 = new SerialPort(115200, Port.kUSB2);
 			if(jevois1.getBytesReceived()>2){
 				hasCamera = true;
 			}
@@ -115,6 +115,8 @@ public class Robot extends TimedRobot {
 
 		runCounter++;
 		if(runCounter%100==0){
+			visionCamera.updateVision();
+
 			if(hasCamera){
 				SmartDashboard.putString("visionString", visionCamera.getString());
 				
