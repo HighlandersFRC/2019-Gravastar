@@ -173,6 +173,8 @@ class TapeDetect:
 		#if sortedArray has 2 contours or less, exit
 		if len(sortedArray) < 2 or len(sortedArray) % 2 != 0:
 			outimg = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
+			#outimg = cv2.cvtColor(opening, cv2.COLOR_GRAY2BGR)
+
 			jevois.sendSerial('{"Distance":' + "-11.0" + ', "Angle":' + "-100.0" + '}')
 			#jevois.sendSerial("Hello")
 			return outimg
@@ -224,24 +226,29 @@ class TapeDetect:
 		rightX = rightRect[0][0]
 		
 		#new UNTESTED code for object tracking - DO NOT DELETE
-		#tracker = cv2.TrackerKCF_create()
-		#leftBBox = (leftX, leftY, 0, 0)
-		#ok, leftBBox = tracker.update(hsv)
+		tracker = cv2.TrackerKCF_create()
+		leftBBox = (leftX, leftY, 0, 0)
+		ok, leftBBox = tracker.update(hsv)
 		#leftBBox = cv2.selectROI(hsv, False)
-		#ok = tracker.init(hsv, leftBBox)
+		ok = tracker.init(hsv, leftBBox)
 		
-		#ok, leftBBox = tracker.update(hsv)
-		#if ok:
+		ok, leftBBox = tracker.update(hsv)
+		if ok:
 			# Tracking success
-		#	p1 = (int(leftBBox[0]), int(leftBBox[1]))
-		#	p2 = (int(leftBBox[0] + leftBBox[2]), int(leftBBox[1] + leftBBox[3]))
-		#	cv2.rectangle(hsv, p1, p2, (255,0,0), 2, 1)
+			p1 = (int(leftBBox[0]), int(leftBBox[1]))
+			p2 = (int(leftBBox[0] + leftBBox[2]), int(leftBBox[1] + leftBBox[3]))
+			cv2.rectangle(hsv, p1, p2, (255,0,0), 2, 1)
 		
 		
 		centerY = (leftY + rightY)/2
 		centerX = (leftX + rightX)/2
 		yawAngle = (centerX - 159.5) * 0.203125
-		distance = -0.00002750028278 * centerY **3 + 0.0110106527 * centerY ** 2 -0.7826513252 * centerY + 51.55036834
+		distance = -0.00004694 * centerY **3 + 0.03053 * centerY ** 2 -6.817 * centerY + 532.19
+		if distance > 35:
+			distance = distance - 5
+		else:
+			distance = distance + 5
+
 		
 		
 		realWorldPointY = (centerX - 159.5)/251
@@ -258,7 +265,7 @@ class TapeDetect:
 		centerX = str(centerX)
 		
 		
-		JSON = '{"Distance":' + distance + ', "Angle":' + yawAngle + '}'
+		JSON = '{"Distance:' + distance + ', "Angle":' + yawAngle + '}'
 		
 		
 		#send vals over serial
@@ -266,7 +273,7 @@ class TapeDetect:
 		#jevois.sendSerial("Hello World")
 		
 		#return outimg
-		#outimg = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)		
-		opening2 = cv2.cvtColor(opening, cv2.COLOR_GRAY2BGR)
-		outimg = opening2
+		outimg = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)		
+		#opening2 = cv2.cvtColor(opening, cv2.COLOR_GRAY2BGR)
+		#outimg = opening2
 		return outimg
