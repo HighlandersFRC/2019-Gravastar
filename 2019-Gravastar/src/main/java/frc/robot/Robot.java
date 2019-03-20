@@ -71,7 +71,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 		try {
-			jevois1 = new SerialPort(115200, Port.kUSB1);
+			jevois1 = new SerialPort(115200, Port.kUSB2);
 			if(jevois1.getBytesReceived()>2){
 				hasCamera = true;
 			}
@@ -114,11 +114,15 @@ public class Robot extends TimedRobot {
 	public void robotPeriodic() {
 
 		runCounter++;
-		if(runCounter%100==0){
+		if(runCounter%10==0){
 			visionCamera.updateVision();
 
-		
 			SmartDashboard.putString("visionString", visionCamera.getString());
+
+		}
+		if(runCounter%100==0){
+
+		
 				
 			
 			ultraSonicAngle = Math.toDegrees(Math.atan((RobotMap.mainUltrasonicSensor1.getDistance()-RobotMap.mainUltrasonicSensor2.getDistance())/RobotConfig.forwardUltraSonicDisplacementDistance));
