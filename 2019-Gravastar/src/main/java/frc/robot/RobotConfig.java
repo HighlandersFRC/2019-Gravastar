@@ -15,7 +15,7 @@ public class RobotConfig {
     public static double encoderTicsPerWheelRotation = gearRatio*encoderTicsPerShaftRotation;
     public static double wheelDiam = 7.75;
 	public static double wheelCircum = Math.PI * wheelDiam;
-	public static double robotBaseDist = 2.0;
+	public static double robotBaseDist = 1.5;
     public static double openLoopRampRate = 0.0;
 	public static double voltageControlMaxAuto = 11.0;
 	public static double voltageControlMaxTeleop = 12.3;

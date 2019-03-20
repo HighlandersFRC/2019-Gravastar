@@ -16,19 +16,16 @@ public class TeleopSuite {
 		driveTrainStallProtectionController = new DriveTrainStallProtectionController();
 		teleopArmControl = new TeleopArmControl();	
 		driveTrainController = new DriveTrainController();
-	//	climbMechanismController = new ClimbMechanismController();
 	}
 	public void startTeleopCommands() {
 		driveTrainController.start();
 		driveTrainStallProtectionController.start();
 		teleopArmControl.start();
-		//climbMechanismController.start();
 	}
 	public void endTeleopCommands(){
 		driveTrainStallProtectionController.cancel();
 		driveTrainController.cancel();
 		teleopArmControl.cancel();
-		//climbMechanismController.cancel();
 	}
 
 }

@@ -229,18 +229,16 @@ public class PurePursuitController extends Command {
         }
         distToEndVector.setX(chosenPath.getMainPath().get(chosenPath.getMainPath().length()-1).x-odometry.getX());
         distToEndVector.setY(chosenPath.getMainPath().get(chosenPath.getMainPath().length()-1).y-odometry.getY());
-         //SmartDashboard.putNumber("distoend", distToEndVector.length()*12);
-         //SmartDashboard.putNumber("x", odometry.getX());
-         //SmartDashboard.putNumber("y",odometry.getY());
-         //SmartDashboard.putNumber("theta", odometry.gettheta());
+        SmartDashboard.putNumber("distoend", distToEndVector.length());
+        SmartDashboard.putNumber("x", odometry.getX());
+        SmartDashboard.putNumber("y",odometry.getY());
+        SmartDashboard.putNumber("theta", odometry.gettheta());
         startingNumberLA = (int)partialPointIndex;
         lastLookAheadPoint = lookAheadPoint;
         findRobotCurvature();
         curveAdjustedVelocity = Math.min(Math.abs(k/desiredRobotCurvature),chosenPath.getMainPath().get(closestSegment).velocity);
         setWheelVelocities(curveAdjustedVelocity, desiredRobotCurvature);
-        endThetaError = Pathfinder.boundHalfDegrees((Math.toDegrees
-(chosenPath.getMainPath().get(chosenPath.getMainPath().length()-1).heading)-odometry.gettheta()));
-        //SmartDashboard.putNumber("thetaError", endThetaError);
+        endThetaError = Pathfinder.boundHalfDegrees((Math.toDegrees(chosenPath.getMainPath().get(chosenPath.getMainPath().length()-1).heading)-odometry.gettheta()));
   } 
   public void setOdometryX(double X){
         double desiredX= X;

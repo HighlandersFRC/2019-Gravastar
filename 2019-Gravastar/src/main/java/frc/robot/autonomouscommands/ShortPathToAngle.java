@@ -64,7 +64,6 @@ public class ShortPathToAngle extends Command {
       if(!firstRun){
         degreeEndAngle = 45*Math.round(startingAngle/45);
         
-        System.out.println(degreeEndAngle);
         angleError = degreeEndAngle-navx.currentAngle();
         
         CascadingPIDTurn cascadingPIDTurn= new CascadingPIDTurn(angleError,0.12,0.00070,0.10);

@@ -30,7 +30,7 @@ public class UPIDF extends Command {
 	    RobotMap.climbingMechLeadTalon.config_kD(0, 0.000025, 0);
       RobotMap.climbingMechLeadTalon.config_kF(0, 0.074066, 0);
       RobotMap.climbingMechLeadTalon.selectProfileSlot(0, 0);
-      RobotMap.climbingMechLeadTalon.set(ControlMode.Position, placewherewewanttobe);
+      //RobotMap.climbingMechLeadTalon.set(ControlMode.Position, placewherewewanttobe);
       startTime = Timer.getFPGATimestamp();
   }
 
@@ -42,12 +42,13 @@ public class UPIDF extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    if(Math.abs(RobotMap.climbingMechLeadTalon.getSelectedSensorPosition()-placewherewewanttobe)<howtrashourcodecanbe){
+   /* if(Math.abs(RobotMap.climbingMechLeadTalon.getSelectedSensorPosition()-placewherewewanttobe)<howtrashourcodecanbe){
       return true;
     }
     else{
       return false;
-    }
+    }*/
+    return false;
    
     // if (Timer.getFPGATimestamp() - (startTime) >= 2){
       

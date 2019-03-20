@@ -71,7 +71,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 		try {
-			jevois1 = new SerialPort(115200, Port.kUSB2);
+			jevois1 = new SerialPort(115200, Port.kUSB1);
 			if(jevois1.getBytesReceived()>2){
 				hasCamera = true;
 			}
@@ -117,10 +117,10 @@ public class Robot extends TimedRobot {
 		if(runCounter%100==0){
 			visionCamera.updateVision();
 
-			if(hasCamera){
-				SmartDashboard.putString("visionString", visionCamera.getString());
+		
+			SmartDashboard.putString("visionString", visionCamera.getString());
 				
-			}
+			
 			ultraSonicAngle = Math.toDegrees(Math.atan((RobotMap.mainUltrasonicSensor1.getDistance()-RobotMap.mainUltrasonicSensor2.getDistance())/RobotConfig.forwardUltraSonicDisplacementDistance));
 			double pressure = ((250*RobotMap.preassureSensor.getAverageVoltage())/4.53)-25;
 			SmartDashboard.putNumber("pressure", pressure);
@@ -133,11 +133,22 @@ public class Robot extends TimedRobot {
 			SmartDashboard.putNumber("ultraSonicAngle", ultraSonicAngle);
 
 		}
-	
+		
+		try{
+			if(jevois1.getBytesReceived()>2){
+				hasCamera = true;
+			}
+			else{
+				hasCamera = false;
+			}
+		}
+		catch(Exception e){
+			hasCamera = false;
+		}
 		
 	
 	
-		if(OI.pilotController.getTriggerAxis(Hand.kLeft)>0.6&&ableToSwitch){
+		if(OI.pilotController.getTriggerAxis(Hand.kLeft)>0.2&&ableToSwitch){
 			if(cameraBoolean){
 				server.setSource(camera2);
 				cameraBoolean = false;
@@ -148,7 +159,7 @@ public class Robot extends TimedRobot {
 			}
 			ableToSwitch = false;
 		}
-		else if(OI.pilotController.getTriggerAxis(Hand.kLeft)<0.5){
+		else if(OI.pilotController.getTriggerAxis(Hand.kLeft)<0.2){
 			ableToSwitch = true;
 		}
 		
@@ -201,27 +212,10 @@ public class Robot extends TimedRobot {
 	}
 	@Override
 	public void autonomousPeriodic() {
-		if(hasCamera){
-			visionDecisionAlgorithm();
-		}
-		else{
-			driveAssistAvaliable = false;
-			changeLightColor.changeLedColor(0, 0, 255);
-
-		}
+		visionDecisionAlgorithm();
 		if(runCounter%5==0){
 			SmartDashboard.putBoolean("driveAssistAvaliable", driveAssistAvaliable);
-
-			if(hasCamera){
-				
-				//SmartDashboard.putNumber("visionAngle", visionCamera.getAngle());
-				SmartDashboard.putString("visionDistance", visionCamera.getString());
-				
-			}
-			SmartDashboard.putNumber("armPosit",RobotMap.mainArmEncoder.getAngle());
-			
 		}
-
 		Scheduler.getInstance().run();
 	}
 
@@ -233,29 +227,9 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopPeriodic() {	
-		if(hasCamera){
-			visionDecisionAlgorithm();
-		}
-		else{
-			driveAssistAvaliable = false;
-			changeLightColor.changeLedColor(0, 0, 255);
-
-		}
+		visionDecisionAlgorithm();
 		if(runCounter%5==0){
 			SmartDashboard.putBoolean("driveAssistAvaliable", driveAssistAvaliable);
-
-			if(hasCamera){
-				SmartDashboard.putString("visionString", visionCamera.getString());
-				
-			}
-			if(Math.abs((RobotMap.mainUltrasonicSensor1.getDistance()+RobotMap.mainUltrasonicSensor2.getDistance())/2-1.4)<0.2){
-				SmartDashboard.putBoolean("isGoodPositionRocket", true);
-			}
-			else{
-				SmartDashboard.putBoolean("isGoodPositionRocket", false);
-
-			}
-			SmartDashboard.putNumber("armPosit",RobotMap.mainArmEncoder.getAngle());
 		}
 		Scheduler.getInstance().run();
 	}

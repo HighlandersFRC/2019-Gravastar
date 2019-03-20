@@ -102,7 +102,7 @@ public class VisionToGetToTarget extends Command {
       }
       xAverage = xSum/xDeltaArrayList.size();
       yAverage = ySum/yDeltaArrayList.size();
-      shortPathToAngle = new ShortPathToAngle(xAverage+0.7, yAverage, angle,RobotMap.mainNavx.currentAngle(), true, isReversed);
+      shortPathToAngle = new ShortPathToAngle(xAverage, yAverage, angle,RobotMap.mainNavx.currentAngle(), true, isReversed);
       
      
       shortPathToAngle.start();

@@ -107,13 +107,11 @@ public class VisionCamera {
 
     public String getString(){
       try {     
-         // System.out.println("Raw Read: "+port.readString());
-         // System.out.println("Bytes Available: "+port.getBytesReceived());
+         
          
          if(port.getBytesReceived()>2){
             
             String unsanatizedString = port.readString();
-            //System.out.println("Raw Read: "+unsanatizedString);
               
             if(unsanatizedString.length()>5&&!unsanatizedString.isBlank()&&!unsanatizedString.isEmpty()){
 
@@ -122,10 +120,8 @@ public class VisionCamera {
            }
         } 
       catch (Exception e) {
-         // System.out.println("Parse Failed");
          }
-         //System.out.println(sanatizedString);
-         //System.out.println("Get String: " + sanatizedString);
+       
         return sanatizedString;   
     } 
 }

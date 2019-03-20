@@ -47,7 +47,7 @@ public class ArcadeDrive extends Command {
 		else {
 			turn = 0;
 		}
-		if(Math.abs(throttel)>0.1){
+		if(Math.abs(throttel)>0.01){
 			leftPower = (throttel - (sensitivity*turn*ratio));
 			rightPower = (throttel + (sensitivity*turn*ratio));
 		}
@@ -77,7 +77,7 @@ public class ArcadeDrive extends Command {
 			RobotMap.drive.setHighGear();
 		}
 		if(RobotMap.shifters.get() == RobotMap.highGear) {
-				sensitivity =1.5;
+				sensitivity =1.25;
 
 		}
 		else if(RobotMap.shifters.get() == RobotMap.lowGear) {

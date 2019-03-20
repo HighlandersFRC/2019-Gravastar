@@ -44,7 +44,6 @@ public class UltrasoundGetToTarget extends Command {
     runCounter++;
     if(runCounter>=10&&!firstRun){
       distanceAverage = distanceSum/10;
-      System.out.println(distanceAverage);
       shortPathToAngle = new ShortPathToAngle(distanceAverage, 0, 0,RobotMap.mainNavx.currentAngle(), false, false);
       shortPathToAngle.start();
       firstRun = true;
