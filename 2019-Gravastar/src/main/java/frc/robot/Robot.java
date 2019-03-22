@@ -51,7 +51,9 @@ public class Robot extends TimedRobot {
 	private boolean hasCamera = false;
 	private boolean cameraBoolean = false;
 	public static boolean driveAssistAvaliable = false;
-	private ChangeLightColor changeLightColor = new ChangeLightColor(0,0, 150, RobotMap.canifier1);
+	private ChangeLightColor changeLightColor = new ChangeLightColor(0,150, 0, RobotMap.canifier1);
+	private ChangeLightColor changeLightColor1 = new ChangeLightColor(0,150, 0, RobotMap.canifier2);
+
 	public static VisionCamera visionCamera;
 	public static SerialPort jevois1;
 	private boolean ableToSwitch;
@@ -71,7 +73,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 		try {
-			jevois1 = new SerialPort(115200, Port.kUSB2);
+			jevois1 = new SerialPort(115200, Port.kUSB);
 			if(jevois1.getBytesReceived()>2){
 				hasCamera = true;
 			}
@@ -132,12 +134,19 @@ public class Robot extends TimedRobot {
 			SmartDashboard.putNumber("leftPos",RobotMap.leftMainDrive.getDistance());
 			SmartDashboard.putNumber("rightpos",RobotMap.rightMaindrive.getDistance());
 			SmartDashboard.putBoolean("hasCamera", hasCamera);
+			SmartDashboard.putNumber("armPosit", RobotMap.mainArmEncoder.getAngle());
 			SmartDashboard.putNumber("ultraSonic1",RobotMap.mainUltrasonicSensor1.getDistance());
 			SmartDashboard.putNumber("ultraSonic2", RobotMap.mainUltrasonicSensor2.getDistance());
 			SmartDashboard.putNumber("ultraSonicAngle", ultraSonicAngle);
 
 		}
-		
+		if(OI.pilotController.getStartButton()||OI.pilotController.getBackButton()){
+			RobotMap.visionRelay1.set(Value.kForward);
+		}
+		else{
+			RobotMap.visionRelay1.set(Value.kReverse);
+			
+		}
 		try{
 			if(jevois1.getBytesReceived()>2){
 				hasCamera = true;

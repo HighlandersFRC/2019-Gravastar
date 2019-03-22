@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import frc.robot.OI;
 import frc.robot.Robot;
+import frc.robot.RobotConfig;
 import frc.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.RobotState;
@@ -78,10 +79,12 @@ public class ArcadeDrive extends Command {
 		}
 		if(RobotMap.shifters.get() == RobotMap.highGear) {
 				sensitivity =1.25;
+				RobotConfig.setDriveMotorsCoast();
 
 		}
 		else if(RobotMap.shifters.get() == RobotMap.lowGear) {
-				sensitivity =0.75;
+				sensitivity =0.95;
+				RobotConfig.setDriveMotorsBrake();
 		}
 	 }
 	
