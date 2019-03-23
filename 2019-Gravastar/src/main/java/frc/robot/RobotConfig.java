@@ -33,11 +33,11 @@ public class RobotConfig {
 	public static int climbingMechMaxPosition;
 	public static int climbingMechStartingPosition;
 	public static int climbingMechUpPosition;
-	public static int driveMotorContinuousCurrentHighGear = 30;
-	public static int driveMotorContinuousCurrentLowGear = 40;
-	public static int driveMotorPeakCurrentHighGear= 30;		
-	public static int driveMotorPeakCurrentLowGear = 60;
-	public static int driveMotorPeakCurrentDurationLowGear = 100;
+	public static int driveMotorContinuousCurrentHighGear = 5;
+	public static int driveMotorContinuousCurrentLowGear = 5;
+	public static int driveMotorPeakCurrentHighGear= 5;		
+	public static int driveMotorPeakCurrentLowGear = 5;
+	public static int driveMotorPeakCurrentDurationLowGear = 0;
 	public static int driveMotorPeakCurrentDurationHighGear = 0;
 	public static int armMotorContinuousCurrent = 20;
 	public static int armMotorPeakCurrent = 30;

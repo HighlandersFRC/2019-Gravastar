@@ -22,6 +22,7 @@ public class ArcadeDrive extends Command {
 	private double deadZone = 0.00;
 	private double turn =0;
 	private double throttel = 0;
+	private double povValue;
 	private double ratio = 0;
 	private double sensitivity;
 	private double leftPower;
@@ -40,53 +41,59 @@ public class ArcadeDrive extends Command {
 	// Called repeatedly when this Command is scheduled to run
 	@Override
 	protected void execute() {
-		throttel = -OI.pilotController.getRawAxis(1); 
+		throttel = -OI.pilotController.getRawAxis(1)*0.9; 
 		ratio = Math.abs(throttel);
-		if(Math.abs(OI.pilotController.getRawAxis(4))>deadZone) {	
-			turn = -OI.pilotController.getRawAxis(4);
-		}
-		else {
-			turn = 0;
-		}
-		if(Math.abs(throttel)>0.01){
-			leftPower = (throttel - (sensitivity*turn*ratio));
-			rightPower = (throttel + (sensitivity*turn*ratio));
-		}
-	
-		else{
-			leftPower = (-turn)*sensitivity;
-			rightPower = (turn)*sensitivity; 
-		}
-		if(OI.pilotController.getRawAxis(3)>0.5) {
-			leftPower = throttel +(-turn);
-			rightPower= throttel +(turn);
-		}
-		if(Math.abs(leftPower)>1) {
-			leftPower = (leftPower/Math.abs(leftPower));
-			rightPower = Math.abs(rightPower/leftPower)*(rightPower/Math.abs(rightPower));
-		}
-		else if(Math.abs(rightPower)>1) {
-			rightPower = (rightPower/Math.abs(rightPower));
-			leftPower = Math.abs(leftPower/rightPower)*(leftPower/Math.abs(leftPower));
-		}
-		RobotMap.leftDriveLead.set(ControlMode.PercentOutput, leftPower);
-		RobotMap.rightDriveLead.set(ControlMode.PercentOutput, rightPower);
-		if(OI.pilotController.getBumperPressed(Hand.kLeft)){
-			RobotMap.drive.setLowGear();
-		}
-		else if(OI.pilotController.getBumperPressed(Hand.kRight)) {
-			RobotMap.drive.setHighGear();
-		}
-		if(RobotMap.shifters.get() == RobotMap.highGear) {
-				sensitivity =1.25;
+		povValue = OI.pilotController.getPOV();
+		
+			if(Math.abs(OI.pilotController.getRawAxis(4))>deadZone) {	
+				turn = -OI.pilotController.getRawAxis(4);
+			}
+			else {
+				turn = 0;
+			}
+			if(Math.abs(throttel)>0.01&&povValue==-1){
+				leftPower = (throttel - (sensitivity*turn*ratio));
+				rightPower = (throttel + (sensitivity*turn*ratio));
 				RobotConfig.setDriveMotorsCoast();
+			}
+			else{
+				leftPower = (-turn)*sensitivity;
+				rightPower = (turn)*sensitivity; 
+			}
+			if(OI.pilotController.getRawAxis(3)>0.5) {
+				leftPower = throttel +(-turn);
+				rightPower= throttel +(turn);
+			}
+			if(Math.abs(leftPower)>1) {
+				leftPower = (leftPower/Math.abs(leftPower));
+				rightPower = Math.abs(rightPower/leftPower)*(rightPower/Math.abs(rightPower));
+			}
+			else if(Math.abs(rightPower)>1) {
+				rightPower = (rightPower/Math.abs(rightPower));
+				leftPower = Math.abs(leftPower/rightPower)*(leftPower/Math.abs(leftPower));
+			}
+			RobotMap.leftDriveLead.set(ControlMode.PercentOutput, leftPower);
+			RobotMap.rightDriveLead.set(ControlMode.PercentOutput, rightPower);
+			if(OI.pilotController.getBumperPressed(Hand.kLeft)){
+				RobotMap.drive.setHighGear();
+			}
+			else if(OI.pilotController.getBumperPressed(Hand.kRight)) {
+				RobotMap.drive.setHighGear();
+			}
+			if(RobotMap.shifters.get() == RobotMap.highGear) {
+					sensitivity =1.25;
+					RobotConfig.setDriveMotorsCoast();
+	
+			}
+			else if(RobotMap.shifters.get() == RobotMap.lowGear) {
+					sensitivity =0.95;
+					RobotConfig.setDriveMotorsCoast();
+			}
 
 		}
-		else if(RobotMap.shifters.get() == RobotMap.lowGear) {
-				sensitivity =0.95;
-				RobotConfig.setDriveMotorsBrake();
-		}
-	 }
+	
+	
+	 
 	
 
 	// Make this return true when this Command no longer needs to run execute()
