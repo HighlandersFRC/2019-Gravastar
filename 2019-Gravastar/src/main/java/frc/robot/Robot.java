@@ -73,7 +73,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 		try {
-			jevois1 = new SerialPort(115200, Port.kUSB);
+			jevois1 = new SerialPort(115200, Port.kUSB1);
 			if(jevois1.getBytesReceived()>2){
 				hasCamera = true;
 			}
