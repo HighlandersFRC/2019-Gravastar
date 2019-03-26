@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.XboxController;
 
 /**
@@ -16,6 +17,10 @@ import edu.wpi.first.wpilibj.XboxController;
 public class OI {
 	public static XboxController pilotController = new XboxController(0);
 	public static XboxController operatorController = new XboxController(1);
+
+	public static JoystickButton autoButton =new JoystickButton (pilotController,2);
+
+
 	//// CREATING BUTTONS
 	// One type of button is a joystick button which is any button on a
 	//// joystick.
