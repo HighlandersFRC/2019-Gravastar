@@ -46,8 +46,6 @@ public class AutoButton extends Command {
   @Override
   protected void execute() {
   
- 
-
       if (startAngle != 0){
 
         orientation.updatePID(startAngle);
@@ -60,10 +58,7 @@ public class AutoButton extends Command {
           
         }
       }
-   
     }
-
-
 
   @Override
   protected boolean isFinished() {
@@ -74,12 +69,10 @@ public class AutoButton extends Command {
     
     }
 
-
    else return false;
   
   }
 
- 
   @Override
   protected void end() {
 
@@ -87,7 +80,6 @@ public class AutoButton extends Command {
 		RobotMap.rightDriveLead.set(ControlMode.PercentOutput, 0);
 
   }
-
 
   @Override
   protected void interrupted() {

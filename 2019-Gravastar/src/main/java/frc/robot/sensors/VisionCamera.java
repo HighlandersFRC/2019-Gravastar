@@ -8,9 +8,6 @@ import edu.wpi.first.wpilibj.Timer;
 import frc.robot.RobotMap;
 import edu.wpi.first.hal.util.UncleanStatusException;
 
-
-
-
 public class VisionCamera {
    
    JSONParser parser = new JSONParser();
