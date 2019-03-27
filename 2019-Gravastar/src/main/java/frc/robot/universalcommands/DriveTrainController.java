@@ -41,13 +41,7 @@ public class DriveTrainController extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    if(OI.pilotController.getStartButton()||OI.pilotController.getBackButton()&&!visionToGetToTarget.shortPathToAngle.isRunning()){
-			RobotMap.visionRelay1.set(Value.kForward);
-		}
-		else{
-			RobotMap.visionRelay1.set(Value.kReverse);
-			
-		}
+   
 
     if(Robot.driveAssistAvaliable&&OI.pilotController.getStartButtonPressed()&&!visionToGetToTarget.isRunning()){
       value = RobotMap.shifters.get();

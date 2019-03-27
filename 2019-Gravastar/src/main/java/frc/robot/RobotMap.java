@@ -15,6 +15,7 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Counter;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Ultrasonic;
@@ -45,7 +46,6 @@ public class RobotMap {
 		
 	public static int rightDriveFollowerOneID = 4; 
 	public static int leftDriveFollowerOneID = 2;
-
 	public static int armMasterID = 5;
 	public static int armFollowerID = 6;
 
@@ -82,6 +82,8 @@ public class RobotMap {
 	public static DoubleSolenoid hatchGrabberPiston = new DoubleSolenoid(4,5);
 	public static DoubleSolenoid.Value hatchMechRelease = DoubleSolenoid.Value.kForward;
 	public static DoubleSolenoid.Value hatchMechGrab = DoubleSolenoid.Value.kReverse;
+	public static PowerDistributionPanel pdp = new PowerDistributionPanel();
+
 
 	public static Relay visionRelay1 = new Relay(0);
 	public static Relay visionRelay2 = new Relay(2);
