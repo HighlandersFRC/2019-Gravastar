@@ -7,6 +7,10 @@ import frc.robot.OI;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.sensors.VisionCamera;
+import edu.wpi.first.hal.util.UncleanStatusException;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 public class AutoButton extends Command {
   
@@ -23,6 +27,7 @@ public class AutoButton extends Command {
   VisionCamera jevois = new VisionCamera(Robot.jevois1);
   private double startAngle = jevois.angle;
   private double startDistance = jevois.distance;
+  private String json = jevois.sanatizedString;
 
   public AutoButton() {
 
@@ -53,7 +58,7 @@ public class AutoButton extends Command {
           RobotMap.leftDriveLead.set(ControlMode.PercentOutput, forwardSpeed);
           RobotMap.rightDriveLead.set(ControlMode.PercentOutput, forwardSpeed);
 
-          if (startDistance == -11 || startAngle == -100){
+          if (startDistance == -11 || startAngle == -100 || json.isBlank()){
             RobotMap.leftDriveLead.set(ControlMode.PercentOutput, forwardSpeed);
             RobotMap.rightDriveLead.set(ControlMode.PercentOutput, forwardSpeed);
           }

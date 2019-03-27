@@ -15,7 +15,7 @@ public class VisionCamera {
    
    JSONParser parser = new JSONParser();
    SerialPort port;
-   private String sanatizedString = "nothing";
+   public String sanatizedString = "nothing";
    public double lastParseTime;
    public double distance;
    public double angle;
