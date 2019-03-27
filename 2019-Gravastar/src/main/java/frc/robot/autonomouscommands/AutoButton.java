@@ -52,6 +52,11 @@ public class AutoButton extends Command {
         if (startDistance != 0){
           RobotMap.leftDriveLead.set(ControlMode.PercentOutput, forwardSpeed);
           RobotMap.rightDriveLead.set(ControlMode.PercentOutput, forwardSpeed);
+
+          if (startDistance == -11 || startAngle == -100){
+            RobotMap.leftDriveLead.set(ControlMode.PercentOutput, forwardSpeed);
+            RobotMap.rightDriveLead.set(ControlMode.PercentOutput, forwardSpeed);
+          }
         }
       }
    
@@ -64,11 +69,14 @@ public class AutoButton extends Command {
   protected boolean isFinished() {
 
     if (startDistance == 0 && startAngle == 0){
+     
       return true;
+    
     }
 
 
    else return false;
+  
   }
 
  
