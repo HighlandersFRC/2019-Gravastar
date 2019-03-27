@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.autonomouscommands.AutoButton;
 import frc.robot.autonomouscommands.AutoSuite;
 import frc.robot.sensors.UltrasonicSensor;
 import frc.robot.sensors.VisionCamera;
@@ -72,6 +73,7 @@ public class Robot extends TimedRobot {
 	
 	@Override
 	public void robotInit() {
+
 		try {
 			jevois1 = new SerialPort(115200, Port.kUSB1);
 			if(jevois1.getBytesReceived()>2){
