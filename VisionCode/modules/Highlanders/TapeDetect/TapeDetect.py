@@ -19,20 +19,21 @@ class TapeDetect:
 		self.timer = jevois.Timer("processing timer", 100, jevois.LOG_INFO)
 		
 		self.draw = True
-		
+				
 	# ###################################################################################################
 	## Process function with USB output
 	def process(self, inframe, outframe):
 		out = self.UniversalProcess(inframe)
 		outframe.sendCv(out)
-		
+	
 
 	def processNoUSB(self, inframe):
 		out = self.UniversalProcess(inframe)
-		
+		#jevois.sendSerial("Hello")
 		
 	def sortContours(self, cntArray):
 		arraySize = len(cntArray)
+		#jevois.sendSerial(str(arraySize))
 		if arraySize == 0:
 			return []
 			
@@ -53,27 +54,58 @@ class TapeDetect:
 		
 		return sortedArray
 	
-	def isLeft(self, contour, hsv):
-		rows,cols = hsv.shape[:2]
-		[vx,vy,x,y] = cv2.fitLine(contour, cv2.DIST_L2,0,0.01,0.01)
-		lefty = int((-x*vy/vx) + y)
-		righty = int(((cols-x)*vy/vx)+y)
-		cv2.line(hsv,(cols-1,righty),(0,lefty),(0,255,255),2)
-		slope = (vy)/(vx)
-		if slope < 0:
-			return True
-		return False
+	def isTape(self, contour, hsv, draw = False):
+		foundTape = False
+		left = False
+		right = False
+		angle = -45
+		cntArea = cv2.contourArea(contour)
+		#jevois.sendSerial("cntArea:" + str(cntArea))
+		if cntArea > 25 and cntArea < 2500:
+			left, angle = self.isLeft(contour, hsv, draw)
+			if not left:
+				right, angle = self.isRight(contour, hsv, draw)
+			foundTape = left or right
+		
+		return foundTape, left, right, angle
+		
+	def isAngle(self, contour, hsv, minAngle, maxAngle, goodColor, draw):
+		rectangle = cv2.minAreaRect(contour)
+		box = cv2.boxPoints(rectangle)
+		boxInts = np.int0(box)
 
-	def isRight(self, contour, hsv):
 		rows,cols = hsv.shape[:2]
 		[vx,vy,x,y] = cv2.fitLine(contour, cv2.DIST_L2,0,0.01,0.01)
-		lefty = int((-x*vy/vx) + y)
-		righty = int(((cols-x)*vy/vx)+y)
-		cv2.line(hsv,(cols-1,righty),(0,lefty),(0,255,0),2)
-		slope = (vy)/(vx)
-		if slope > 0:
-			return True
-		return False
+		leftY = int((-x*vy/vx) + y)
+		rightY = int(((cols-x)*vy/vx)+y)
+		
+		#jevois.sendSerial("vx:" + str(vx) + " vy" + str(vy) + " x" + str(x) + " y:" + str(y))
+		
+		absY = math.fabs(vy)
+		absX = math.fabs(vx)
+		
+		angle = math.atan(vy/vx) * 180 / 3.1415
+		
+		inBounds = False
+		color = (0, 0, 255)
+
+		if angle >= minAngle and angle <= maxAngle:
+			color = goodColor
+			inBounds = True
+		#if (draw):	
+		#	try:
+		#		cv2.line(hsv,(cols-1,rightY),(0,leftY),color,2)
+		#	except:
+		#		jevois.sendSerial("LeftY: " + str(leftY))
+		#		jevois.sendSerial("RightY: " + str(rightY))
+			
+		return inBounds, angle
+		
+	def isLeft(self, contour, hsv, draw = False):
+		return self.isAngle(contour, hsv, -90, -45, (85, 255, 255), draw)
+
+	def isRight(self, contour, hsv, draw = False):
+		return self.isAngle(contour, hsv, 45, 90, (170, 255, 255), draw)
 
 	def UniversalProcess(self, inframe):
 		#jevois.sendSerial("Hello World")
@@ -86,18 +118,15 @@ class TapeDetect:
 		
 		#change to hsv
 		hsv = cv2.cvtColor(inimg, cv2.COLOR_BGR2HSV)
-		outimg = hsv
 		
-		oKernel = np.ones((7, 7), np.uint8)
-		cKernel = np.ones((7, 7), np.uint8)
-		#cKernel = np.array([
-		#[0, 0, 1, 0, 0],
-		#[0, 1, 1, 0, 0],
-		#[1, 1, 1, 1, 0],
-		#[0, 1, 1, 1, 0],
-		#[0, 1, 1, 1, 1],
-		#[0, 0, 1, 1, 0],
-		#[0, 0, 1, 0, 0]], dtype = np.uint8)
+		oKernel = np.ones((3, 3), np.uint8)
+		#cKernel = np.ones((5, 5), np.uint8)
+		cKernel = np.array([
+		[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+		[0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+		[0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+		[0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+		[0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]], dtype = np.uint8)
 		
 		
 		#threshold colors to detect - Green: First value decides color, second val determines intensity, third val decides brightness
@@ -116,139 +145,123 @@ class TapeDetect:
 		closing = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, cKernel)
 		
 		#takes away noise from outside object
-		opening = cv2.morphologyEx(closing, cv2.MORPH_OPEN, oKernel)
+		#opening = cv2.morphologyEx(closing, cv2.MORPH_OPEN, cKernel)
 		
 		#find contours
-		
-		countours, _ = cv2.findContours(closing, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+		contours, _ = cv2.findContours(closing, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
 		
 		cntArray = []
 		yesNo = " "
 		pairsList = []
 		
+		intDave = 0
+
 		#sift through contours and add 4 sided contours to cntArray
-		for countour in countours:
-			peri = cv2.arcLength(countour, True)
-			approx = cv2.approxPolyDP(countour, 0.04 * peri, True)
-			cntArea = cv2.contourArea(countour)
-			rotatedRect = cv2.minAreaRect(countour)
+		for contour in contours:
+			intDave = intDave + 1
+			peri = cv2.arcLength(contour, True)
+			approx = cv2.approxPolyDP(contour, 0.04 * peri, True)
+			cntArea = cv2.contourArea(contour)
+			rotatedRect = cv2.minAreaRect(contour)
 			box = cv2.boxPoints(rotatedRect)
 			boxArray = np.int0(box)
-			boxColor = (255,0,0)
-			if len(approx) == 4 and cntArea > 100 and cntArea < 800:
-				targetAngle = rotatedRect[2]
-				#if targetAngle >= -80 and targetAngle <= -65:
-				#cntArray.append(countour)
-				#boxColor = (155, 200, 240)
-				#elif targetAngle >= -25 and targetAngle <= -5:
-				if self.isLeft(countour, hsv):
-					cntArray.append(countour)
-				if self.isRight(countour, hsv):
-					cntArray.append(countour)
-				#boxColor = (50, 200, 240)
+			boxColor = (0,0,255)
+			#cv2.drawContours(hsv,[boxArray],0,boxColor,2)
 
-				targetAngle = str(targetAngle)
-				centerX = rotatedRect[0][0]
-				centerX = str(centerX)
-				#jevois.sendSerial("CenterX: " + centerX + " " + "TargetAngle: " + targetAngle)
-				#cv2.drawContours(outimg,[boxArray],0,boxColor,2)
-		#jevois.sendSerial(" ")
+			tape, _, _, angle = self.isTape(contour, hsv, True)
+			#jevois.sendSerial("Angle: " + str(angle))
+			#if len(approx) == 4 and tape:
+			#jevois.sendSerial(str(len(cntArray)) + "cntArray")
+			cntArray.append(contour)
+			#jevois.sendSerial(str(intDave))
 		
-		#call function to sort contours
+		#jevois.sendSerial("")
+		jevois.sendSerial(str(len(contours)))
 		sortedArray = self.sortContours(cntArray)
-				
-		
-		
-		
-		#time.sleep(0.25)
+		#jevois.sendSerial(str(len(sortedArray))
+		#jevois.sendSerial(str(len(sortedArray)) + "sortedArray")
 
-		#take out contours if in wrong position
-		if len(sortedArray) > 0:
-			if self.isRight(sortedArray[0], hsv):
-				sortedArray.pop(0)
-		if len(sortedArray) > 0:
-			if self.isLeft(sortedArray[len(sortedArray) - 1], hsv):
-				sortedArray.pop(len(sortedArray) - 1)
-		
-		#if sortedArray has 2 contours or less, exit
-		if len(sortedArray) < 2 or len(sortedArray) % 2 != 0:
-			outimg = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
-			#outimg = cv2.cvtColor(opening, cv2.COLOR_GRAY2BGR)
+		#outimg = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
+		#outimg = cv2.cvtColor(closing, cv2.COLOR_GRAY2BGR)
+	
+		if len(sortedArray) < 2:
+			jevois.sendSerial('{"Distance":-11, "Angle":-100}')
+			#outimg = cv2.cvtColor(closing, cv2.COLOR_GRAY2BGR)
+			#outimg = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
+			return outimg
+			
+		isFirstRight, _ = self.isRight(sortedArray[0], hsv)
+		isLastLeft, _ = self.isLeft(sortedArray[len(sortedArray) - 1], hsv)
 
-			jevois.sendSerial('{"Distance":' + "-11.0" + ', "Angle":' + "-100.0" + '}')
-			#jevois.sendSerial("Hello")
+		if isFirstRight:
+			sortedArray.pop(0)
+		if isLastLeft:
+			sortedArray.pop(len(sortedArray) - 1)   
+		
+		if len(sortedArray) < 2:
 			return outimg
 		
 		boxColor = (0,255, 255)
 		
 		xArray = []
 		
-		#chose center pair
 		for index in range(0, len(sortedArray), 2):
-			if index != len(sortedArray):
-				leftRect = cv2.minAreaRect(sortedArray[index])
-				rightRect = cv2.minAreaRect(sortedArray[index + 1])
-				points_A = cv2.boxPoints(leftRect)
-				points_1 = np.int0(points_A)
-				points_B = cv2.boxPoints(rightRect)
-				points_2 = np.int0(points_B)
-				leftX = leftRect[0][0]
-				rightX = rightRect[0][0]
-				cv2.drawContours(hsv, [points_1], 0, boxColor, 2)
-				cv2.drawContours(hsv, [points_2], 0, boxColor, 2)
-				centerX = (leftX + rightX)/2
-				centerX = math.fabs(centerX - 160)
-				xArray.append(centerX)
+			if ((index + 1) >= len(sortedArray)):
+				break;
+			firstLeft, _ = self.isLeft(sortedArray[index], hsv)
+			secondRight, _ = self.isRight(sortedArray[index + 1], hsv)
+			if ((not firstLeft) or (not secondRight)):
+				break;
+			leftRect = cv2.minAreaRect(sortedArray[index])
+			rightRect = cv2.minAreaRect(sortedArray[index + 1])
+			points_A = cv2.boxPoints(leftRect)
+			points_1 = np.int0(points_A)
+			points_B = cv2.boxPoints(rightRect)
+			points_2 = np.int0(points_B)
+			leftX = leftRect[0][0]
+			rightX = rightRect[0][0]
+			#cv2.drawContours(hsv, [points_1], 0, boxColor, 2)
+			#cv2.drawContours(hsv, [points_2], 0, boxColor, 2)
+			centerX = (leftX + rightX)/2
+			centerX = math.fabs(centerX - 160)
+			xArray.append(centerX)
 		
-		minX = np.argmin(xArray)
+		#minX = np.argmin(xArray)
 		
 		#jevois.sendSerial("Hello")
+		
+
+		#tracker = cv2.TrackerMil_Create()
+		#bbox = (287, 23, 86, 320)
+		minX = 0
 		
 		centerPairLeft = sortedArray[minX * 2]
 		centerPairRight = sortedArray[(minX * 2) + 1]
 		
-		boxColor = (120, 255, 255)
-		
-		#draw center pair
 		rightRect = cv2.minAreaRect(centerPairRight)
 		leftRect = cv2.minAreaRect(centerPairLeft)
-		pointsLeft = cv2.boxPoints(leftRect)
-		pointsRight = cv2.boxPoints(rightRect)
-		pointsLeft = np.int0(pointsLeft)
-		pointsRight = np.int0(pointsRight)
-		cv2.drawContours(hsv, [pointsLeft], 0, boxColor, 2)
-		cv2.drawContours(hsv, [pointsRight], 0, boxColor, 2)
+		leftPoints = cv2.boxPoints(leftRect)
+		rightPoints = cv2.boxPoints(rightRect)
+		leftPoints_1 = np.int0(leftPoints)
+		rightPoints_1 = np.int0(rightPoints)
 		
-		#define different x and y vals
+		boxColor = (240, 255, 255)
+		
+		#cv2.drawContours(hsv, [leftPoints_1], 0, boxColor, 2)
+		#cv2.drawContours(hsv, [rightPoints_1], 0, boxColor, 2)
+		
 		leftY = leftRect[0][1]
 		rightY = rightRect[0][1]
 		leftX = leftRect[0][0]
 		rightX = rightRect[0][0]
 		
-		#new UNTESTED code for object tracking - DO NOT DELETE
-		tracker = cv2.TrackerKCF_create()
-		leftBBox = (leftX, leftY, 0, 0)
-		ok, leftBBox = tracker.update(hsv)
-		#leftBBox = cv2.selectROI(hsv, False)
-		ok = tracker.init(hsv, leftBBox)
-		
-		ok, leftBBox = tracker.update(hsv)
-		if ok:
-			# Tracking success
-			p1 = (int(leftBBox[0]), int(leftBBox[1]))
-			p2 = (int(leftBBox[0] + leftBBox[2]), int(leftBBox[1] + leftBBox[3]))
-			cv2.rectangle(hsv, p1, p2, (255,0,0), 2, 1)
-		
 		
 		centerY = (leftY + rightY)/2
 		centerX = (leftX + rightX)/2
 		yawAngle = (centerX - 159.5) * 0.203125
-		distance = -0.00004694 * centerY **3 + 0.03053 * centerY ** 2 -6.817 * centerY + 532.19
-		if distance > 35:
-			distance = distance - 5
-		else:
-			distance = distance + 5
-
+		distance = -0.00002750028278 * centerY **3 + 0.0110106527 * centerY ** 2 -0.7826513252 * centerY + 51.55036834
+		# Old Formula
+		#distance = -(0.0004445927112 * (centerY **3)) + (0.1857477797 * (centerY ** 2)) - (26.22856387 * centerY) + 1297.652952
 		
 		
 		realWorldPointY = (centerX - 159.5)/251
@@ -265,15 +278,13 @@ class TapeDetect:
 		centerX = str(centerX)
 		
 		
-		JSON = '{"Distance:' + distance + ', "Angle":' + yawAngle + '}'
+		JSON = '{"Distance":' + distance + ', "Angle":' + yawAngle + '}'
 		
 		
 		#send vals over serial
 		jevois.sendSerial(JSON)
 		#jevois.sendSerial("Hello World")
-		
-		#return outimg
-		outimg = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)		
-		#opening2 = cv2.cvtColor(opening, cv2.COLOR_GRAY2BGR)
-		#outimg = opening2
+		#outimg = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)		
+		opening2 = cv2.cvtColor(closing, cv2.COLOR_GRAY2BGR)
+		outimg = opening2
 		return outimg

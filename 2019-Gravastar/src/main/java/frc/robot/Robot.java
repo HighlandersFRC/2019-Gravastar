@@ -39,7 +39,7 @@ import frc.robot.universalcommands.StopMotors;
  * project.
  */
 public class Robot extends TimedRobot {
-
+	public AutoButton easyButton;
 	public static TeleopSuite teleopSuite = new TeleopSuite();
 	public static AutoSuite autoSuite  = new AutoSuite();
 	private RobotConfig robotConfig = new RobotConfig();
@@ -238,6 +238,8 @@ public class Robot extends TimedRobot {
 	public void teleopInit() {
 		robotConfig.teleopConfig();
 		teleopSuite.startTeleopCommands();
+		easyButton = new AutoButton();
+		easyButton.start();
 	}
 
 	@Override
