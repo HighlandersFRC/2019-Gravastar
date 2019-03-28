@@ -1,4 +1,4 @@
-package frc.robot.autonomouscommands;
+0package frc.robot.autonomouscommands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -46,38 +46,40 @@ public class AutoButton extends Command {
   @Override
   protected void execute() {
   
+    if (OI.autoButton.get(){
       if (startAngle != 0){
 
-        orientation.updatePID(startAngle);
-        RobotMap.leftDriveLead.set(ControlMode.PercentOutput, -forwardSpeed - orientation.getResult());
-        RobotMap.rightDriveLead.set(ControlMode.PercentOutput, -forwardSpeed + orientation.getResult());
+          orientation.updatePID(startAngle);
+          RobotMap.leftDriveLead.set(ControlMode.PercentOutput,  orientation.getResult());
+          RobotMap.rightDriveLead.set(ControlMode.PercentOutput, orientation.getResult());
         
           if (startAngle == -100 || json.isBlank() || startAngle == 0){
-            RobotMap.leftDriveLead.set(ControlMode.PercentOutput, forwardSpeed);
-            RobotMap.rightDriveLead.set(ControlMode.PercentOutput, forwardSpeed);
+            //RobotMap.leftDriveLead.set(ControlMode.PercentOutput, forwardSpeed);
+            //RobotMap.rightDriveLead.set(ControlMode.PercentOutput, forwardSpeed);
           
         }
       }
     }
+  }
 
   @Override
   protected boolean isFinished() {
 
-    if (startAngle == 0){
+    //if (startAngle == 0){
      
-      return true;
+      //return truFalse;
     
-    }
+    //}
 
-   else return false;
+   return false;
   
   }
 
   @Override
   protected void end() {
 
-    RobotMap.leftDriveLead.set(ControlMode.PercentOutput, 0);
-		RobotMap.rightDriveLead.set(ControlMode.PercentOutput, 0);
+    //RobotMap.leftDriveLead.set(ControlMode.PercentOutput, 0);
+		//RobotMap.rightDriveLead.set(ControlMode.PercentOutput, 0);
 
   }
 

@@ -24,12 +24,12 @@ class TapeDetect:
 	## Process function with USB output
 	def process(self, inframe, outframe):
 		out = self.UniversalProcess(inframe)
-		outframe.sendCv(out, 50)
-		
+		outframe.sendCv(out)
+	
 
 	def processNoUSB(self, inframe):
 		out = self.UniversalProcess(inframe)
-		
+		#jevois.sendSerial("Hello")
 		
 	def sortContours(self, cntArray):
 		arraySize = len(cntArray)
@@ -119,7 +119,7 @@ class TapeDetect:
 		#change to hsv
 		hsv = cv2.cvtColor(inimg, cv2.COLOR_BGR2HSV)
 		
-		oKernel = np.ones((5, 5), np.uint8)
+		oKernel = np.ones((3, 3), np.uint8)
 		#cKernel = np.ones((5, 5), np.uint8)
 		cKernel = np.array([
 		[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
@@ -145,11 +145,10 @@ class TapeDetect:
 		closing = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, cKernel)
 		
 		#takes away noise from outside object
-		opening = cv2.morphologyEx(closing, cv2.MORPH_OPEN, cKernel)
+		#opening = cv2.morphologyEx(closing, cv2.MORPH_OPEN, cKernel)
 		
 		#find contours
-		
-		contours, _ = cv2.findContours(opening, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+		contours, _ = cv2.findContours(closing, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
 		
 		cntArray = []
 		yesNo = " "
@@ -167,7 +166,7 @@ class TapeDetect:
 			box = cv2.boxPoints(rotatedRect)
 			boxArray = np.int0(box)
 			boxColor = (0,0,255)
-			cv2.drawContours(hsv,[boxArray],0,boxColor,2)
+			#cv2.drawContours(hsv,[boxArray],0,boxColor,2)
 
 			tape, _, _, angle = self.isTape(contour, hsv, True)
 			#jevois.sendSerial("Angle: " + str(angle))
@@ -175,17 +174,20 @@ class TapeDetect:
 			#jevois.sendSerial(str(len(cntArray)) + "cntArray")
 			cntArray.append(contour)
 			#jevois.sendSerial(str(intDave))
-		#jevois.sendSerial("")
-
-		sortedArray = self.sortContours(cntArray)
 		
+		#jevois.sendSerial("")
+		jevois.sendSerial(str(len(contours)))
+		sortedArray = self.sortContours(cntArray)
+		#jevois.sendSerial(str(len(sortedArray))
 		#jevois.sendSerial(str(len(sortedArray)) + "sortedArray")
 
-		outimg = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
-		#outimg = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
-
+		#outimg = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
+		#outimg = cv2.cvtColor(closing, cv2.COLOR_GRAY2BGR)
+	
 		if len(sortedArray) < 2:
 			jevois.sendSerial('{"Distance":-11, "Angle":-100}')
+			#outimg = cv2.cvtColor(closing, cv2.COLOR_GRAY2BGR)
+			#outimg = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
 			return outimg
 			
 		isFirstRight, _ = self.isRight(sortedArray[0], hsv)
@@ -218,8 +220,8 @@ class TapeDetect:
 			points_2 = np.int0(points_B)
 			leftX = leftRect[0][0]
 			rightX = rightRect[0][0]
-			cv2.drawContours(hsv, [points_1], 0, boxColor, 2)
-			cv2.drawContours(hsv, [points_2], 0, boxColor, 2)
+			#cv2.drawContours(hsv, [points_1], 0, boxColor, 2)
+			#cv2.drawContours(hsv, [points_2], 0, boxColor, 2)
 			centerX = (leftX + rightX)/2
 			centerX = math.fabs(centerX - 160)
 			xArray.append(centerX)
@@ -228,6 +230,7 @@ class TapeDetect:
 		
 		#jevois.sendSerial("Hello")
 		
+
 		#tracker = cv2.TrackerMil_Create()
 		#bbox = (287, 23, 86, 320)
 		minX = 0
@@ -244,8 +247,8 @@ class TapeDetect:
 		
 		boxColor = (240, 255, 255)
 		
-		cv2.drawContours(hsv, [leftPoints_1], 0, boxColor, 2)
-		cv2.drawContours(hsv, [rightPoints_1], 0, boxColor, 2)
+		#cv2.drawContours(hsv, [leftPoints_1], 0, boxColor, 2)
+		#cv2.drawContours(hsv, [rightPoints_1], 0, boxColor, 2)
 		
 		leftY = leftRect[0][1]
 		rightY = rightRect[0][1]
@@ -281,7 +284,7 @@ class TapeDetect:
 		#send vals over serial
 		jevois.sendSerial(JSON)
 		#jevois.sendSerial("Hello World")
-		outimg = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)		
-		#opening2 = cv2.cvtColor(opening, cv2.COLOR_GRAY2BGR)
-		#outimg = opening2
+		#outimg = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)		
+		opening2 = cv2.cvtColor(closing, cv2.COLOR_GRAY2BGR)
+		outimg = opening2
 		return outimg
