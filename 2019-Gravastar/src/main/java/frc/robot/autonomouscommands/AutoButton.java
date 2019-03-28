@@ -52,12 +52,14 @@ public class AutoButton extends Command {
         RobotMap.leftDriveLead.set(ControlMode.PercentOutput, -forwardSpeed - orientation.getResult());
         RobotMap.rightDriveLead.set(ControlMode.PercentOutput, -forwardSpeed + orientation.getResult());
         
-          if (startAngle == -100 || json.isBlank() || startAngle == 0){
-            RobotMap.leftDriveLead.set(ControlMode.PercentOutput, forwardSpeed);
-            RobotMap.rightDriveLead.set(ControlMode.PercentOutput, forwardSpeed);
+      }
+         // if (startAngle == -100 || json.isBlank() || startAngle == 0){
+      else{
+
+        RobotMap.leftDriveLead.set(ControlMode.PercentOutput, forwardSpeed);
+        RobotMap.rightDriveLead.set(ControlMode.PercentOutput, forwardSpeed);
           
         }
-      }
     }
 
   @Override
