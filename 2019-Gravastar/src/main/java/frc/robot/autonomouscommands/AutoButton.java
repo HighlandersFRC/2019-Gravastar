@@ -65,13 +65,7 @@ public class AutoButton extends Command {
   @Override
   protected boolean isFinished() {
 
-    if (startAngle == 0){
-     
-      return true;
-   
-    }
-
-   return false;
+    return true;
   
   }
 
