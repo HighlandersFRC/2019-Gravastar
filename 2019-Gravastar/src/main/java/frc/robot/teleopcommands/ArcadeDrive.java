@@ -16,6 +16,7 @@ import frc.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class ArcadeDrive extends Command {
@@ -36,6 +37,7 @@ public class ArcadeDrive extends Command {
 	// Called just before this Command runs the first time
 	@Override
 	protected void initialize() {
+		RobotMap.drive.initAlignmentPID();
 	}
 
 	// Called repeatedly when this Command is scheduled to run
@@ -51,7 +53,7 @@ public class ArcadeDrive extends Command {
 			else {
 				turn = 0;
 			}
-			if(Math.abs(throttel)>0.01&&povValue==-1){
+			if(Math.abs(throttel)>0.01){
 				leftPower = (throttel - (sensitivity*turn*ratio));
 				rightPower = (throttel + (sensitivity*turn*ratio));
 				RobotConfig.setDriveMotorsCoast();
@@ -71,6 +73,16 @@ public class ArcadeDrive extends Command {
 			else if(Math.abs(rightPower)>1) {
 				rightPower = (rightPower/Math.abs(rightPower));
 				leftPower = Math.abs(leftPower/rightPower)*(leftPower/Math.abs(leftPower));
+			}
+			if(OI.pilotController.getBButton()){
+				RobotMap.visionRelay1.set(Value.kForward);
+				rightPower =-0.41+ RobotMap.drive.getAlignmentPIDOutput();
+				leftPower =-0.41 -RobotMap.drive.getAlignmentPIDOutput();
+				RobotMap.drive.setLowGear();
+			}
+			else{
+				RobotMap.visionRelay1.set(Value.kReverse);		
+				//RobotMap.drive.setHighGear();		
 			}
 			RobotMap.leftDriveLead.set(ControlMode.PercentOutput, leftPower);
 			RobotMap.rightDriveLead.set(ControlMode.PercentOutput, rightPower);

@@ -26,8 +26,6 @@ class TapeDetect:
 		out = self.UniversalProcess(inframe)
 		outframe.sendCv(out)
 	
-	#def process(self, inframe):
-	#	out = self.UniversalProcess(inframe)
 
 	def processNoUSB(self, inframe):
 		out = self.UniversalProcess(inframe)
@@ -176,6 +174,7 @@ class TapeDetect:
 			#jevois.sendSerial(str(len(cntArray)) + "cntArray")
 			cntArray.append(contour)
 			#jevois.sendSerial(str(intDave))
+		
 		#jevois.sendSerial("")
 		#jevois.sendSerial(str(len(contours)))
 		sortedArray = self.sortContours(cntArray)
@@ -184,7 +183,7 @@ class TapeDetect:
 
 		#outimg = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
 		#outimg = cv2.cvtColor(closing, cv2.COLOR_GRAY2BGR)
-
+	
 		if len(sortedArray) < 2:
 			jevois.sendSerial('{"Distance":-11, "Angle":-100}')
 			#outimg = cv2.cvtColor(closing, cv2.COLOR_GRAY2BGR)

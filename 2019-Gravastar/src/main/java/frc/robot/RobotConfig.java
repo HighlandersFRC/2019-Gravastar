@@ -21,8 +21,8 @@ public class RobotConfig {
 	public static double voltageControlMaxTeleop = 12.3;
 	public static double robotMaxAcceleration = 10.0;
 	public static double robotMaxVelocity = 14.5;
-	public static double armTicksToAngleConversion=0.02470588;//-0.02857;
-	public static double armUpAngle = 105;//90;
+	public static double armTicksToAngleConversion=-0.02857;//0.02470588;
+	public static double armUpAngle = 90;//105;
 	public static double armRestingAngle = 0;
 	public static double armKfFactor = 0.0;
 	public static double ultraSonicConversionFactor = 0.00427807;
@@ -33,10 +33,10 @@ public class RobotConfig {
 	public static int climbingMechMaxPosition;
 	public static int climbingMechStartingPosition;
 	public static int climbingMechUpPosition;
-	public static int driveMotorContinuousCurrentHighGear = 5;
-	public static int driveMotorContinuousCurrentLowGear = 5;
-	public static int driveMotorPeakCurrentHighGear= 5;		
-	public static int driveMotorPeakCurrentLowGear = 5;
+	public static int driveMotorContinuousCurrentHighGear = 40;
+	public static int driveMotorContinuousCurrentLowGear = 40;
+	public static int driveMotorPeakCurrentHighGear= 40;		
+	public static int driveMotorPeakCurrentLowGear = 40;
 	public static int driveMotorPeakCurrentDurationLowGear = 0;
 	public static int driveMotorPeakCurrentDurationHighGear = 0;
 	public static int armMotorContinuousCurrent = 20;
@@ -80,8 +80,8 @@ public class RobotConfig {
 
     	RobotMap.leftDriveLead.setSelectedSensorPosition(0, 0,0);
 		RobotMap.rightDriveLead.setSelectedSensorPosition(0, 0, 0);
-        RobotMap.armMaster.setSelectedSensorPosition((int)(105*RobotConfig.armAngleToTicksConversion));
-		//RobotMap.armMaster.setSelectedSensorPosition((int)(90*RobotConfig.armAngleToTicksConversion), 0, 0);
+        //RobotMap.armMaster.setSelectedSensorPosition((int)(105*RobotConfig.armAngleToTicksConversion));
+		RobotMap.armMaster.setSelectedSensorPosition((int)(90*RobotConfig.armAngleToTicksConversion), 0, 0);
 		RobotMap.climbingMechLeadTalon.setSelectedSensorPosition(climbingMechStartingPosition);
 
 		RobotMap.climbingMechLeadTalon.configForwardSoftLimitEnable(false);

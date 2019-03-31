@@ -12,10 +12,10 @@ public class VisionCamera {
    
    JSONParser parser = new JSONParser();
    SerialPort port;
-   public String sanatizedString = "nothing";
+   private String sanatizedString = "nothing";
    public double lastParseTime;
-   public double distance;
-   public double angle;
+   private double distance;
+   private double angle;
    private double badAngle = -100.0;
    private double badDistance = -11.0;
    
@@ -23,34 +23,38 @@ public class VisionCamera {
        port = jevois;
     }
    
-    public void updateVision(){
+   public void updateVision(){
+   
 
       try{
          String jsonString = this.getString();
-
+         double tryDistance = badDistance;
+         double tryAngle = badAngle;
          if (jsonString != null){
-            double tryDistance = parseDistance(jsonString);
-            double tryAngle = parseAngle(jsonString);
-   
-         if (tryDistance != badDistance && tryAngle != badAngle){
+
+           // tryDistance = parseDistance(jsonString);
+            tryAngle = parseAngle(jsonString);
+         }   
+         if (tryAngle != badAngle){
             distance = tryDistance;
             angle = tryAngle;
 
             lastParseTime = Timer.getFPGATimestamp();
          }
+      
       }
+      catch (Exception e){
       }
-   catch (Exception e){
    }
-}
-    public double parseAngle(String jsonString){
+   public double parseAngle(String jsonString){
  
       try{
 
+
          Object object = parser.parse(jsonString);   
          JSONObject jsonObject = (JSONObject) object;
-               
          if (jsonObject != null){
+
             double distString = (double) jsonObject.get("Angle");
    
                return Double.valueOf(distString);

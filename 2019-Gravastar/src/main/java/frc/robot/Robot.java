@@ -22,7 +22,6 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.autonomouscommands.AutoButton;
 import frc.robot.autonomouscommands.AutoSuite;
 import frc.robot.sensors.UltrasonicSensor;
 import frc.robot.sensors.VisionCamera;
@@ -39,7 +38,6 @@ import frc.robot.universalcommands.StopMotors;
  * project.
  */
 public class Robot extends TimedRobot {
-	public AutoButton easyButton;
 	public static TeleopSuite teleopSuite = new TeleopSuite();
 	public static AutoSuite autoSuite  = new AutoSuite();
 	private RobotConfig robotConfig = new RobotConfig();
@@ -47,11 +45,8 @@ public class Robot extends TimedRobot {
 	private UsbCamera camera;
 	private UsbCamera camera2;
 	private VideoSink server;
-	private double ultraSonicAngle;
-	private double ultraSonicAverage;
 	private boolean hasCamera = false;
 	private boolean cameraBoolean = false;
-	public static boolean driveAssistAvaliable = false;
 	private ChangeLightColor changeLightColor = new ChangeLightColor(0,150, 0, RobotMap.canifier1);
 	private ChangeLightColor changeLightColor1 = new ChangeLightColor(0,150, 0, RobotMap.canifier2);
 
@@ -129,7 +124,6 @@ public class Robot extends TimedRobot {
 		
 				
 			
-			ultraSonicAngle = Math.toDegrees(Math.atan((RobotMap.mainUltrasonicSensor1.getDistance()-RobotMap.mainUltrasonicSensor2.getDistance())/RobotConfig.forwardUltraSonicDisplacementDistance));
 			double pressure = ((250*RobotMap.preassureSensor.getAverageVoltage())/4.53)-25;
 			SmartDashboard.putNumber("pressure", pressure);
 			SmartDashboard.putBoolean("hasNavx", RobotMap.navx.isConnected());
@@ -139,15 +133,7 @@ public class Robot extends TimedRobot {
 			SmartDashboard.putNumber("armPosit", RobotMap.mainArmEncoder.getAngle());
 			SmartDashboard.putNumber("ultraSonic1",RobotMap.mainUltrasonicSensor1.getDistance());
 			SmartDashboard.putNumber("ultraSonic2", RobotMap.mainUltrasonicSensor2.getDistance());
-			SmartDashboard.putNumber("ultraSonicAngle", ultraSonicAngle);
-
-		}
-		if(OI.pilotController.getStartButton()||OI.pilotController.getBackButton()){
-			RobotMap.visionRelay1.set(Value.kForward);
-		}
-		else{
-			RobotMap.visionRelay1.set(Value.kReverse);
-			
+			SmartDashboard.putNumber("lastParse", Timer.getFPGATimestamp()-visionCamera.lastParseTime);
 		}
 		try{
 			if(jevois1.getBytesReceived()>2){
@@ -201,36 +187,10 @@ public class Robot extends TimedRobot {
 		autoSuite.startAutoCommandsDriverControl();
 		
 	}
-	private void visionDecisionAlgorithm(){
-		try{
-			visionCamera.updateVision();
-			ultraSonicAverage = (RobotMap.mainUltrasonicSensor1.getDistance()+RobotMap.mainUltrasonicSensor2.getDistance())/2;
-			ultraSonicAngle = Math.toDegrees(Math.atan(RobotConfig.forwardUltraSonicDisplacementDistance/(RobotMap.mainUltrasonicSensor1.getDistance()-RobotMap.mainUltrasonicSensor2.getDistance())));
-			if(Timer.getFPGATimestamp()-visionCamera.lastParseTime<0.25){
-				driveAssistAvaliable = true;
-				changeLightColor.changeLedColor(255,0, 0);
-			}	
-			else if(Timer.getFPGATimestamp()-visionCamera.lastParseTime<0.5){
-				driveAssistAvaliable = true;
-				changeLightColor.changeLedColor(0, 255, 0);
-			}	
-			else{
-				changeLightColor.changeLedColor(0, 0, 255);
-				driveAssistAvaliable = false;
-			}	
-		}
-		catch(Exception e){
-			hasCamera = false;
-		}
-			
 
-	}
 	@Override
 	public void autonomousPeriodic() {
-		visionDecisionAlgorithm();
-		if(runCounter%5==0){
-			SmartDashboard.putBoolean("driveAssistAvaliable", driveAssistAvaliable);
-		}
+		
 		Scheduler.getInstance().run();
 	}
 
@@ -238,16 +198,11 @@ public class Robot extends TimedRobot {
 	public void teleopInit() {
 		robotConfig.teleopConfig();
 		teleopSuite.startTeleopCommands();
-		easyButton = new AutoButton();
-		easyButton.start();
 	}
 
 	@Override
 	public void teleopPeriodic() {	
-		visionDecisionAlgorithm();
-		if(runCounter%5==0){
-			SmartDashboard.putBoolean("driveAssistAvaliable", driveAssistAvaliable);
-		}
+		
 		Scheduler.getInstance().run();
 	}
 	@Override
