@@ -177,7 +177,7 @@ class TapeDetect:
 			cntArray.append(contour)
 			#jevois.sendSerial(str(intDave))
 		#jevois.sendSerial("")
-		jevois.sendSerial(str(len(contours)))
+		#jevois.sendSerial(str(len(contours)))
 		sortedArray = self.sortContours(cntArray)
 		#jevois.sendSerial(str(len(sortedArray))
 		#jevois.sendSerial(str(len(sortedArray)) + "sortedArray")
