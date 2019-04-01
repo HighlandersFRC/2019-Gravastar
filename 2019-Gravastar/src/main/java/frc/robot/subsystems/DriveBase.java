@@ -41,9 +41,12 @@ public class DriveBase extends Subsystem {
 	public double getAlignmentPIDOutput(){
 		Robot.visionCamera.updateVision();
 		if(Timer.getFPGATimestamp()-Robot.visionCamera.lastParseTime>0.25){
+			Robot.changeLightColor.changeLedColor(0, 0, 255);
 			return 0;
 		}
 		else{
+			Robot.changeLightColor.changeLedColor(0, 255, 0);
+
 			if(Robot.visionCamera.getAngle()>25){
 				return 0;
 			}

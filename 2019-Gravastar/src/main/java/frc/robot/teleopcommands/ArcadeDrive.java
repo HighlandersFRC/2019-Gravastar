@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ArcadeDrive extends Command {
 	private double deadZone = 0.00;
@@ -75,19 +76,31 @@ public class ArcadeDrive extends Command {
 				leftPower = Math.abs(leftPower/rightPower)*(leftPower/Math.abs(leftPower));
 			}
 			if(OI.pilotController.getBButton()){
-				RobotMap.visionRelay1.set(Value.kForward);
-				rightPower =-0.41+ RobotMap.drive.getAlignmentPIDOutput();
-				leftPower =-0.41 -RobotMap.drive.getAlignmentPIDOutput();
 				RobotMap.drive.setLowGear();
+				RobotMap.visionRelay1.set(Value.kForward);
+				double power = 0.4;
+				if(RobotMap.mainUltrasonicSensor1.isConnected()){
+					if(RobotMap.mainUltrasonicSensor1.getDistance()>1&&RobotMap.mainUltrasonicSensor1.getDistance()<10){
+						power= (RobotMap.mainUltrasonicSensor1.getDistance()/10);
+				    }
+				    else if(RobotMap.mainUltrasonicSensor1.getDistance()<1){
+						power = 0.2;
+				    }
+				}
+				
+				SmartDashboard.putNumber("power", power);
+				rightPower =-power+ RobotMap.drive.getAlignmentPIDOutput();
+				leftPower =-power-RobotMap.drive.getAlignmentPIDOutput();
 			}
 			else{
-				RobotMap.visionRelay1.set(Value.kReverse);		
+				RobotMap.visionRelay1.set(Value.kReverse);	
+				Robot.changeLightColor.changeLedColor(0, 0, 150);	
 				//RobotMap.drive.setHighGear();		
 			}
 			RobotMap.leftDriveLead.set(ControlMode.PercentOutput, leftPower);
 			RobotMap.rightDriveLead.set(ControlMode.PercentOutput, rightPower);
 			if(OI.pilotController.getBumperPressed(Hand.kLeft)){
-				RobotMap.drive.setHighGear();
+				RobotMap.drive.setLowGear();
 			}
 			else if(OI.pilotController.getBumperPressed(Hand.kRight)) {
 				RobotMap.drive.setHighGear();

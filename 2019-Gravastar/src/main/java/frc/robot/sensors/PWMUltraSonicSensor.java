@@ -27,4 +27,12 @@ public class PWMUltraSonicSensor {
             return -1;
         }
     }
+    public boolean isConnected(){
+        if(sensor.getPeriod()>1){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
 }
