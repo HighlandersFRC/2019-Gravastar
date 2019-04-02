@@ -3,7 +3,7 @@ taskkill /IM putty.exe /f
 taskkill /IM plink.exe /f
 
 
-cd "C:\Users\Cody1\Desktop\2019 Vision"
+cd "C:\Users\Cody1\Desktop\Highlanders\2019-Gravastar\VisionCode"
 start /b plink.exe -load COM14 < mountJevois.txt
 
 sleep 10
