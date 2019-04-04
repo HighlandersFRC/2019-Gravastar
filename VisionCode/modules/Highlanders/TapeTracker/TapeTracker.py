@@ -15,12 +15,20 @@ class TapeTracker:
 	## Constructor
 	
 	
+	
 	def __init__(self):
 		# Instantiate a JeVois Timer to measure our processing framerate:
 		self.timer = jevois.Timer("processing timer", 100, jevois.LOG_INFO)
 		
 		self.draw = True
-				
+		
+		self.tracker = cv2.TrackerKCF_create()
+		
+		self.hasTarget = False
+		self.frame = 1
+		
+		self.runcount = 1
+		
 	# ###################################################################################################
 	## Process function with USB output
 	def process(self, inframe, outframe):
@@ -113,45 +121,48 @@ class TapeTracker:
 		return self.isAngle(contour, hsv, 45, 90, (170, 255, 255), draw)
 
 	def UniversalProcess(self, inframe, distance):
-		if distance == 0:
+		inimg = inframe.getCvBGR()
+		outimg = inimg
+		
+		
+		#change to hsv
+		hsv = cv2.cvtColor(inimg, cv2.COLOR_BGR2HSV)
+		
+		oKernel = np.ones((3, 3), np.uint8)
+		#cKernel = np.ones((5, 5), np.uint8)
+		cKernel = np.array([
+		[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+		[0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+		[0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+		[0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+		[0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]], dtype = np.uint8)
+		
+		
+		#threshold colors to detect - Green: First value decides color, second val determines intensity, third val decides brightness
+		lowerThreshold = np.array([65, 150, 150])
+		upperThreshold = np.array([105, 255, 255])
+		
+		#check if color in range
+		mask = cv2.inRange(hsv, lowerThreshold, upperThreshold)
+		
+		#create blur on image to reduce noise
+		blur = cv2.GaussianBlur(mask,(5,5),0)
+		
+		ret,thresh = cv2.threshold(blur,180,255,0)
+		
+		#closes of noise from inside object
+		closing = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, cKernel)
+		
+		#takes away noise from outside object
+		#opening = cv2.morphologyEx(closing, cv2.MORPH_OPEN, cKernel)
+		
+		
+		if self.hasTarget == False or self.runcount % 5 == 0:
 			#jevois.sendSerial("Hello World")
 			#jevois.sendSerial("Hello World")
-			runcount = 0
+			#runcount = 0
 			#get image
-			inimg = inframe.getCvBGR()
-			outimg = inimg
 			
-			
-			#change to hsv
-			hsv = cv2.cvtColor(inimg, cv2.COLOR_BGR2HSV)
-			
-			oKernel = np.ones((3, 3), np.uint8)
-			#cKernel = np.ones((5, 5), np.uint8)
-			cKernel = np.array([
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
-			[0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-			[0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-			[0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
-			[0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]], dtype = np.uint8)
-			
-			
-			#threshold colors to detect - Green: First value decides color, second val determines intensity, third val decides brightness
-			lowerThreshold = np.array([65, 150, 150])
-			upperThreshold = np.array([105, 255, 255])
-			
-			#check if color in range
-			mask = cv2.inRange(hsv, lowerThreshold, upperThreshold)
-			
-			#create blur on image to reduce noise
-			blur = cv2.GaussianBlur(mask,(5,5),0)
-			
-			ret,thresh = cv2.threshold(blur,180,255,0)
-			
-			#closes of noise from inside object
-			closing = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, cKernel)
-			
-			#takes away noise from outside object
-			#opening = cv2.morphologyEx(closing, cv2.MORPH_OPEN, cKernel)
 			
 			#find contours
 			contours, _ = cv2.findContours(closing, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
@@ -281,6 +292,9 @@ class TapeTracker:
 			rightY = str(rightY)
 			realWorldPointY = str(realWorldPointY)
 			#centerX = str(centerX)
+			#jevois.sendSerial(self.globalVariable)
+			#self.globalVariable = "Goodbye"
+			
 			
 			
 			JSON = '{"Distance":' + distance + ', "Angle":' + yawAngle + '}'
@@ -288,40 +302,59 @@ class TapeTracker:
 			
 			#send vals over serial
 			jevois.sendSerial(JSON)
+			self.hasTarget = True
 			#jevois.sendSerial("Hello World")
 			#outimg = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)		
 			opening2 = cv2.cvtColor(closing, cv2.COLOR_GRAY2BGR)
 			outimg = opening2
 			#return outimg
 		
-			if distance != 0:
-				bbox = (centerX, centerY, 0, 0)
+			bbox = ((leftPoints_1[2][0] + leftPoints[2][0])/2, (leftPoints_1[2][1] + leftPoints[2][1])/2, (leftPoints_1[0][0] + leftPoints[0][0])/2, (leftPoints_1[0][1] + leftPoints[0][1])/2)
+		
+			#cap = cv2.VideoCapture(0)
+			
+			#ret,frame=cap.read()
+			
+			self.frame = closing
+			
+			
+			
+			# Initialize tracker with first frame and bounding box
+			ok = self.tracker.init(self.frame, bbox)
+		
+			self.runcount = self.runcount + 1
+		
+		else:
+			#jevois.sendSerial("Hi")
+			#while ok:
+			#jevois.sendSerial("inTrackingPhase")
+			
+			# Update tracker
+			ok, bbox = self.tracker.update(self.frame)
+			
+			jevois.sendSerial(str(ok))
+			
+			
+			
+			# Draw bounding box
+			if ok:
+				# Tracking success
+				p1 = (int(bbox[0]), int(bbox[1]))
+				p2 = ((int(bbox[0] + bbox[2]))/2, (int(bbox[1] + bbox[3]))/2)
+				#cv2.rectangle(self.frame, p1[0], p2[0], (255,0,0), 2, 1)
+				#jevois.sendSerial("Hello")
+			else:
+				self.hasTarget = False
 				
-				cap = cv2.VideoCapture(0)
+				ok == False
 				
-				ret,frame=cap.read()
-				
-				tracker = cv2.TrackerKCF_create()
-				
-				# Initialize tracker with first frame and bounding box
-				ok = tracker.init(frame, bbox)
-	 
-				while True:
-					if not ok:
-						jevois.sendSerial('{"Distance":-11, "Angle":-100}')
-						break
-					jevois.sendSerial("inTrackingPhase")
-						# Update tracker
-					ok, bbox = tracker.update(frame)
-	 
-					# Draw bounding box
-					if ok:
-						# Tracking success
-						p1 = (int(bbox[0]), int(bbox[1]))
-						p2 = (int(bbox[0] + bbox[2]), int(bbox[1] + bbox[3]))
-						#cv2.rectangle(frame, p1, p2, (255,0,0), 2, 1)
-					yawAngle = (bbox[0] - 159.5) * 0.203125
-					yawAngle = str(yawAngle)
-					distance = str(distance)
-					JSON = '{"Distance":' + distance + ', "Angle":' + yawAngle + '}'
-					jevois.sendSerial(str(JSON))
+				return outimg
+			#3jevois.sendSerial("inTrackingPhase")
+			yawAngle = (bbox[0] - 159.5) * 0.203125
+			yawAngle = str(yawAngle)
+			distance = str(distance)
+			JSON = '{"Distance":' + distance + ', "Angle":' + yawAngle + '}'
+			jevois.sendSerial(str(JSON))
+			self.runcount = self.runcount + 1
+			jevois.sendSerial(str(self.runcount))
+			return 
