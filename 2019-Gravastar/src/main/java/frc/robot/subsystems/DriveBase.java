@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.sensors.VisionCamera;
@@ -40,19 +41,25 @@ public class DriveBase extends Subsystem {
 	
 	public double getAlignmentPIDOutput(){
 		Robot.visionCamera.updateVision();
+		
 		if(Timer.getFPGATimestamp()-Robot.visionCamera.lastParseTime>0.25){
+			SmartDashboard.putBoolean("hasCameraValues", false);
 			Robot.changeLightColor.changeLedColor(0, 0, 255);
 			return 0;
 		}
 		else{
-			Robot.changeLightColor.changeLedColor(0, 255, 0);
-
+			SmartDashboard.putBoolean("hasCameraValues", true);
+			if(RobotMap.mainUltrasonicSensor2.isConnected()){
+				Robot.changeLightColor.changeLedColor(0, 255, 0);
+			}
+			else{
+				Robot.changeLightColor.changeLedColor(255, 0, 0);
+			}
 			if(Robot.visionCamera.getAngle()>25){
 				return 0;
 			}
 			alignmentPID.updatePID(Robot.visionCamera.getAngle());
 			return alignmentPID.getResult();
 		}
-		
 	}
 }

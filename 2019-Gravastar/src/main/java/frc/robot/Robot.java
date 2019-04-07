@@ -45,7 +45,7 @@ public class Robot extends TimedRobot {
 	private UsbCamera camera;
 	private UsbCamera camera2;
 	private VideoSink server;
-	private boolean hasCamera = false;
+	public static boolean hasCamera = false;
 	private boolean cameraBoolean = false;
 	public static ChangeLightColor changeLightColor = new ChangeLightColor(0,0, 140, RobotMap.canifier1);
 	private ChangeLightColor changeLightColor1 = new ChangeLightColor(0,150, 0, RobotMap.canifier2);
@@ -139,7 +139,7 @@ public class Robot extends TimedRobot {
 			SmartDashboard.putNumber("lastParse", Timer.getFPGATimestamp()-visionCamera.lastParseTime);
 		}
 		try{
-			if(jevois1.getBytesReceived()>2){
+			if(jevois1.getBytesReceived()>0){
 				hasCamera = true;
 			}
 			else{
