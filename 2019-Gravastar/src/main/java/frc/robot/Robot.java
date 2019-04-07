@@ -70,7 +70,7 @@ public class Robot extends TimedRobot {
 	public void robotInit() {
 
 		try {
-			jevois1 = new SerialPort(115200, Port.kUSB1);
+			jevois1 = new SerialPort(115200, Port.kUSB);
 			if(jevois1.getBytesReceived()>2){
 				hasCamera = true;
 			}
@@ -115,8 +115,10 @@ public class Robot extends TimedRobot {
 		runCounter++;
 		if(runCounter%10==0){
 			visionCamera.updateVision();
+			SmartDashboard.putNumber("ultraSonic2", RobotMap.mainUltrasonicSensor2.getDistance());
 
 			SmartDashboard.putString("visionString", visionCamera.getString());
+			SmartDashboard.putNumber("visionAngle", visionCamera.getAngle());
 
 		}
 		if(runCounter%100==0){
@@ -132,7 +134,8 @@ public class Robot extends TimedRobot {
 			SmartDashboard.putBoolean("hasCamera", hasCamera);
 			SmartDashboard.putNumber("armPosit", RobotMap.mainArmEncoder.getAngle());
 			SmartDashboard.putNumber("ultraSonic1",RobotMap.mainUltrasonicSensor1.getDistance());
-			SmartDashboard.putNumber("ultraSonic2", RobotMap.mainUltrasonicSensor2.getDistance());
+			SmartDashboard.putNumber("ultraSonic3",RobotMap.mainUltrasonicSensor3.getDistance());
+			SmartDashboard.putNumber("ultraSonic4", RobotMap.mainUltrasonicSensor4.getDistance());
 			SmartDashboard.putNumber("lastParse", Timer.getFPGATimestamp()-visionCamera.lastParseTime);
 		}
 		try{
@@ -146,8 +149,16 @@ public class Robot extends TimedRobot {
 		catch(Exception e){
 			hasCamera = false;
 		}
+		if(!OI.pilotController.getBButton()){
+			if(OI.pilotController.getStartButton()){
+				RobotMap.visionRelay1.set(Value.kForward);
+			}
+			else{
+				RobotMap.visionRelay1.set(Value.kReverse);
+
+			}
+		}
 		
-	
 	
 		if(OI.pilotController.getTriggerAxis(Hand.kLeft)>0.2&&ableToSwitch){
 			if(cameraBoolean){
@@ -202,7 +213,6 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopPeriodic() {	
-		
 		Scheduler.getInstance().run();
 	}
 	@Override

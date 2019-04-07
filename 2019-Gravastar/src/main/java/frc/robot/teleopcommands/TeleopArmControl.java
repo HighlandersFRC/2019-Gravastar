@@ -43,7 +43,7 @@ public class TeleopArmControl extends Command {
   @Override
   protected void execute() {
     if(Math.abs(OI.operatorController.getRawAxis(1))>0.25){
-      RobotMap.armMaster.set(ControlMode.PercentOutput, OI.operatorController.getRawAxis(1)*-0.60+ Math.cos(Math.toRadians(RobotMap.mainArmEncoder.getAngle()))*RobotConfig.armKfFactor);
+      RobotMap.armMaster.set(ControlMode.PercentOutput, OI.operatorController.getRawAxis(1)*-1.0+ Math.cos(Math.toRadians(RobotMap.mainArmEncoder.getAngle()))*RobotConfig.armKfFactor);
       armPositionController.setArmPosition(armPositionController.getArmAngle());
     }
     else if(OI.operatorController.getAButton()){
@@ -82,8 +82,8 @@ public class TeleopArmControl extends Command {
 		else{
       RobotMap.arm.intakeWheelsResting();
     }
-    if(OI.operatorController.getBackButton()&&OI.operatorController.getStartButton()){
-      //climbMechanismController.start();
+    if(OI.operatorController.getStartButton()){
+      climbMechanismController.start();
     }
   }
 
