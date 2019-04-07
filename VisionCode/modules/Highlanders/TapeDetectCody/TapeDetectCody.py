@@ -35,11 +35,9 @@ class TapeDetectCody:
 		arraySize = len(cntArray)
 		if arraySize == 0:
 			return []
-			
-
+		
 		sortedArray = [cntArray[0]]
 		for i in range(1, arraySize):
-			
 			rectangle = cv2.minAreaRect(cntArray[i])
 			
 			for j in range(len(sortedArray)):
@@ -59,7 +57,6 @@ class TapeDetectCody:
 		right = False
 		angle = -45
 		cntArea = cv2.contourArea(contour)
-		#jevois.sendSerial("cntArea:" + str(cntArea))
 		if cntArea > 25 and cntArea < 2500:
 			left, angle = self.isLeft(contour, hsv, draw)
 			if not left:
