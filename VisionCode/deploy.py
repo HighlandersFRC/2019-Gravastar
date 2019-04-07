@@ -1,21 +1,67 @@
 import os
 import tkinter as tk
-#import pxssh
-
 import sys
 import glob
 import serial
+import time
+import shutil
+
+class OptionMenu(tk.OptionMenu):
+	def __init__(self, *args, **kw):
+		self._command = kw.get("command")
+		self.variable = args
+		tk.OptionMenu.__init__(self, *self.variable, **kw)
+		
+	def addOption(self, label):
+		self["menu"].add_command(label=label,
+			command=tk._setit(self.variable[1], label, self._command))
+	def deleteAll(self):
+		self["menu"].delete(0, "end")
 
 def deploy(port, module):
 	try:
-		com = serial.Serial(port, 115200)
-		com.write("streamoff\n")
-		com.write("usbsd\n")
+		com = serial.Serial(port)
+		com.write(b'streamoff\r')
+		com.write(b'usbsd\r')
+		time.sleep(3)
+		srcFile = "./modules/Highlanders/" + module + "/" + module + ".py"
+		dstDir = "D:/modules/Highlanders/" + module
+			
+		shutil.copy2(srcFile, dstDir)
+		com.write(b'restart\r')
 		com.close()
-	except (OSError, serial.SerialException):
-		print("Could not connect to %s", port)
-	
+	except (serial.SerialException) as e:
+		print("Could not connect to", port, e)
+	except (OSError) as e:
+		print(e)
 
+
+def refresh(commMenu, moduleMenu):
+	refreshModules(moduleMenu)
+	refreshPorts(commMenu)
+		
+def refreshModules(menu):
+	try:
+		modules = os.listdir("./modules/Highlanders")
+	except OSError as e:
+		print("No Modules Found", e)	
+	if (len(modules) == 0):
+		modules = ['']	
+	
+	menu.deleteAll()
+	for mod in modules:
+		menu.addOption(mod)
+		
+def refreshPorts(menu):
+	comms = serial_ports()
+
+	if (len(comms) == 0):
+		comms = ['']
+
+	menu.deleteAll()
+	for comm in comms:
+		menu.addOption(comm)
+	
 def serial_ports():
 	""" Lists serial port names
 
@@ -45,36 +91,28 @@ def serial_ports():
 	return result
 
 
-if __name__ == '__main__':
-
-	try:
-		modules = os.listdir("./modules/Highlanders")
-	except:
-		print("No Modules Found")
-		
-	coms = serial_ports()
-	
-	if (len(modules) == 0):
-		modules = ['']
-	if (len(coms) == 0):
-		coms = ['']
-		
+if __name__ == '__main__':	
 	main = tk.Tk()
-
+	
 	moduleString = tk.StringVar(main)
-	moduleString.set(modules[0])
-	w = tk.OptionMenu(main, moduleString, *modules)
-	w.pack()
-
-	comString = tk.StringVar(main)
-	comString.set(coms[0])
-	w = tk.OptionMenu(main, comString, *coms)
-	w.pack()
+	moduleString.set([''])
+	moduleMenu = OptionMenu(main, moduleString, "")
+	moduleMenu.pack()
+	
+	commString = tk.StringVar(main)
+	commString.set([''])
+	commMenu = OptionMenu(main, commString, "")
+	commMenu.pack()
+	
+	refresh(commMenu, moduleMenu)
 	
 	button = tk.Button(main, text='Cancel', width=25, command=main.destroy)
 	button.pack()
 
-	button = tk.Button(main, text='Deploy', width=25, command=deploy)
+	button = tk.Button(main, text='Deploy', width=25, command=lambda : deploy(commString.get(), moduleString.get()))
+	button.pack()
+	
+	button = tk.Button(main, text='Refresh', width=25, command=lambda : refresh(commMenu, moduleMenu))
 	button.pack()
 	
 	main.mainloop()
