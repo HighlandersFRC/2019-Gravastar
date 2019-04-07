@@ -18,6 +18,8 @@ class TapeDetect:
 		# Instantiate a JeVois Timer to measure our processing framerate:
 		self.timer = jevois.Timer("processing timer", 100, jevois.LOG_INFO)
 		
+		self.targetLocation = "Neither"
+		
 		self.draw = True
 				
 	# ###################################################################################################
@@ -26,6 +28,8 @@ class TapeDetect:
 		out = self.UniversalProcess(inframe)
 		outframe.sendCv(out)
 	
+	#def process(self, inframe):
+	#	out = self.UniversalProcess(inframe)
 
 	def processNoUSB(self, inframe):
 		out = self.UniversalProcess(inframe)
@@ -130,7 +134,7 @@ class TapeDetect:
 		
 		
 		#threshold colors to detect - Green: First value decides color, second val determines intensity, third val decides brightness
-		lowerThreshold = np.array([65, 150, 150])
+		lowerThreshold = np.array([65, 150, 120])
 		upperThreshold = np.array([105, 255, 255])
 		
 		#check if color in range
@@ -165,6 +169,7 @@ class TapeDetect:
 			rotatedRect = cv2.minAreaRect(contour)
 			box = cv2.boxPoints(rotatedRect)
 			boxArray = np.int0(box)
+			xVal = boxArray[0][0]
 			boxColor = (0,0,255)
 			#cv2.drawContours(hsv,[boxArray],0,boxColor,2)
 
@@ -172,22 +177,24 @@ class TapeDetect:
 			#jevois.sendSerial("Angle: " + str(angle))
 			#if len(approx) == 4 and tape:
 			#jevois.sendSerial(str(len(cntArray)) + "cntArray")
-			cntArray.append(contour)
-			#jevois.sendSerial(str(intDave))
-		
-		#jevois.sendSerial("")
-		#jevois.sendSerial(str(len(contours)))
+			
+			if cntArea > 100 and cntArea < 1600:
+				if self.targetLocation == "Right":
+					if xVal > 160:
+						cntArray.append(contour)
+				if self.targetLocation == "Left":
+					if xVal < 160:
+						cntArray.append(contour)
+				if self.targetLocation == "Neither":
+					cntArray.append(contour)
+			
 		sortedArray = self.sortContours(cntArray)
-		#jevois.sendSerial(str(len(sortedArray))
-		#jevois.sendSerial(str(len(sortedArray)) + "sortedArray")
 
-		#outimg = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
-		#outimg = cv2.cvtColor(closing, cv2.COLOR_GRAY2BGR)
-	
 		if len(sortedArray) < 2:
 			jevois.sendSerial('{"Distance":-11, "Angle":-100}')
+			self.targetLocation = "Neither"
 			#outimg = cv2.cvtColor(closing, cv2.COLOR_GRAY2BGR)
-			#outimg = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
+			outimg = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
 			return outimg
 			
 		isFirstRight, _ = self.isRight(sortedArray[0], hsv)
@@ -210,8 +217,8 @@ class TapeDetect:
 				break;
 			firstLeft, _ = self.isLeft(sortedArray[index], hsv)
 			secondRight, _ = self.isRight(sortedArray[index + 1], hsv)
-			if ((not firstLeft) or (not secondRight)):
-				break;
+			#if ((not firstLeft) or (not secondRight)):
+			#	break;
 			leftRect = cv2.minAreaRect(sortedArray[index])
 			rightRect = cv2.minAreaRect(sortedArray[index + 1])
 			points_A = cv2.boxPoints(leftRect)
@@ -220,20 +227,20 @@ class TapeDetect:
 			points_2 = np.int0(points_B)
 			leftX = leftRect[0][0]
 			rightX = rightRect[0][0]
-			#cv2.drawContours(hsv, [points_1], 0, boxColor, 2)
-			#cv2.drawContours(hsv, [points_2], 0, boxColor, 2)
+			cv2.drawContours(hsv, [points_1], 0, boxColor, 2)
+			cv2.drawContours(hsv, [points_2], 0, boxColor, 2)
 			centerX = (leftX + rightX)/2
 			centerX = math.fabs(centerX - 160)
 			xArray.append(centerX)
 		
-		#minX = np.argmin(xArray)
+		minX = np.argmin(xArray)
 		
 		#jevois.sendSerial("Hello")
 		
 
 		#tracker = cv2.TrackerMil_Create()
 		#bbox = (287, 23, 86, 320)
-		minX = 0
+		#minX = 0
 		
 		centerPairLeft = sortedArray[minX * 2]
 		centerPairRight = sortedArray[(minX * 2) + 1]
@@ -247,8 +254,8 @@ class TapeDetect:
 		
 		boxColor = (240, 255, 255)
 		
-		#cv2.drawContours(hsv, [leftPoints_1], 0, boxColor, 2)
-		#cv2.drawContours(hsv, [rightPoints_1], 0, boxColor, 2)
+		cv2.drawContours(hsv, [leftPoints_1], 0, boxColor, 2)
+		cv2.drawContours(hsv, [rightPoints_1], 0, boxColor, 2)
 		
 		leftY = leftRect[0][1]
 		rightY = rightRect[0][1]
@@ -258,6 +265,12 @@ class TapeDetect:
 		
 		centerY = (leftY + rightY)/2
 		centerX = (leftX + rightX)/2
+		
+		if centerX > 160:
+			self.targetLocation = "Right"
+		if centerX < 160:
+			self.targetLocation = "Left"
+		
 		yawAngle = (centerX - 159.5) * 0.203125
 		distance = -0.00002750028278 * centerY **3 + 0.0110106527 * centerY ** 2 -0.7826513252 * centerY + 51.55036834
 		# Old Formula
@@ -278,13 +291,13 @@ class TapeDetect:
 		centerX = str(centerX)
 		
 		
-		JSON = '{"Distance":' + distance + ', "Angle":' + yawAngle + '}'
+		JSON = '{"Distance":' + centerY + ', "Angle":' + yawAngle + '}'
 		
 		
 		#send vals over serial
 		jevois.sendSerial(JSON)
 		#jevois.sendSerial("Hello World")
-		#outimg = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)		
-		opening2 = cv2.cvtColor(closing, cv2.COLOR_GRAY2BGR)
-		outimg = opening2
+		outimg = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)		
+		#opening2 = cv2.cvtColor(closing, cv2.COLOR_GRAY2BGR)
+		#outimg = opening2
 		return outimg
