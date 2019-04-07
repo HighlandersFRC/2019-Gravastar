@@ -15,8 +15,8 @@ public class DriveBase extends Subsystem {
 	// Put methods for controlling this subsystem
 	// here. Call these from Commnds.
 	private PID alignmentPID;
-	private double p = 0.015;
-	private double i= 0.00015;
+	private double p = 0.011;
+	private double i= 0.000;
 	private double d;
 	public void initDefaultCommand() {
 		// Set the default command for a subsystem here.

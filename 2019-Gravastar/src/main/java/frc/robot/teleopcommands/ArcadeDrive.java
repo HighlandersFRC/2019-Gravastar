@@ -80,19 +80,18 @@ public class ArcadeDrive extends Command {
 				RobotMap.visionRelay1.set(Value.kForward);
 				double power = 0.35;
 				RobotMap.drive.setLowGear();
-				
-				if(RobotMap.mainUltrasonicSensor2.getDistance()>1.5&&RobotMap.mainUltrasonicSensor2.isConnected()){
+				RobotConfig.setDriveMotorsBrake();
+				boolean connected = RobotMap.mainUltrasonicSensor2.isConnected();
+				double distance = RobotMap.mainUltrasonicSensor2.getDistance();
+				if(distance>1.5&&connected){
 					OI.pilotController.setRumble(RumbleType.kLeftRumble, 0.0);
-					if(RobotMap.mainUltrasonicSensor2.isConnected()){
-						if(RobotMap.mainUltrasonicSensor2.getDistance()<15){
-							power= (RobotMap.mainUltrasonicSensor2.getDistance()/12);
-						}
-					
-					}
+					power = Math.pow(distance/15,0.8);
+						
+				
 					rightPower =-power+ RobotMap.drive.getAlignmentPIDOutput();
 					leftPower =-power-RobotMap.drive.getAlignmentPIDOutput();
 				}
-				else if(RobotMap.mainUltrasonicSensor2.getDistance()<1.5&&RobotMap.mainUltrasonicSensor2.isConnected()){
+				else if(distance<1.5&&connected){
 					power = 0.0;
 					OI.pilotController.setRumble(RumbleType.kLeftRumble, 0.5);
 
@@ -105,9 +104,9 @@ public class ArcadeDrive extends Command {
 			}
 			else{
 				RobotMap.visionRelay1.set(Value.kReverse);	
+				RobotConfig.setDriveMotorsCoast();
 				Robot.changeLightColor.changeLedColor(0, 0, 150);	
 				OI.pilotController.setRumble(RumbleType.kLeftRumble, 0.0);
-				//RobotMap.drive.setHighGear();		
 			}
 			RobotMap.leftDriveLead.set(ControlMode.PercentOutput, leftPower);
 			RobotMap.rightDriveLead.set(ControlMode.PercentOutput, rightPower);
