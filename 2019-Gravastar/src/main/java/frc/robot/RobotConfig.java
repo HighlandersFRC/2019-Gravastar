@@ -39,7 +39,7 @@ public class RobotConfig {
 	public static int driveMotorPeakCurrentLowGear = 40;
 	public static int driveMotorPeakCurrentDurationLowGear = 0;
 	public static int driveMotorPeakCurrentDurationHighGear = 0;
-	public static int armMotorContinuousCurrent = 20;
+	public static int armMotorContinuousCurrent = 30;
 	public static int armMotorPeakCurrent = 30;
 	public static int armMotorPeakCurrentDuration = 500;
 	public static int timeOut = 0;//Milliseconds

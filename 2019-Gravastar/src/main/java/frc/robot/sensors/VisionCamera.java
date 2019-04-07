@@ -32,7 +32,7 @@ public class VisionCamera {
          double tryAngle = badAngle;
          if (jsonString != null){
 
-           // tryDistance = parseDistance(jsonString);
+            tryDistance = parseDistance(jsonString);
             tryAngle = parseAngle(jsonString);
          }   
          if (tryAngle != badAngle){

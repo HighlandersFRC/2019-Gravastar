@@ -16,6 +16,7 @@ import frc.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -76,25 +77,36 @@ public class ArcadeDrive extends Command {
 				leftPower = Math.abs(leftPower/rightPower)*(leftPower/Math.abs(leftPower));
 			}
 			if(OI.pilotController.getBButton()){
-				RobotMap.drive.setLowGear();
 				RobotMap.visionRelay1.set(Value.kForward);
-				double power = 0.4;
-				if(RobotMap.mainUltrasonicSensor1.isConnected()){
-					if(RobotMap.mainUltrasonicSensor1.getDistance()>1&&RobotMap.mainUltrasonicSensor1.getDistance()<10){
-						power= (RobotMap.mainUltrasonicSensor1.getDistance()/10);
-				    }
-				    else if(RobotMap.mainUltrasonicSensor1.getDistance()<1){
-						power = 0.2;
-				    }
-				}
+				double power = 0.35;
+				RobotMap.drive.setLowGear();
 				
-				SmartDashboard.putNumber("power", power);
-				rightPower =-power+ RobotMap.drive.getAlignmentPIDOutput();
-				leftPower =-power-RobotMap.drive.getAlignmentPIDOutput();
+				if(RobotMap.mainUltrasonicSensor2.getDistance()>1.5&&RobotMap.mainUltrasonicSensor2.isConnected()){
+					OI.pilotController.setRumble(RumbleType.kLeftRumble, 0.0);
+					if(RobotMap.mainUltrasonicSensor2.isConnected()){
+						if(RobotMap.mainUltrasonicSensor2.getDistance()<15){
+							power= (RobotMap.mainUltrasonicSensor2.getDistance()/12);
+						}
+					
+					}
+					rightPower =-power+ RobotMap.drive.getAlignmentPIDOutput();
+					leftPower =-power-RobotMap.drive.getAlignmentPIDOutput();
+				}
+				else if(RobotMap.mainUltrasonicSensor2.getDistance()<1.5&&RobotMap.mainUltrasonicSensor2.isConnected()){
+					power = 0.0;
+					OI.pilotController.setRumble(RumbleType.kLeftRumble, 0.5);
+
+				}
+				else{
+					rightPower =-power+ RobotMap.drive.getAlignmentPIDOutput();
+					leftPower =-power-RobotMap.drive.getAlignmentPIDOutput();
+				}
+			
 			}
 			else{
 				RobotMap.visionRelay1.set(Value.kReverse);	
 				Robot.changeLightColor.changeLedColor(0, 0, 150);	
+				OI.pilotController.setRumble(RumbleType.kLeftRumble, 0.0);
 				//RobotMap.drive.setHighGear();		
 			}
 			RobotMap.leftDriveLead.set(ControlMode.PercentOutput, leftPower);
