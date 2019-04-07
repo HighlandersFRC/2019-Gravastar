@@ -242,14 +242,14 @@ class TapeTracker:
 				centerX = math.fabs(centerX - 160)
 				xArray.append(centerX)
 			
-			#minX = np.argmin(xArray)
+			minX = np.argmin(xArray)
 			
 			#jevois.sendSerial("Hello")
 			
 
 			#tracker = cv2.TrackerMil_Create()
 			#bbox = (287, 23, 86, 320)
-			minX = 0
+			#minX = 0
 			
 			centerPairLeft = sortedArray[minX * 2]
 			centerPairRight = sortedArray[(minX * 2) + 1]
