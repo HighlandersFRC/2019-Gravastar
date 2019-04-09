@@ -23,12 +23,11 @@ def refresh(commMenu, moduleMenu):
 	refreshPorts(commMenu)
 		
 def refreshModules(menu):
+	modules = []
 	try:
 		modules = os.listdir("./modules/Highlanders")
 	except OSError as e:
 		print("No Modules Found", e)	
-	if (len(modules) == 0):
-		modules = ['']	
 	
 	menu.deleteAll()
 	for mod in modules:
@@ -109,7 +108,12 @@ def sendCommand(port, cmd):
 
 
 if __name__ == '__main__':	
+	abspath = os.path.abspath(__file__)
+	dname = os.path.dirname(abspath)
+	os.chdir(dname)
+	
 	main = tk.Tk()
+	main.title("Jevois Deploy")
 	
 	lbl = tk.Label(main, text="Module:") 
 	lbl.grid(column=0, row=0)
@@ -128,17 +132,19 @@ if __name__ == '__main__':
 	commMenu.grid(column=1, row=1)
 	
 	refresh(commMenu, moduleMenu)
-
-	button = tk.Button(main, text='Deploy', width=12, command=lambda : deploy(commString.get(), moduleString.get()))
+	
+	
+	buttonWidth = 16
+	button = tk.Button(main, text='Deploy', width=buttonWidth, command=lambda : deploy(commString.get(), moduleString.get()))
 	button.grid(column=1, row=2)
 	
-	button = tk.Button(main, text='Refresh', width=12, command=lambda : refresh(commMenu, moduleMenu))
+	button = tk.Button(main, text='Refresh', width=buttonWidth, command=lambda : refresh(commMenu, moduleMenu))
 	button.grid(column=0, row=2)
 	
-	button = tk.Button(main, text='initscript', width=12, command=lambda : sendConfig(commString.get(), "initscript.cfg"))
+	button = tk.Button(main, text='initscript', width=buttonWidth, command=lambda : sendConfig(commString.get(), "initscript.cfg"))
 	button.grid(column=1, row=3)
 	
-	button = tk.Button(main, text='videomappings', width=12, command=lambda : sendConfig(commString.get(), "videomappings.cfg"))
+	button = tk.Button(main, text='videomappings', width=buttonWidth, command=lambda : sendConfig(commString.get(), "videomappings.cfg"))
 	button.grid(column=0, row=3)
 	
 	main.mainloop()
