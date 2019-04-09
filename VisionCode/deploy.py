@@ -17,25 +17,7 @@ class OptionMenu(tk.OptionMenu):
 			command=tk._setit(self.variable[1], label, self._command))
 	def deleteAll(self):
 		self["menu"].delete(0, "end")
-
-def deploy(port, module):
-	try:
-		com = serial.Serial(port)
-		com.write(b'streamoff\r')
-		com.write(b'usbsd\r')
-		time.sleep(3)
-		srcFile = "./modules/Highlanders/" + module + "/" + module + ".py"
-		dstDir = "D:/modules/Highlanders/" + module
-			
-		shutil.copy2(srcFile, dstDir)
-		com.write(b'restart\r')
-		com.close()
-	except (serial.SerialException) as e:
-		print("Could not connect to", port, e)
-	except (OSError) as e:
-		print(e)
-
-
+		
 def refresh(commMenu, moduleMenu):
 	refreshModules(moduleMenu)
 	refreshPorts(commMenu)
@@ -89,30 +71,74 @@ def serial_ports():
 		except (OSError, serial.SerialException):
 			pass
 	return result
+	
+	
+def deploy(port, module):
+	srcFile = "./modules/Highlanders/" + module + "/" + module + ".py"
+	dstDir = "D:/modules/Highlanders/" + module
+	
+	copyFile(port, srcFile, dstDir)
+	sendCommand(port, b'restart\r')
+		
+def sendConfig(port, file):
+	srcFile = "./config/" + file
+	dstDir = "D:/config"
+	
+	copyFile(port, srcFile, dstDir)
+	sendCommand(port, b'restart\r')
+
+def copyFile(port, srcFile, dstDir):
+	try:
+		sendCommand(port, b'streamoff\rusbsd\r')
+		time.sleep(3)
+		shutil.copy2(srcFile, dstDir)
+	except (serial.SerialException) as e:
+		print("Could not connect to", port, e)
+	except (OSError) as e:
+		print(e)
+
+def sendCommand(port, cmd):
+	try:
+		com = serial.Serial(port)
+		com.write(cmd)
+		com.close()
+	except (serial.SerialException) as e:
+		print("Could not connect to", port, e)
+	except (OSError) as e:
+		print(e)		
 
 
 if __name__ == '__main__':	
 	main = tk.Tk()
 	
+	lbl = tk.Label(main, text="Module:") 
+	lbl.grid(column=0, row=0)
+	lbl = tk.Label(main, text="Comm Port:")
+	lbl.grid(column=0, row=1)
+	
+	
 	moduleString = tk.StringVar(main)
 	moduleString.set([''])
 	moduleMenu = OptionMenu(main, moduleString, "")
-	moduleMenu.pack()
+	moduleMenu.grid(column=1, row=0)
 	
 	commString = tk.StringVar(main)
 	commString.set([''])
 	commMenu = OptionMenu(main, commString, "")
-	commMenu.pack()
+	commMenu.grid(column=1, row=1)
 	
 	refresh(commMenu, moduleMenu)
-	
-	button = tk.Button(main, text='Cancel', width=25, command=main.destroy)
-	button.pack()
 
-	button = tk.Button(main, text='Deploy', width=25, command=lambda : deploy(commString.get(), moduleString.get()))
-	button.pack()
+	button = tk.Button(main, text='Deploy', width=12, command=lambda : deploy(commString.get(), moduleString.get()))
+	button.grid(column=1, row=2)
 	
-	button = tk.Button(main, text='Refresh', width=25, command=lambda : refresh(commMenu, moduleMenu))
-	button.pack()
+	button = tk.Button(main, text='Refresh', width=12, command=lambda : refresh(commMenu, moduleMenu))
+	button.grid(column=0, row=2)
+	
+	button = tk.Button(main, text='initscript', width=12, command=lambda : sendConfig(commString.get(), "initscript.cfg"))
+	button.grid(column=1, row=3)
+	
+	button = tk.Button(main, text='videomappings', width=12, command=lambda : sendConfig(commString.get(), "videomappings.cfg"))
+	button.grid(column=0, row=3)
 	
 	main.mainloop()
