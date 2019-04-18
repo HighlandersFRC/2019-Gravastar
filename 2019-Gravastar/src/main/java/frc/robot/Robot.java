@@ -47,8 +47,8 @@ public class Robot extends TimedRobot {
 	private VideoSink server;
 	public static boolean hasCamera = false;
 	private boolean cameraBoolean = false;
-	public static ChangeLightColor changeLightColor = new ChangeLightColor(0,0, 140, RobotMap.canifier1);
-	private ChangeLightColor changeLightColor1 = new ChangeLightColor(0,150, 0, RobotMap.canifier2);
+	public static ChangeLightColor changeLightColor = new ChangeLightColor(255,0, 0, RobotMap.canifier1);
+	public static ChangeLightColor changeLightColor1 = new ChangeLightColor(0,255, 0, RobotMap.canifier2);
 
 	public static VisionCamera visionCamera;
 	public static SerialPort jevois1;
