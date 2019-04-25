@@ -83,7 +83,7 @@ public class ArcadeDrive extends Command {
 				RobotConfig.setDriveMotorsBrake();
 				boolean connected = RobotMap.mainUltrasonicSensor2.isConnected();
 				double distance = RobotMap.mainUltrasonicSensor2.getDistance();
-				if(distance>=1.5&&connected&&distance<15){
+				if(distance>=1.5&&connected&&distance<7){
 					OI.pilotController.setRumble(RumbleType.kLeftRumble, 0.0);
 					power = Math.pow(distance/15,0.8);
 						

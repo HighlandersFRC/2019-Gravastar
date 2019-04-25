@@ -116,7 +116,7 @@ public class Robot extends TimedRobot {
 		if(runCounter%10==0){
 			visionCamera.updateVision();
 			SmartDashboard.putNumber("ultraSonic2", RobotMap.mainUltrasonicSensor2.getDistance());
-
+			SmartDashboard.putNumber("cambytes", jevois1.getBytesReceived());
 			SmartDashboard.putString("visionString", visionCamera.getString());
 			SmartDashboard.putNumber("visionAngle", visionCamera.getAngle());
 
@@ -149,15 +149,15 @@ public class Robot extends TimedRobot {
 		catch(Exception e){
 			hasCamera = false;
 		}
-		if(!OI.pilotController.getBButton()){
-			if(OI.pilotController.getStartButton()){
-				RobotMap.visionRelay1.set(Value.kForward);
-			}
-			else{
-				RobotMap.visionRelay1.set(Value.kReverse);
+		
+		// if(OI.pilotController.getStartButton()){
+		// 	RobotMap.visionRelay1.set(Value.kForward);
+		// }
+		// else{
+		// 	RobotMap.visionRelay1.set(Value.kReverse);
 
-			}
-		}
+		// }
+	
 		
 	
 		if(OI.pilotController.getTriggerAxis(Hand.kLeft)>0.2&&ableToSwitch){
