@@ -195,7 +195,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 		robotConfig.autoConfig();
-		autoSuite.startAutoCommandsDriverControl();
+		autoSuite.startAutoCommandsRobotControl();
 		
 	}
 

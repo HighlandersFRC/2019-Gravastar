@@ -102,7 +102,7 @@ public class PurePursuitController extends Command {
   protected void initialize() {
         shouldEnd = false;
         odometry = new Odometry(chosenPath.getReversed());
-      
+        RobotConfig.setDriveMotorsBrake();
         leftDriveTrainVelocityPID.start();
         rightDriveTrainVelocityPID.start();
         odometry.zero();
@@ -320,6 +320,7 @@ public class PurePursuitController extends Command {
   @Override
   protected void end() {
     pathNotifier.stop();
+    RobotConfig.setDriveMotorsCoast();
     shouldRunAlgorithm = false;
     odometry.endOdmetry();
     leftDriveTrainVelocityPID.changeDesiredSpeed(0);

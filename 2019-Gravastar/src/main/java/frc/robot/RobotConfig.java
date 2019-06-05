@@ -132,7 +132,7 @@ public class RobotConfig {
     		talon.configPeakCurrentDuration(RobotConfig.driveMotorPeakCurrentDurationLowGear, RobotConfig.timeOut);
     		talon.enableCurrentLimit(true);
 		}
-		this.setDriveMotorsCoast();
+		this.setDriveMotorsBrake();
 		RobotMap.navx.resetDisplacement();
 	}
 	public void teleopConfig() {
@@ -151,7 +151,7 @@ public class RobotConfig {
     	for(TalonSRX talon:RobotMap.driveMotors) {
     		talon.configContinuousCurrentLimit(RobotConfig.driveMotorContinuousCurrentLowGear, RobotConfig.timeOut);
 		}
-		RobotConfig.setDriveMotorsCoast();
+		RobotConfig.setDriveMotorsBrake();
 	}
 	public void disabledConfig() {
 		for(TalonSRX talon:RobotMap.driveMotors){
