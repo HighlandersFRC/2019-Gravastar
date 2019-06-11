@@ -308,9 +308,6 @@ public class PurePursuitController extends Command {
     if(distToEndVector.length()<endError){
         return true;
     } 
-    else if(chosenPath.getMainPath().get(closestSegment).velocity ==0&&distToEndVector.length()<0.3){
-        return true;
-    }
     else{
         return shouldEnd;
     }   

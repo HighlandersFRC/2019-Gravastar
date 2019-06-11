@@ -151,7 +151,7 @@ public class RobotConfig {
     	for(TalonSRX talon:RobotMap.driveMotors) {
     		talon.configContinuousCurrentLimit(RobotConfig.driveMotorContinuousCurrentLowGear, RobotConfig.timeOut);
 		}
-		RobotConfig.setDriveMotorsBrake();
+		RobotConfig.setDriveMotorsCoast();
 	}
 	public void disabledConfig() {
 		for(TalonSRX talon:RobotMap.driveMotors){

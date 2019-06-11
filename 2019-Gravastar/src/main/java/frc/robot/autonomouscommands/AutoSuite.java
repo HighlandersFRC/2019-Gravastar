@@ -20,7 +20,7 @@ public class AutoSuite {
     private CascadingPIDUltrasonicAlignment cascadingPIDUltrasonicAlignment;
     private UltrasoundAlineandGetTo ultrasoundAlineandGetTo;
     private ArcadeDrive arcadeDrive;
-    private PurePursuitController purePursuitController = new PurePursuitController(PathList.test1Path, 0.6, 4.25, 0.05);
+    private PurePursuitController purePursuitController = new PurePursuitController(PathList.test1Path, 2.7, 4.25, 0.05);
     public AutoSuite() {
     
 		driveTrainStallProtectionController = new DriveTrainStallProtectionController();
