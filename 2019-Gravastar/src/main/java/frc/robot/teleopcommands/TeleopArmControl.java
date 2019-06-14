@@ -17,11 +17,16 @@ import frc.robot.RobotConfig;
 import frc.robot.RobotMap;
 import frc.robot.universalcommands.ArmPositionController;
 import frc.robot.universalcommands.ClimbMechanismController;
+import frc.robot.universalcommands.AutoHatchGrab;
+import frc.robot.universalcommands.AutoHatchRelease;
 import jaci.pathfinder.Pathfinder;
 
 public class TeleopArmControl extends Command {
   private ArmPositionController armPositionController;
   private ClimbMechanismController climbMechanismController;
+  private AutoHatchGrab autoHatchGrab;
+  private AutoHatchRelease autoHatchRelease;
+
   public TeleopArmControl() {
     requires(RobotMap.arm);
    
@@ -36,7 +41,11 @@ public class TeleopArmControl extends Command {
     RobotMap.hatchGrabberPiston.set(RobotMap.hatchMechGrab);
     armPositionController = new ArmPositionController(RobotConfig.armUpAngle);
     climbMechanismController = new ClimbMechanismController();
+    autoHatchGrab = new AutoHatchGrab();
+    autoHatchRelease = new AutoHatchRelease();
     armPositionController.start();
+ 
+
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -55,20 +64,14 @@ public class TeleopArmControl extends Command {
 		else if(OI.operatorController.getXButton()){
 		  armPositionController.setArmPosition(70);
 		}
-		
   
-		if(OI.operatorController.getBumper(Hand.kLeft)){
-			RobotMap.hatchPushOutPiston.set(RobotMap.hatchMechOut);
+		if(OI.operatorController.getBumper(Hand.kLeft)&&!autoHatchGrab.isRunning()&&!autoHatchRelease.isRunning()){
+      autoHatchGrab.start();
 		}	
-		else{
-      RobotMap.hatchPushOutPiston.set(RobotMap.hatchMechIn);
+    else if(OI.operatorController.getBumper(Hand.kRight)&&!autoHatchGrab.isRunning()&&!autoHatchRelease.isRunning()){
+      autoHatchRelease.start();
     }
-    if(OI.operatorController.getBumper(Hand.kRight)){
-      RobotMap.hatchGrabberPiston.set(RobotMap.hatchMechRelease);
-    }
-    else{
-      RobotMap.hatchGrabberPiston.set(RobotMap.hatchMechGrab);
-    }
+
 
 		if(OI.operatorController.getTriggerAxis(Hand.kLeft)>0.1){
       RobotMap.arm.intakeBall();

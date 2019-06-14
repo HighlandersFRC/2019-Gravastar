@@ -11,6 +11,7 @@ import frc.robot.teleopcommands.TankDrive;
 import frc.robot.teleopcommands.TeleopArmControl;
 import jaci.pathfinder.Pathfinder;
 import frc.robot.OI;
+import frc.robot.autonomouscommands.testAuto;
 
 public class AutoSuite {
    
@@ -20,7 +21,9 @@ public class AutoSuite {
     private CascadingPIDUltrasonicAlignment cascadingPIDUltrasonicAlignment;
     private UltrasoundAlineandGetTo ultrasoundAlineandGetTo;
     private ArcadeDrive arcadeDrive;
-    private PurePursuitController purePursuitController = new PurePursuitController(PathList.test1Path, 2.7, 4.25, 0.05);
+    private PurePursuitController purePursuitController = new PurePursuitController(PathList.test1Path, 0.8, 5.0, 0.05);
+    private VisionAutoHatchPickup visionAutoHatchPickup = new VisionAutoHatchPickup();
+    private testAuto testAuto = new testAuto();
     public AutoSuite() {
     
 		driveTrainStallProtectionController = new DriveTrainStallProtectionController();
@@ -35,8 +38,7 @@ public class AutoSuite {
         
     }
     public void startAutoCommandsRobotControl() {
-        purePursuitController.start();
-      
+        testAuto.start();
     }
 
     public void endAutoCommands(){

@@ -55,13 +55,13 @@ public class Odometry extends Command {
     //this is a sperate section of code that runs at a different update rate than the rest, this is necessary to match the dt
      public void run(){
       if(shouldRun){
+        if(isReversed){
           leftSideNext = leftDriveEncoder.getDistance();
           rightSideNext = rightDriveEncoder.getDistance();
+          thetaNext = navx.currentReverseYaw();
           leftDelta = -(leftSideNext-leftSide);
           rightDelta = -(rightSideNext-rightSide);
           centerDelta = (leftDelta+rightDelta)/2;
-        if(isReversed){
-          thetaNext = navx.currentReverseYaw();
           xNext = x-centerDelta*Math.cos(Math.toRadians(thetaNext));
           yNext = y-centerDelta*Math.sin(Math.toRadians(thetaNext));
           x = xNext;
@@ -71,7 +71,12 @@ public class Odometry extends Command {
           rightSide = rightSideNext;
         }
         else{
+          leftSideNext = leftDriveEncoder.getDistance();
+          rightSideNext = rightDriveEncoder.getDistance();
           thetaNext = navx.currentYaw();
+          leftDelta = (leftSideNext-leftSide);
+          rightDelta = (rightSideNext-rightSide);
+          centerDelta = (leftDelta+rightDelta)/2;
           xNext = x+centerDelta*Math.cos(Math.toRadians(thetaNext));
           yNext = y+centerDelta*Math.sin(Math.toRadians(thetaNext));
           x = xNext;

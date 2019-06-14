@@ -41,18 +41,25 @@ public class Arm extends Subsystem {
     RobotMap.intake.set(ControlMode.PercentOutput, 0);
   }
   public void pushOutHatchMech(){
-    RobotMap.hatchPushOutPiston.set(RobotMap.hatchMechIn);
+    RobotMap.hatchPushOutPiston.set(RobotMap.hatchMechOut);
   }
   public void pullInHatchMech(){
     RobotMap.hatchPushOutPiston.set(RobotMap.hatchMechIn);
    
   }
-  public void grabHatch(){
+  public void tenseHatchGrabbers(){
     RobotMap.hatchGrabberPiston.set(RobotMap.hatchMechGrab);
   }
-  public void releaseHatch(){
+  public void releaseHatchGrabbers(){
     RobotMap.hatchGrabberPiston.set(RobotMap.hatchMechRelease);
   }
+  public void grabHatch(){
+    pushOutHatchMech();
+    
+    
+
+  }
+
 
 
 }

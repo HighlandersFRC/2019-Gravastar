@@ -38,8 +38,8 @@ public class PurePursuitController extends Command {
   private double minDistanceToPoint;
   private Point closestPoint;
   private double lookAheadDistance;
-  private DriveTrainVelocityPID leftDriveTrainVelocityPID = new DriveTrainVelocityPID(0, RobotMap.leftDriveLead, 1, 0.33230122, 0.7, 0.006, 15.0);
-  private DriveTrainVelocityPID rightDriveTrainVelocityPID = new DriveTrainVelocityPID(0, RobotMap.rightDriveLead, 1, 0.33230122, 0.7, 0.006, 15.0);
+  private DriveTrainVelocityPID leftDriveTrainVelocityPID = new DriveTrainVelocityPID(0, RobotMap.leftDriveLead, 1, 0.33230122, 0.9, 0.0004, 9.0);
+  private DriveTrainVelocityPID rightDriveTrainVelocityPID = new DriveTrainVelocityPID(0, RobotMap.rightDriveLead, 1, 0.33230122, 0.9, 0.0004, 9.0);	//#endregion.0);
   private double desiredRobotCurvature;
   private Point startingPointOfLineSegment;
   private boolean firstLookAheadFound;
@@ -102,7 +102,7 @@ public class PurePursuitController extends Command {
   protected void initialize() {
         shouldEnd = false;
         odometry = new Odometry(chosenPath.getReversed());
-        RobotConfig.setDriveMotorsBrake();
+      
         leftDriveTrainVelocityPID.start();
         rightDriveTrainVelocityPID.start();
         odometry.zero();
@@ -308,6 +308,9 @@ public class PurePursuitController extends Command {
     if(distToEndVector.length()<endError){
         return true;
     } 
+    else if(chosenPath.getMainPath().get(closestSegment).velocity ==0&&distToEndVector.length()<0.5){
+        return true;
+    }
     else{
         return shouldEnd;
     }   
@@ -316,8 +319,8 @@ public class PurePursuitController extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    System.out.println("done");
     pathNotifier.stop();
-    RobotConfig.setDriveMotorsCoast();
     shouldRunAlgorithm = false;
     odometry.endOdmetry();
     leftDriveTrainVelocityPID.changeDesiredSpeed(0);
