@@ -23,6 +23,7 @@ public class AutoSuite {
     private ArcadeDrive arcadeDrive;
     private PurePursuitController purePursuitController = new PurePursuitController(PathList.test1Path, 0.8, 5.0, 0.05);
     private VisionAutoHatchPickup visionAutoHatchPickup = new VisionAutoHatchPickup();
+    private AutoPathCreation autoPathCreation = new AutoPathCreation();
     private testAuto testAuto = new testAuto();
     public AutoSuite() {
     
@@ -39,6 +40,7 @@ public class AutoSuite {
     }
     public void startAutoCommandsRobotControl() {
         testAuto.start();
+        //autoPathCreation.start();
     }
 
     public void endAutoCommands(){

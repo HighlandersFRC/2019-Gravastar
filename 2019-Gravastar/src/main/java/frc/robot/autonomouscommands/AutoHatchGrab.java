@@ -8,14 +8,25 @@
 package frc.robot.autonomouscommands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.command.WaitCommand;
+import frc.robot.RobotMap;
+import frc.robot.universalcommands.PushOutHatchMech;
+import frc.robot.universalcommands.PullInHatchMech;
+import frc.robot.universalcommands.TenseHatchGrabbers;
+import frc.robot.universalcommands.ReleaseHatchGrabbers;
 
-public class testAuto extends CommandGroup {
+public class AutoHatchGrab extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public testAuto() {
-    addSequential(new PurePursuitController(PathList.test1Path, 0.6, 2.6, 0.15));
-    addSequential(new VisionAutoHatchPickup());
+  public AutoHatchGrab() {
+    addParallel(new ReleaseHatchGrabbers());
+    addSequential(new PushOutHatchMech());
+    addSequential(new WaitCommand(0.35));
+    addParallel(new TenseHatchGrabbers());
+    addSequential(new WaitCommand(0.15));
+    addSequential(new PullInHatchMech());
+
     // Add Commands here:
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());

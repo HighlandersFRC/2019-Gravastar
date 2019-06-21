@@ -5,27 +5,28 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.universalcommands;
+package frc.robot.autonomouscommands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.WaitCommand;
-import frc.robot.RobotMap;
-import frc.robot.universalcommands.PushOutHatchMech;
 import frc.robot.universalcommands.PullInHatchMech;
-import frc.robot.universalcommands.TenseHatchGrabbers;
+import frc.robot.universalcommands.PushOutHatchMech;
 import frc.robot.universalcommands.ReleaseHatchGrabbers;
+import frc.robot.universalcommands.TenseHatchGrabbers;
 
-public class AutoHatchGrab extends CommandGroup {
+public class AutoHatchRelease extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public AutoHatchGrab() {
-    addParallel(new ReleaseHatchGrabbers());
-    addSequential(new PushOutHatchMech());
-    addSequential(new WaitCommand(0.35));
+  public AutoHatchRelease() {
     addParallel(new TenseHatchGrabbers());
+    addSequential(new PushOutHatchMech());
+    addSequential(new WaitCommand(0.45));
+    addParallel(new ReleaseHatchGrabbers());
     addSequential(new WaitCommand(0.15));
     addSequential(new PullInHatchMech());
+    addSequential(new WaitCommand(0.25));
+    addParallel(new TenseHatchGrabbers());
 
     // Add Commands here:
     // e.g. addSequential(new Command1());

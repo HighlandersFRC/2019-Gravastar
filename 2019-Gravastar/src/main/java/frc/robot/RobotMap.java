@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Ultrasonic;
+import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.Ultrasonic.Unit;
 import frc.robot.autonomouscommands.PathList;
@@ -105,6 +106,8 @@ public class RobotMap {
 	public static PWMUltraSonicSensor mainUltrasonicSensor3=new PWMUltraSonicSensor(ultraSonic3);
 	public static PWMUltraSonicSensor mainUltrasonicSensor4= new PWMUltraSonicSensor(ultraSonic4);
 
+	public static Relay.Value lightRingOn = Value.kForward;
+	public static Relay.Value lightRingOff = Value.kReverse;
 
 
 	//Array of drive motors to simplify configuration

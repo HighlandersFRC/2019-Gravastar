@@ -17,7 +17,7 @@ import frc.robot.RobotConfig;
 import frc.robot.RobotMap;
 import frc.robot.universalcommands.ArmPositionController;
 import frc.robot.universalcommands.ClimbMechanismController;
-import frc.robot.universalcommands.AutoHatchGrab;
+import frc.robot.autonomouscommands.AutoHatchGrab;
 import frc.robot.universalcommands.AutoHatchRelease;
 import jaci.pathfinder.Pathfinder;
 
