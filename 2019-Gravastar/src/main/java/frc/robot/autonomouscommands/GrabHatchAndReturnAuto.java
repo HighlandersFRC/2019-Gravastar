@@ -8,15 +8,20 @@
 package frc.robot.autonomouscommands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import frc.robot.RobotMap;
+import frc.robot.Robot;
 
-public class UltrasoundAlineandGetTo extends CommandGroup {
+public class GrabHatchAndReturnAuto extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public UltrasoundAlineandGetTo() {
-    //dSequential(new CascadingPIDUltrasonicAlignment(0.12,0.0585,0.06, RobotMap.mainUltrasonicSensor1, RobotMap.mainUltrasonicSensor2));
-    //addSequential(new UltrasoundGetToTarget(RobotMap.mainUltrasonicSensor1,RobotMap.mainUltrasonicSensor2));
+  private QuickPathGeneration quickPathGeneration;
+
+  public GrabHatchAndReturnAuto() {
+    addSequential(new PurePursuitController(PathList.test1Path, 0.6, 3.6, 0.10));
+    addSequential(new VisionAutoHatchPickup());
+
+    addSequential(new ShortPathToAngle(Math.abs(Robot.autoOdometry.getX()), Math.abs(Robot.autoOdometry.getY()-2), 0, 0, false, true));
+    
     // Add Commands here:
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());

@@ -73,7 +73,7 @@ public class ArcadeDrive extends Command {
 		}
 		if(OI.pilotController.getBButton()){
 			RobotMap.visionRelay1.set(Value.kForward);
-			double power = 0.35;
+	    	double power = 0.35;
 			RobotMap.drive.setLowGear();
 			RobotConfig.setDriveMotorsBrake();
 			boolean connected = RobotMap.mainUltrasonicSensor2.isConnected();

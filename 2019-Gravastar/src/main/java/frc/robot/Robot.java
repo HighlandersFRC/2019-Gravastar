@@ -49,7 +49,6 @@ public class Robot extends TimedRobot {
 	private boolean cameraBoolean = false;
 	public static ChangeLightColor changeLightColor = new ChangeLightColor(255,0, 0, RobotMap.canifier1);
 	public static ChangeLightColor changeLightColor1 = new ChangeLightColor(0,255, 0, RobotMap.canifier2);
-
 	public static VisionCamera visionCamera;
 	public static SerialPort jevois1;
 	private boolean ableToSwitch;
@@ -93,7 +92,7 @@ public class Robot extends TimedRobot {
 		camera2.setFPS(15);
 		RobotMap.visionRelay1.set(Value.kOn);
 	
-
+		autoOdometry.start();
 		server = CameraServer.getInstance().addSwitchedCamera("driverVisionCameras");
 		server.setSource(camera);
 		Shuffleboard.update();
@@ -195,13 +194,17 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 		robotConfig.autoConfig();
+		autoOdometry.zero();
+		autoOdometry.start();
 		autoSuite.startAutoCommandsRobotControl();
 		
 	}
 
 	@Override
 	public void autonomousPeriodic() {
-		
+		SmartDashboard.putNumber("x", autoOdometry.getX());
+		SmartDashboard.putNumber("y", autoOdometry.getY());
+		SmartDashboard.putNumber("theta", autoOdometry.gettheta());
 		Scheduler.getInstance().run();
 	}
 
@@ -212,7 +215,8 @@ public class Robot extends TimedRobot {
 	}
 
 	@Override
-	public void teleopPeriodic() {	
+	public void teleopPeriodic() {
+			
 		Scheduler.getInstance().run();
 	}
 	@Override

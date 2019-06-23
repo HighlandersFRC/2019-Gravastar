@@ -25,45 +25,45 @@ import frc.robot.RobotConfig;
 import jaci.pathfinder.Pathfinder;
 
 public class PurePursuitController extends Command {
-  private PathSetup chosenPath;
-  private Odometry odometry;
-  private int closestSegment;
-  private Point lookAheadPoint;
-  private Point lastLookAheadPoint;
-  private Notifier pathNotifier;
-  private int startingNumber;
-  private double deltaX;
-  private double deltaY;
-  private double distToPoint;
-  private double minDistanceToPoint;
-  private Point closestPoint;
-  private double lookAheadDistance;
-  private DriveTrainVelocityPID leftDriveTrainVelocityPID = new DriveTrainVelocityPID(0, RobotMap.leftDriveLead, 1, 0.33230122, 0.9, 0.0004, 9.0);
-  private DriveTrainVelocityPID rightDriveTrainVelocityPID = new DriveTrainVelocityPID(0, RobotMap.rightDriveLead, 1, 0.33230122, 0.9, 0.0004, 9.0);	//#endregion.0);
-  private double desiredRobotCurvature;
-  private Point startingPointOfLineSegment;
-  private boolean firstLookAheadFound;
-  private int startingNumberLA;
-  private Vector lineSegVector;
-  private Point endPointOfLineSegment;
-  private Point robotPos;
-  private Vector robotPosVector;
-  private double lookAheadIndexT1;
-  private double lookAheadIndexT2;
-  private double partialPointIndex;
-  private double lastPointIndex;
-  private Vector distToEndVector;
-  private double curveAdjustedVelocity;
-  private double k;
-  private boolean shouldRunAlgorithm;
-  private double endError;
-  private double startingTheta = 0;
-  private double startingX = 0;
-  private double startingY = 0;
-  public double endThetaError;
-  private boolean shouldEnd;
-  //no carried over position information
-  public PurePursuitController(PathSetup path, double lookAhead, double kValue, double distoEndError){
+    private PathSetup chosenPath;
+    private Odometry odometry;
+    private int closestSegment;
+    private Point lookAheadPoint;
+    private Point lastLookAheadPoint;
+    private Notifier pathNotifier;
+    private int startingNumber;
+    private double deltaX;
+    private double deltaY;
+    private double distToPoint;
+    private double minDistanceToPoint;
+    private Point closestPoint;
+    private double lookAheadDistance;
+    private DriveTrainVelocityPID leftDriveTrainVelocityPID = new DriveTrainVelocityPID(0, RobotMap.leftDriveLead, 1, 0.33230122, 0.9, 0.0004, 9.0);
+    private DriveTrainVelocityPID rightDriveTrainVelocityPID = new DriveTrainVelocityPID(0, RobotMap.rightDriveLead, 1, 0.33230122, 0.9, 0.0004, 9.0);	//#endregion.0);
+    private double desiredRobotCurvature;
+    private Point startingPointOfLineSegment;
+    private boolean firstLookAheadFound;
+    private int startingNumberLA;
+    private Vector lineSegVector;
+    private Point endPointOfLineSegment;
+    private Point robotPos;
+    private Vector robotPosVector;
+    private double lookAheadIndexT1;
+    private double lookAheadIndexT2;
+    private double partialPointIndex;
+    private double lastPointIndex;
+    private Vector distToEndVector;
+    private double curveAdjustedVelocity;
+    private double k;
+    private boolean shouldRunAlgorithm;
+    private double endError;
+    private double startingTheta = 0;
+    private double startingX = 0;
+    private double startingY = 0;
+    public double endThetaError;
+    private boolean shouldEnd;
+    //no carried over position information
+    public PurePursuitController(PathSetup path, double lookAhead, double kValue, double distoEndError){
         chosenPath = path;
         lookAheadDistance = lookAhead;  
         k = kValue;  
@@ -71,38 +71,22 @@ public class PurePursuitController extends Command {
         requires(RobotMap.drive);
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
-  }
-  //for carried over angle
-  public PurePursuitController(PathSetup path, double lookAhead, double kValue, double distoEndError, double startingAngle){
+    }
+    public PurePursuitController(PathSetup path, double lookAhead, double kValue, double distoEndError, Odometry outerOdometry){
         chosenPath = path;
         lookAheadDistance = lookAhead;  
         k = kValue;  
         endError = distoEndError;
-        startingTheta = startingAngle;
         requires(RobotMap.drive);
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
-  }
-  //for carried over x, y, and theta
-  public PurePursuitController(PathSetup path, double lookAhead, double kValue, double distoEndError, double startingAngle, double startXPos, double startYPos){
-        chosenPath = path;
-        lookAheadDistance = lookAhead;  
-        k = kValue;  
-        endError = distoEndError;
-        startingTheta = startingAngle;
-        startingX = startXPos;
-        startingY = startYPos;
-        requires(RobotMap.drive);
-        // Use requires() here to declare subsystem dependencies
-        // eg. requires(chassis);
-  }
+    }   
 
-  // Called just before this Command runs the first time
-  @Override
-  protected void initialize() {
+    // Called just before this Command runs the first time
+    @Override
+    protected void initialize() {
         shouldEnd = false;
         odometry = new Odometry(chosenPath.getReversed());
-      
         leftDriveTrainVelocityPID.start();
         rightDriveTrainVelocityPID.start();
         odometry.zero();
@@ -123,13 +107,13 @@ public class PurePursuitController extends Command {
         }
         if(chosenPath.getMainPath().get(0).x >= chosenPath.getMainPath().get(chosenPath.getMainPath().length()-1).x){
             if(chosenPath.getReversed()){
-            odometry.setReversed(false);
+                odometry.setReversed(false);
             }
             else{
-            odometry.setReversed(true);
+                odometry.setReversed(true);
             }
         }
-            distToEndVector = new Vector(12,12);
+            distToEndVector = new Vector(chosenPath.getMainPath().get(chosenPath.getMainPath().length()-1).x-odometry.getX(),chosenPath.getMainPath().get(chosenPath.getMainPath().length()-1).y-odometry.getY());
             lookAheadPoint = new Point(0, 0);
             closestPoint = new Point(0,0);
             robotPos = new Point(0,0);
@@ -155,8 +139,8 @@ public class PurePursuitController extends Command {
             curveAdjustedVelocity = 0;
             pathNotifier = new Notifier(new PathRunnable());
             pathNotifier.startPeriodic(0.005);
-  }
-  private class PathRunnable implements Runnable{
+    }
+    private class PathRunnable implements Runnable{
         public void run(){
             if(shouldRunAlgorithm){
             purePursuitAlgorithm();
@@ -165,8 +149,8 @@ public class PurePursuitController extends Command {
             pathNotifier.stop();
             }
         }
-  }
-  private void purePursuitAlgorithm(){
+    }
+    private void purePursuitAlgorithm(){
         for(int i = startingNumber; i<chosenPath.getMainPath().length();i++){        
             deltaX = chosenPath.getMainPath().get(i).x-odometry.getX();
             deltaY = chosenPath.getMainPath().get(i).y-odometry.getY();
@@ -239,29 +223,29 @@ public class PurePursuitController extends Command {
         curveAdjustedVelocity = Math.min(Math.abs(k/desiredRobotCurvature),chosenPath.getMainPath().get(closestSegment).velocity);
         setWheelVelocities(curveAdjustedVelocity, desiredRobotCurvature);
         endThetaError = Pathfinder.boundHalfDegrees((Math.toDegrees(chosenPath.getMainPath().get(chosenPath.getMainPath().length()-1).heading)-odometry.gettheta()));
-  } 
-  public void setOdometryX(double X){
+    } 
+    public void setOdometryX(double X){
         double desiredX= X;
         odometry.setX(desiredX);
-  }
-  public void setOdometryY(double Y){
+    }
+    public void setOdometryY(double Y){
         double desiredY= Y;
         odometry.setX(desiredY);
-  }
-  public void setOdometryTheta(double Theta){
+    }
+    public void setOdometryTheta(double Theta){
         double desiredTheta= Theta;
         odometry.setX(desiredTheta);
-  }
-  public double getX(){
+    }
+    public double getX(){
         return odometry.getX();
-  }
-  public double getY(){
+    }
+    public double getY(){
         return odometry.getY();
-  }
-  public double getTheta(){
+    }
+    public double getTheta(){
         return odometry.gettheta();
-  }
-  private void setWheelVelocities(double targetVelocity, double curvature){
+    }
+    private void setWheelVelocities(double targetVelocity, double curvature){
         double leftVelocity;
         double rightVelocity;
         double v = targetVelocity;
@@ -282,7 +266,7 @@ public class PurePursuitController extends Command {
             leftDriveTrainVelocityPID.changeDesiredSpeed(leftVelocity);
             rightDriveTrainVelocityPID.changeDesiredSpeed(rightVelocity);
         }
-       // SmartDashboard.putNumber("left", leftVelocity);
+        // SmartDashboard.putNumber("left", leftVelocity);
         //SmartDashboard.putNumber("right",rightVelocity);  
     }
     private void findRobotCurvature(){
@@ -293,50 +277,49 @@ public class PurePursuitController extends Command {
         double side = Math.signum(Math.sin(Math.toRadians(odometry.gettheta())) * (lookAheadPoint.getXPos()-odometry.getX())-Math.cos(Math.toRadians(odometry.gettheta()))*(lookAheadPoint.getYPos()-odometry.getY())); 
         double curvature = ((2*x)/Math.pow(lookAheadDistance,2))*side;
         desiredRobotCurvature = curvature;
-   }
-
-  // Called repeatedly when this Command is scheduled to run
-  @Override
-  protected void execute() {
-  }
-  public void forceFinish(){
-    shouldEnd = true;
-  }
-  // Make this return true when this Command no longer needs to run execute()
-  @Override
-  protected boolean isFinished() {
-    if(distToEndVector.length()<endError){
-        return true;
-    } 
-    else if(chosenPath.getMainPath().get(closestSegment).velocity ==0&&distToEndVector.length()<0.5){
-        return true;
     }
-    else{
-        return shouldEnd;
-    }   
-      
-   }
-  // Called once after isFinished returns true
-  @Override
-  protected void end() {
-    System.out.println("done");
-    pathNotifier.stop();
-    shouldRunAlgorithm = false;
-    odometry.endOdmetry();
-    leftDriveTrainVelocityPID.changeDesiredSpeed(0);
-    rightDriveTrainVelocityPID.changeDesiredSpeed(0);
-    rightDriveTrainVelocityPID.endPID();
-    leftDriveTrainVelocityPID.endPID();
-    leftDriveTrainVelocityPID.cancel();
-    rightDriveTrainVelocityPID.cancel();
-    odometry.cancel();
-    Robot.stopMotors.stopDriveTrainMotors();
-  }
 
-  // Called when another command which requires one or more of the same
-  // subsystems is scheduled to run
-  @Override
-  protected void interrupted() {
-    this.end();
-  }
+    // Called repeatedly when this Command is scheduled to run
+    @Override
+    protected void execute() {
+    }
+    public void forceFinish(){
+        shouldEnd = true;
+    }
+    // Make this return true when this Command no longer needs to run execute()
+    @Override
+    protected boolean isFinished() {
+        if(distToEndVector.length()<endError){
+            return true;
+        }       
+        else if(chosenPath.getMainPath().get(closestSegment).velocity ==0&&distToEndVector.length()<0.5){
+            return true;
+        }
+        else{
+            return shouldEnd;
+        }   
+        
+    }
+    // Called once after isFinished returns true
+    @Override
+    protected void end() {
+        System.out.println("done");
+        pathNotifier.stop();
+        shouldRunAlgorithm = false;
+        leftDriveTrainVelocityPID.changeDesiredSpeed(0);
+        rightDriveTrainVelocityPID.changeDesiredSpeed(0);
+        rightDriveTrainVelocityPID.endPID();
+        leftDriveTrainVelocityPID.endPID();
+        leftDriveTrainVelocityPID.cancel();
+        rightDriveTrainVelocityPID.cancel();
+        odometry.cancel();
+        Robot.stopMotors.stopDriveTrainMotors();
+    }
+
+    // Called when another command which requires one or more of the same
+    // subsystems is scheduled to run
+    @Override
+    protected void interrupted() {
+        this.end();
+    }
 }
