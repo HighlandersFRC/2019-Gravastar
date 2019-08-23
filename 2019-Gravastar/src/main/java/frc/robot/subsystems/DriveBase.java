@@ -44,8 +44,8 @@ public class DriveBase extends Subsystem {
 		
 		if(Timer.getFPGATimestamp()-Robot.visionCamera.lastParseTime>0.25){
 			SmartDashboard.putBoolean("hasCameraValues", false);
-			Robot.changeLightColor.changeLedColor(255, 0, 0);
-			Robot.changeLightColor1.changeLedColor(0, 255, 0);
+			//Robot.changeLightColor.changeLedColor(255, 0, 0);
+			//Robot.changeLightColor1.changeLedColor(0, 255, 0);
 
 			
 			return 0;
@@ -53,13 +53,13 @@ public class DriveBase extends Subsystem {
 		else{
 			SmartDashboard.putBoolean("hasCameraValues", true);
 			if(RobotMap.mainUltrasonicSensor2.isConnected()){
-				Robot.changeLightColor.changeLedColor(0, 0, 255);
-				Robot.changeLightColor1.changeLedColor(0, 0, 255);
+				//Robot.changeLightColor.changeLedColor(0, 0, 255);
+				//Robot.changeLightColor1.changeLedColor(0, 0, 255);
 
 			}
 			else{
-				Robot.changeLightColor.changeLedColor(0, 255, 0);
-				Robot.changeLightColor1.changeLedColor(255, 0, 0);
+				//Robot.changeLightColor.changeLedColor(0, 255, 0);
+				//Robot.changeLightColor1.changeLedColor(255, 0, 0);
 
 			}
 			if(Robot.visionCamera.getAngle()>25){

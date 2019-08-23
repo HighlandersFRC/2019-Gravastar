@@ -75,6 +75,7 @@ public class ArmPositionController extends Command {
         RobotMap.armMaster.set(ControlMode.PercentOutput, -0.2);
       }
       else{
+        
         RobotMap.armMaster.set(ControlMode.PercentOutput, armPID.getResult()+Math.cos(Math.toRadians(armEncoder.getAngle()))*RobotConfig.armKfFactor);
       }
      

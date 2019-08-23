@@ -72,7 +72,7 @@ public class ArcadeDrive extends Command {
 			leftPower = Math.abs(leftPower/rightPower)*(leftPower/Math.abs(leftPower));
 		}
 		if(OI.pilotController.getBButton()){
-			RobotMap.visionRelay1.set(Value.kForward);
+			//RobotMap.visionRelay1.set(Value.kForward);
 	    	double power = 0.35;
 			RobotMap.drive.setLowGear();
 			RobotConfig.setDriveMotorsBrake();
@@ -96,9 +96,9 @@ public class ArcadeDrive extends Command {
 			}
 		}
 		else{
-			RobotMap.visionRelay1.set(Value.kReverse);	
+			//RobotMap.visionRelay1.set(Value.kReverse);	
 			RobotConfig.setDriveMotorsCoast();
-			Robot.changeLightColor.changeLedColor(0, 0, 150);	
+			//Robot.changeLightColor.changeLedColor(0, 0, 150);	
 			OI.pilotController.setRumble(RumbleType.kLeftRumble, 0.0);
 		}
 		RobotMap.leftDriveLead.set(ControlMode.PercentOutput, leftPower);

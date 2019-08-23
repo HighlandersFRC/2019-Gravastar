@@ -87,7 +87,7 @@ public class RobotMap {
 
 
 	public static Relay visionRelay1 = new Relay(0);
-	public static Relay visionRelay2 = new Relay(2);
+	//public static Relay visionRelay2 = new Relay(3);
 
 	public static Counter ultraSonic1 = new Counter(0);
 	public static Counter ultraSonic2 = new Counter(1);

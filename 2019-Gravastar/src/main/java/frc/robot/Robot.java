@@ -47,7 +47,7 @@ public class Robot extends TimedRobot {
 	private VideoSink server;
 	public static boolean hasCamera = false;
 	private boolean cameraBoolean = false;
-	public static ChangeLightColor changeLightColor = new ChangeLightColor(255,0, 0, RobotMap.canifier1);
+	public static ChangeLightColor changeLightColor = new ChangeLightColor(0,0, 255, RobotMap.canifier1);
 	public static ChangeLightColor changeLightColor1 = new ChangeLightColor(0,255, 0, RobotMap.canifier2);
 	public static VisionCamera visionCamera;
 	public static SerialPort jevois1;
@@ -110,21 +110,16 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void robotPeriodic() {
-
 		runCounter++;
 		if(runCounter%10==0){
 			visionCamera.updateVision();
 			SmartDashboard.putNumber("ultraSonic2", RobotMap.mainUltrasonicSensor2.getDistance());
-			SmartDashboard.putNumber("cambytes", jevois1.getBytesReceived());
+			//SmartDashboard.putNumber("cambytes", jevois1.getBytesReceived());
 			SmartDashboard.putString("visionString", visionCamera.getString());
 			SmartDashboard.putNumber("visionAngle", visionCamera.getAngle());
 
 		}
 		if(runCounter%100==0){
-
-		
-				
-			
 			double pressure = ((250*RobotMap.preassureSensor.getAverageVoltage())/4.53)-25;
 			SmartDashboard.putNumber("pressure", pressure);
 			SmartDashboard.putBoolean("hasNavx", RobotMap.navx.isConnected());
@@ -149,13 +144,14 @@ public class Robot extends TimedRobot {
 			hasCamera = false;
 		}
 		
-		// if(OI.pilotController.getStartButton()){
-		// 	RobotMap.visionRelay1.set(Value.kForward);
-		// }
-		// else{
-		// 	RobotMap.visionRelay1.set(Value.kReverse);
+		if(OI.pilotController.getStartButton()){
+			RobotMap.visionRelay1.set(Value.kForward);
 
-		// }
+		}
+		else{
+			RobotMap.visionRelay1.set(Value.kReverse);
+
+		}
 	
 		
 	
@@ -196,7 +192,7 @@ public class Robot extends TimedRobot {
 		robotConfig.autoConfig();
 		autoOdometry.zero();
 		autoOdometry.start();
-		autoSuite.startAutoCommandsRobotControl();
+		autoSuite.startAutoCommandsDriverControl();
 		
 	}
 
@@ -212,10 +208,13 @@ public class Robot extends TimedRobot {
 	public void teleopInit() {
 		robotConfig.teleopConfig();
 		teleopSuite.startTeleopCommands();
+
 	}
 
 	@Override
 	public void teleopPeriodic() {
+		if(OI.operatorController.getStartButton()){
+		}
 			
 		Scheduler.getInstance().run();
 	}

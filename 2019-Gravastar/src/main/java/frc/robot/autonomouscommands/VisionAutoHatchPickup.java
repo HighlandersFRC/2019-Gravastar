@@ -52,8 +52,8 @@ public class VisionAutoHatchPickup extends Command {
 		
 		if(Timer.getFPGATimestamp()-Robot.visionCamera.lastParseTime>0.25){
 			SmartDashboard.putBoolean("hasCameraValues", false);
-			Robot.changeLightColor.changeLedColor(255, 0, 0);
-			Robot.changeLightColor1.changeLedColor(0, 255, 0);
+			//Robot.changeLightColor.changeLedColor(255, 0, 0);
+			//Robot.changeLightColor1.changeLedColor(0, 255, 0);
 
 			
 			return 0;
@@ -61,13 +61,13 @@ public class VisionAutoHatchPickup extends Command {
 		else{
 			SmartDashboard.putBoolean("hasCameraValues", true);
 			if(RobotMap.mainUltrasonicSensor2.isConnected()){
-				Robot.changeLightColor.changeLedColor(0, 0, 255);
-				Robot.changeLightColor1.changeLedColor(0, 0, 255);
+				//Robot.changeLightColor.changeLedColor(0, 0, 255);
+				//Robot.changeLightColor1.changeLedColor(0, 0, 255);
 
 			}
 			else{
-				Robot.changeLightColor.changeLedColor(0, 255, 0);
-				Robot.changeLightColor1.changeLedColor(255, 0, 0);
+				//Robot.changeLightColor.changeLedColor(0, 255, 0);
+				//Robot.changeLightColor1.changeLedColor(255, 0, 0);
 
 			}
 			if(Robot.visionCamera.getAngle()>25){
@@ -81,7 +81,7 @@ public class VisionAutoHatchPickup extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    RobotMap.visionRelay1.set(Value.kForward);
+    //RobotMap.visionRelay1.set(Value.kForward);
     power = 0.35;
     RobotMap.drive.setLowGear();
     RobotConfig.setDriveMotorsBrake();
@@ -118,7 +118,7 @@ public class VisionAutoHatchPickup extends Command {
   protected void end() {
     autoHatchGrab.start();
     RobotConfig.setDriveMotorsCoast();
-    RobotMap.visionRelay1.set(Value.kReverse);
+    //RobotMap.visionRelay1.set(Value.kReverse);
 
     RobotMap.leftDriveLead.set(ControlMode.PercentOutput, 0);
 		RobotMap.rightDriveLead.set(ControlMode.PercentOutput, 0   );

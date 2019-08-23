@@ -20,7 +20,7 @@ public class GrabHatchAndReturnAuto extends CommandGroup {
     addSequential(new PurePursuitController(PathList.test1Path, 0.6, 3.6, 0.10));
     addSequential(new VisionAutoHatchPickup());
 
-    addSequential(new ShortPathToAngle(Math.abs(Robot.autoOdometry.getX()), Math.abs(Robot.autoOdometry.getY()-2), 0, 0, false, true));
+    //addSequential(new ShortPathToAngle(Math.abs(Robot.autoOdometry.getX()), Math.abs(Robot.autoOdometry.getY()-2), 0, 0, false, true));
     
     // Add Commands here:
     // e.g. addSequential(new Command1());
