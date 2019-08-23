@@ -64,10 +64,10 @@ public class RobotConfig {
 		RobotMap.armFollower.set(ControlMode.Follower, RobotMap.armMasterID);
     	
     	//Invert the right hand side of the drive train
-    	RobotMap.rightDriveLead.setInverted(false);
+    	RobotMap.rightDriveLead.setInverted(true);
 		RobotMap.rightDriveFollowerOne.setInverted(InvertType.FollowMaster);
 
-    	RobotMap.leftDriveLead.setInverted(true);
+    	RobotMap.leftDriveLead.setInverted(false);
         RobotMap.leftDriveFollowerOne.setInverted(InvertType.FollowMaster);
 		
 		RobotMap.armMaster.setInverted(false);

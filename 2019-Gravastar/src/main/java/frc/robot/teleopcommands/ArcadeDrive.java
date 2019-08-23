@@ -50,7 +50,7 @@ public class ArcadeDrive extends Command {
 		povValue = OI.pilotController.getPOV();
 		
 			if(Math.abs(OI.pilotController.getRawAxis(4))>deadZone) {	
-				turn = -OI.pilotController.getRawAxis(4);
+				turn = OI.pilotController.getRawAxis(4);
 			}
 			else {
 				turn = 0;
@@ -88,16 +88,16 @@ public class ArcadeDrive extends Command {
 					power = Math.pow(distance/15,0.8);
 						
 				
-					rightPower =-power+ RobotMap.drive.getAlignmentPIDOutput();
-					leftPower =-power-RobotMap.drive.getAlignmentPIDOutput();
+					rightPower =-power- RobotMap.drive.getAlignmentPIDOutput();
+					leftPower =-power+RobotMap.drive.getAlignmentPIDOutput();
 				}
 				else if(distance<1.5&&connected){
 					power = 0.0;
 					OI.pilotController.setRumble(RumbleType.kLeftRumble, 0.5);
 				}
 				else{
-					rightPower =-power+ RobotMap.drive.getAlignmentPIDOutput();
-					leftPower =-power-RobotMap.drive.getAlignmentPIDOutput();
+					rightPower =-power- RobotMap.drive.getAlignmentPIDOutput();
+					leftPower =-power+RobotMap.drive.getAlignmentPIDOutput();
 				}
 			}
 			else{
