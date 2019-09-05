@@ -47,11 +47,12 @@ public class Robot extends TimedRobot {
 	private VideoSink server;
 	public static boolean hasCamera = false;
 	private boolean cameraBoolean = false;
-	public static ChangeLightColor changeLightColor = new ChangeLightColor(255,0, 0, RobotMap.canifier1);
-	public static ChangeLightColor changeLightColor1 = new ChangeLightColor(0,255, 0, RobotMap.canifier2);
+	public static ChangeLightColor changeLightColor = new ChangeLightColor(1,0, 0, RobotMap.canifier1);
+	public static ChangeLightColor changeLightColor1 = new ChangeLightColor(0,0, 0, RobotMap.canifier2);
 
 	public static VisionCamera visionCamera;
 	public static SerialPort jevois1;
+	private double byteCount;
 	private boolean ableToSwitch;
 	private int runCounter = 0;
 
@@ -75,7 +76,7 @@ public class Robot extends TimedRobot {
 				hasCamera = true;
 			}
 			else{
-				hasCamera = true;
+				hasCamera = false;
 			}
 		} catch (Exception e) {
 			hasCamera = false;
@@ -119,13 +120,8 @@ public class Robot extends TimedRobot {
 			SmartDashboard.putNumber("cambytes", jevois1.getBytesReceived());
 			SmartDashboard.putString("visionString", visionCamera.getString());
 			SmartDashboard.putNumber("visionAngle", visionCamera.getAngle());
-
 		}
 		if(runCounter%100==0){
-
-		
-				
-			
 			double pressure = ((250*RobotMap.preassureSensor.getAverageVoltage())/4.53)-25;
 			SmartDashboard.putNumber("pressure", pressure);
 			SmartDashboard.putBoolean("hasNavx", RobotMap.navx.isConnected());
@@ -137,29 +133,22 @@ public class Robot extends TimedRobot {
 			SmartDashboard.putNumber("ultraSonic3",RobotMap.mainUltrasonicSensor3.getDistance());
 			SmartDashboard.putNumber("ultraSonic4", RobotMap.mainUltrasonicSensor4.getDistance());
 			SmartDashboard.putNumber("lastParse", Timer.getFPGATimestamp()-visionCamera.lastParseTime);
-		}
-		try{
-			if(jevois1.getBytesReceived()>0){
+			if(byteCount>0){
 				hasCamera = true;
+				changeLightColor1.changeLedColor(0, 1,0);
 			}
 			else{
+				changeLightColor1.changeLedColor(0, 0,1);
 				hasCamera = false;
 			}
+			byteCount = 0;
+		}
+		try{
+			byteCount = byteCount + jevois1.getBytesReceived();
 		}
 		catch(Exception e){
 			hasCamera = false;
 		}
-		
-		// if(OI.pilotController.getStartButton()){
-		// 	RobotMap.visionRelay1.set(Value.kForward);
-		// }
-		// else{
-		// 	RobotMap.visionRelay1.set(Value.kReverse);
-
-		// }
-	
-		
-	
 		if(OI.pilotController.getTriggerAxis(Hand.kLeft)>0.2&&ableToSwitch){
 			if(cameraBoolean){
 				server.setSource(camera2);

@@ -103,7 +103,7 @@ public class ArcadeDrive extends Command {
 			else{
 				RobotMap.visionRelay1.set(Value.kReverse);	
 				RobotConfig.setDriveMotorsCoast();
-				Robot.changeLightColor.changeLedColor(0, 0, 150);	
+				Robot.changeLightColor.changeLedColor(1, 0, 0);	
 				OI.pilotController.setRumble(RumbleType.kLeftRumble, 0.0);
 			}
 			RobotMap.leftDriveLead.set(ControlMode.PercentOutput, leftPower);
