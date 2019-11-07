@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.Talon;
 import frc.robot.RobotConfig;
+import frc.robot.RobotStats;
 
 /**
  * Add your docs here.
@@ -26,12 +27,18 @@ public class ArmEncoder {
         return talon.getSelectedSensorPosition();
     }
     public double getAngle(){
-        return talon.getSelectedSensorPosition()*RobotConfig.armTicksToAngleConversion; 
+        return talon.getSelectedSensorPosition()*RobotStats.armTicksToAngleConversion; 
+    }
+    public double convertAngleToEncoderTics(double angle){
+        return Math.round(RobotStats.armAngleToTicksConversion * angle);
+    }
+    public double convertTicsToAngle(double tics){
+        return RobotStats.armTicksToAngleConversion * tics;
     }
     public void setForwardLimitSwitchAngle(){
-        talon.setSelectedSensorPosition((int)(RobotConfig.armUpAngle*RobotConfig.armAngleToTicksConversion));
+        talon.setSelectedSensorPosition((int)(convertAngleToEncoderTics(RobotStats.armUpAngle)));
     }
     public void setReverseLimitSwitchAngle(){
-        talon.setSelectedSensorPosition((int)(RobotConfig.armRestingAngle*RobotConfig.armAngleToTicksConversion));
+        talon.setSelectedSensorPosition((int)(convertAngleToEncoderTics(RobotStats.armRestingAngle)));
     }
 }

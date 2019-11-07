@@ -1,9 +1,0 @@
-  private PurePursuitController leftSideHatchOne = new PurePursuitController(RobotMap.universalPathList.LeftSideHatchOne, 1.9, 2.25, 0.05);
-    private PurePursuitController frontLeftHatchCenter = new PurePursuitController(RobotMap.universalPathList.FrontLeftHatchCenter, 1.9, 2.25, 0.05);
-    private PurePursuitController frontRightHatchCenter = new PurePursuitController(RobotMap.universalPathList.FrontRightHatchCenter, 1.9, 2.25, 0.05);
-    private OffHabToLeftSideHatchOne habToFrontLeft = new OffHabToLeftSideHatchOne();
-    private PurePursuitController smallPath;
-    private QuickPathGeneration quickPathGeneration;
-    private CascadingPIDTurn turn = new CascadingPIDTurn(20.0,0.08,0.00085,0.00006);\
-     quickPathGeneration = new QuickPathGeneration(3, Math.toRadians(0), Math.toRadians(0));
-        smallPath = new PurePursuitController(quickPathGeneration.GeneratePath(), 0.2, 1, 0.05);
