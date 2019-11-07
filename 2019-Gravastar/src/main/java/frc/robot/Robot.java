@@ -21,12 +21,9 @@ import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.controls.ChangeLightColor;
 import frc.robot.sensors.VisionCamera;
-import frc.robot.tools.pathTools.Odometry;
-import frc.robot.tools.pathTools.PathList;
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the TimedRobot
@@ -37,20 +34,12 @@ import frc.robot.tools.pathTools.PathList;
 public class Robot extends TimedRobot {
   public static OI m_oi;
   Command m_autonomousCommand;
-  public static PathList pathlist = new PathList();
   private CommandSuites commandSuites;
   private RobotConfig robotConfig;
-	private UsbCamera camera;
-	private UsbCamera camera2;
-	private VideoSink server;
 	public static boolean hasCamera = false;
-	private boolean cameraBoolean = false;
 	public static ChangeLightColor changeLightColor = new ChangeLightColor(1,0, 0, RobotMap.canifier1);
 	public static ChangeLightColor changeLightColor1 = new ChangeLightColor(0,0, 0, RobotMap.canifier2);
 	public static VisionCamera visionCamera;
-	public static SerialPort jevois1;
-	private double byteCount;
-	private boolean ableToSwitch;
 	private int runCounter = 0;
   /**
    * This function is run when the robot is first started up and should be
@@ -63,34 +52,6 @@ public class Robot extends TimedRobot {
     RobotMap.drive.startAutoOdometry();
     robotConfig.setStartingConfig();
     //RobotMap.drive.initVelocityPIDs();
-    RobotMap.drive.initAlignmentPID();
-    try {
-			jevois1 = new SerialPort(115200, Port.kUSB);
-			if(jevois1.getBytesReceived()>2){
-				hasCamera = true;
-			}
-			else{
-				hasCamera = false;
-			}
-		} catch (Exception e) {
-			hasCamera = false;
-		}
-		visionCamera= new VisionCamera(Robot.jevois1);
-		ableToSwitch = true;
-		
-		robotConfig.setStartingConfig();
-		camera = CameraServer.getInstance().startAutomaticCapture("VisionCamera1", "/dev/video0");
-		camera.setResolution(320, 240);
-		camera.setFPS(15);
-
-		camera2 = CameraServer.getInstance().startAutomaticCapture("VisionCamera2", "/dev/video1");
-		camera2.setResolution(320, 240);
-		camera2.setFPS(15);
-		RobotMap.visionRelay1.set(Value.kOn);
-	
-
-		server = CameraServer.getInstance().addSwitchedCamera("driverVisionCameras");
-		server.setSource(camera);
 		Shuffleboard.update();
 		SmartDashboard.updateValues(); 
     m_oi = new OI();
@@ -107,50 +68,13 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     runCounter++;
-		if(runCounter%10==0){
-			visionCamera.updateVision();
-			SmartDashboard.putNumber("visionAngle", visionCamera.getAngle());
-		}
 		if(runCounter%100==0){
 			double pressure = ((250*RobotMap.preassureSensor.getAverageVoltage())/4.53)-25;
       SmartDashboard.putNumber("pressure", pressure);
-      SmartDashboard.putString("visionString", visionCamera.getString());
       SmartDashboard.putNumber("ultraSonic2", RobotMap.mainUltrasonicSensor2.getDistance());
 			SmartDashboard.putBoolean("hasNavx", RobotMap.navx.isConnected());
-			SmartDashboard.putNumber("getX",RobotMap.drive.getDriveTrainX());
-			SmartDashboard.putNumber("getY",RobotMap.drive.getDriveTrainY());
-			SmartDashboard.putBoolean("hasCamera", hasCamera);
 			SmartDashboard.putNumber("armPosit", RobotMap.arm.getArmAngle());
-			if(byteCount>0){
-				hasCamera = true;
-				changeLightColor1.changeLedColor(0, 1,0);
-			}
-			else{
-				changeLightColor1.changeLedColor(0, 0,1);
-				hasCamera = true;
-			}
-			byteCount = 0;
-		}
-		try{
-			byteCount = byteCount + jevois1.getBytesReceived();
-		}
-		catch(Exception e){
-			hasCamera = false;
-		}
-		if(ButtonMap.switchCamera()&&ableToSwitch){
-			if(cameraBoolean){
-				server.setSource(camera2);
-				cameraBoolean = false;
-			}
-			else if(!cameraBoolean){
-				server.setSource(camera);
-				cameraBoolean = true;
-			}
-			ableToSwitch = false;
-		}
-		else if(!ButtonMap.switchCamera()){
-			ableToSwitch = true;
-		}
+    }
   }
   /**
    * This function is called once each time the robot enters Disabled mode.
@@ -187,8 +111,7 @@ public class Robot extends TimedRobot {
      */
 
     // schedule the autonomous command (example)
-    commandSuites.startAutoCommands();
-    RobotMap.drive.startAutoOdometry();
+    commandSuites.startTeleopCommands();
     if (m_autonomousCommand != null) {
       m_autonomousCommand.start();
     }

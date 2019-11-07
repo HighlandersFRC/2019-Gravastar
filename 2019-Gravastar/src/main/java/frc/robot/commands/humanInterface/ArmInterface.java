@@ -22,7 +22,7 @@ import frc.robot.commands.controls.ClimbMechanismController;
 
 public class ArmInterface extends Command {
   private boolean shouldFinish;
-  private double desiredAngle  = 105;
+  private double desiredAngle = 105;
   private GrabHatch grabHatch;
   private PlaceHatch placeHatch;
   private ClimbMechanismController climbMechanismController;
@@ -38,7 +38,6 @@ public class ArmInterface extends Command {
     placeHatch = new PlaceHatch();
     climbMechanismController = new ClimbMechanismController();
     RobotMap.arm.setHatchMechIn();
-    desiredAngle = RobotMap.arm.getArmAngle();
     RobotMap.arm.setArmPostion(desiredAngle);
     RobotMap.arm.tenseHatchGrabbers();
     shouldFinish = false;
@@ -72,7 +71,7 @@ public class ArmInterface extends Command {
       desiredAngle = RobotMap.arm.getArmAngle();
     }
     if(Math.abs(ButtonMap.armManualControlValue())>0.2){
-      RobotMap.arm.setArmPercentPower(ButtonMap.armManualControlValue());
+      RobotMap.arm.setArmPercentPower(ButtonMap.armManualControlValue()*0.3);
     }
     else if(RobotMap.arm.getArmAngle()<10&&desiredAngle == RobotStats.armRestingAngle){
       RobotMap.arm.setArmPercentPower(-0.1);

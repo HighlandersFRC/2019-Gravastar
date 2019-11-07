@@ -20,8 +20,6 @@ import frc.robot.RobotConfig;
 import frc.robot.RobotMap;
 import frc.robot.RobotStats;
 import frc.robot.sensors.DriveEncoder;
-import frc.robot.tools.controlLoops.PID;
-import frc.robot.tools.controlLoops.VelocityPID;
 import frc.robot.tools.pathTools.Odometry;
 
 /**
@@ -46,10 +44,6 @@ public class DriveTrain extends Subsystem {
   private double d = 0;//7.5;
 	private int profile = 0;
 	private Odometry autoOdometry;
-	private PID alignmentPID;
-	private double alignmentP = 0.011;
-	private double alignmenti= 0.000;
-	private double alignmentd;
 	private double power;
 	private boolean connected;
 	private double distance;
@@ -88,12 +82,6 @@ public class DriveTrain extends Subsystem {
     RobotMap.rightDriveLead.config_kD(profile, d, 0);
     RobotMap.rightDriveLead.set(ControlMode.Velocity, rightMainDrive.convertftpersToNativeUnitsper100ms(speed));
 	}
-	public void initAlignmentPID(){
-		alignmentPID = new PID(alignmentP, alignmenti, alignmentd);
-		alignmentPID.setMaxOutput(0.4);
-		alignmentPID.setMinOutput(-0.4);
-    alignmentPID.setSetPoint(0);
-	}
   public void setHighGear(){
     RobotMap.shifters.set(RobotMap.highGear);
   }
@@ -101,10 +89,21 @@ public class DriveTrain extends Subsystem {
 		double leftPower;
 		double rightPower;
 		double differential;
-		
-		throttel = Math.tanh(ButtonMap.getDriveThrottle()); 
+		System.out.println(ButtonMap.getDriveThrottle());
+		if(Math.abs(ButtonMap.getDriveThrottle())>0.15){
+			throttel = Math.tanh(ButtonMap.getDriveThrottle())*(4/3.14)*0.4; 
+		}
+		else{
+			throttel = 0;
+		}
 
 		ratio = Math.abs(throttel);
+		if(Math.abs(ButtonMap.getRotation())>0.2){
+			turn = ButtonMap.getRotation();
+		}
+		else{
+			turn = 0;
+		}
 		turn = ButtonMap.getRotation();
 		differential = turn;
 		SmartDashboard.putNumber("differential", differential);
@@ -133,39 +132,6 @@ public class DriveTrain extends Subsystem {
 		else if(RobotMap.shifters.get() == RobotMap.lowGear) {
 				sensitivity =1;
     }
-	}
-	public boolean trackVisionTape(){
-    RobotMap.drive.setLowGear();
-		Robot.visionCamera.updateVision();
-		if(Timer.getFPGATimestamp()-Robot.visionCamera.lastParseTime>0.25){
-			Robot.changeLightColor.changeLedColor(1, 0, 0);
-			alignmentPID.updatePID(0);
-		}
-		else{
-			alignmentPID.updatePID(Robot.visionCamera.getAngle());
-			Robot.changeLightColor.changeLedColor(0, 1, 0);
-
-		}
-		
-    power = 0.35;
-    RobotMap.drive.setLowGear();
-    RobotConfig.setDriveMotorsCoast();
-    connected = RobotMap.mainUltrasonicSensor2.isConnected();
-    distance = RobotMap.mainUltrasonicSensor2.getDistance();
-    if(distance>=1.5&&connected&&distance<7){
-      power = Math.pow(distance/15,0.8);
-    }
-    else if(distance<1.5&&connected){
-			power = 0.0;
-    }
-		RobotMap.leftDriveLead.set(ControlMode.PercentOutput, -power+ alignmentPID.getResult());
-		RobotMap.rightDriveLead.set(ControlMode.PercentOutput, -power- alignmentPID.getResult());
-		if(ButtonMap.autoBreakTapeTracking()&&RobotState.isAutonomous()){
-			return true;
-		}
-		else{
-			return false;
-		}
 	}
 	public void Stop(){
 		RobotMap.leftDriveLead.set(ControlMode.PercentOutput, 0);

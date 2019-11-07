@@ -42,16 +42,8 @@ public class DriveInterface extends Command {
 	// Called repeatedly when this Command is scheduled to run
 	@Override
 	protected void execute() {
-		if(ButtonMap.testVelocity()){
-			RobotMap.visionRelay1.set(RobotMap.lightRingOn);
-			RobotMap.drive.trackVisionTape();
-		}
-		else{
-			RobotMap.visionRelay1.set(RobotMap.lightRingOff);
-			Robot.changeLightColor.changeLedColor(1, 0, 0);
-			RobotMap.drive.arcadeDrive();
-		}
-
+		Robot.changeLightColor.changeLedColor(1, 0, 0);
+		RobotMap.drive.arcadeDrive();
 	}
 	public void forceEnd(){
 		shouldFinish = true;

@@ -31,8 +31,8 @@ public class Arm extends Subsystem {
   private SwitchPiston pushHatchMechOut;
   private SwitchPiston pullHatchMechIn;
   private double kf = 1.274;
-  private int acceleration = 1250;
-  private int velocity = 1250;
+  private int acceleration = 500;
+  private int velocity = 500;
   
   private double compensationFactor = 0.07;
   public static ArmEncoder mainArmEncoder = new ArmEncoder(RobotMap.armMaster);
@@ -80,10 +80,10 @@ public class Arm extends Subsystem {
   }
   
   public void outTakeBall(){
-    RobotMap.intakeMotor.set(ControlMode.PercentOutput,-1.0);
+    RobotMap.intakeMotor.set(ControlMode.PercentOutput,-0.4);
   }
   public void inTakeBall(){
-    RobotMap.intakeMotor.set(ControlMode.PercentOutput, 0.7);
+    RobotMap.intakeMotor.set(ControlMode.PercentOutput, 0.4);
   }
   public void intakeRest(){
     RobotMap.intakeMotor.set(ControlMode.PercentOutput, 0);
