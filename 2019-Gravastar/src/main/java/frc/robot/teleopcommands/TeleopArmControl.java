@@ -22,6 +22,8 @@ import jaci.pathfinder.Pathfinder;
 public class TeleopArmControl extends Command {
   private ArmPositionController armPositionController;
   private ClimbMechanismController climbMechanismController;
+  private GrabHatch grabHatch;
+  private PlaceHatch placeHatch;
   public TeleopArmControl() {
     requires(RobotMap.arm);
    
@@ -58,16 +60,10 @@ public class TeleopArmControl extends Command {
 		
   
 		if(OI.operatorController.getBumper(Hand.kLeft)){
-			RobotMap.hatchPushOutPiston.set(RobotMap.hatchMechOut);
+      placeHatch.start();
 		}	
-		else{
-      RobotMap.hatchPushOutPiston.set(RobotMap.hatchMechIn);
-    }
-    if(OI.operatorController.getBumper(Hand.kRight)){
-      RobotMap.hatchGrabberPiston.set(RobotMap.hatchMechRelease);
-    }
-    else{
-      RobotMap.hatchGrabberPiston.set(RobotMap.hatchMechGrab);
+    else if(OI.operatorController.getBumper(Hand.kRight)){
+      grabHatch.start();
     }
 
 		if(OI.operatorController.getTriggerAxis(Hand.kLeft)>0.1){

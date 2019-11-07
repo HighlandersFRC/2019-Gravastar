@@ -30,6 +30,7 @@ public class ArcadeDrive extends Command {
 	private double sensitivity;
 	private double leftPower;
 	private double rightPower;
+	private double minTurnFactor = 0.4;
 	public ArcadeDrive() {
 		// Use requires() here to declare subsystem dependencies
 		// eg. requires(chassis);
@@ -45,86 +46,76 @@ public class ArcadeDrive extends Command {
 	// Called repeatedly when this Command is scheduled to run
 	@Override
 	protected void execute() {
-		throttel = -OI.pilotController.getRawAxis(1)*0.9; 
-		ratio = Math.abs(throttel);
-		povValue = OI.pilotController.getPOV();
+		double leftPower;
+		double rightPower;
+		double differential;
 		
-			if(Math.abs(OI.pilotController.getRawAxis(4))>deadZone) {	
-				turn = OI.pilotController.getRawAxis(4);
-			}
-			else {
-				turn = 0;
-			}
-			if(Math.abs(throttel)>0.01){
-				leftPower = (throttel - (sensitivity*turn*ratio));
-				rightPower = (throttel + (sensitivity*turn*ratio));
-				RobotConfig.setDriveMotorsCoast();
-			}
-			else{
-				leftPower = (-turn)*sensitivity;
-				rightPower = (turn)*sensitivity; 
-			}
-			if(OI.pilotController.getRawAxis(3)>0.5) {
-				leftPower = throttel +(-turn);
-				rightPower= throttel +(turn);
-			}
-			if(Math.abs(leftPower)>1) {
-				leftPower = (leftPower/Math.abs(leftPower));
-				rightPower = Math.abs(rightPower/leftPower)*(rightPower/Math.abs(rightPower));
-			}
-			else if(Math.abs(rightPower)>1) {
-				rightPower = (rightPower/Math.abs(rightPower));
-				leftPower = Math.abs(leftPower/rightPower)*(leftPower/Math.abs(leftPower));
-			}
-			if(OI.pilotController.getBButton()){
-				RobotMap.visionRelay1.set(Value.kForward);
-				double power = 0.35;
-				RobotMap.drive.setLowGear();
-				RobotConfig.setDriveMotorsBrake();
-				boolean connected = RobotMap.mainUltrasonicSensor2.isConnected();
-				double distance = RobotMap.mainUltrasonicSensor2.getDistance();
-				if(distance>=1.5&&connected&&distance<7){
-					OI.pilotController.setRumble(RumbleType.kLeftRumble, 0.0);
-					power = Math.pow(distance/15,0.8);
-						
-				
-					rightPower =-power- RobotMap.drive.getAlignmentPIDOutput();
-					leftPower =-power+RobotMap.drive.getAlignmentPIDOutput();
-				}
-				else if(distance<1.5&&connected){
-					power = 0.0;
-					OI.pilotController.setRumble(RumbleType.kLeftRumble, 0.5);
-				}
-				else{
-					rightPower =-power- RobotMap.drive.getAlignmentPIDOutput();
-					leftPower =-power+RobotMap.drive.getAlignmentPIDOutput();
-				}
-			}
-			else{
-				RobotMap.visionRelay1.set(Value.kReverse);	
-				RobotConfig.setDriveMotorsCoast();
-				Robot.changeLightColor.changeLedColor(1, 0, 0);	
-				OI.pilotController.setRumble(RumbleType.kLeftRumble, 0.0);
-			}
-			RobotMap.leftDriveLead.set(ControlMode.PercentOutput, leftPower);
-			RobotMap.rightDriveLead.set(ControlMode.PercentOutput, rightPower);
-			if(OI.pilotController.getBumperPressed(Hand.kLeft)){
-				RobotMap.drive.setLowGear();
-			}
-			else if(OI.pilotController.getBumperPressed(Hand.kRight)) {
-				RobotMap.drive.setHighGear();
-			}
-			if(RobotMap.shifters.get() == RobotMap.highGear) {
-					sensitivity =1.25;
-					RobotConfig.setDriveMotorsCoast();
-	
-			}
-			else if(RobotMap.shifters.get() == RobotMap.lowGear) {
-					sensitivity =0.95;
-					RobotConfig.setDriveMotorsCoast();
-			}
-
+		throttel = -OI.pilotController.getRawAxis(1); 
+		if(throttel ==0){
+			throttel = 0.001;
 		}
+		ratio = Math.abs(1/throttel);
+		turn = OI.pilotController.getRawAxis(4);
+		differential = (turn*ratio*sensitivity) + Math.abs(minTurnFactor*turn);
+
+		leftPower = (throttel - (differential));
+		rightPower = (throttel + (differential));
+	
+		if(Math.abs(leftPower)>1) {
+			rightPower = Math.abs(rightPower/leftPower)*Math.signum(rightPower);
+			leftPower = Math.signum(leftPower);
+		}
+		else if(Math.abs(rightPower)>1) {
+			leftPower = Math.abs(leftPower/rightPower)*Math.signum(leftPower);
+			rightPower = Math.signum(rightPower);
+		}
+    	RobotMap.leftDriveLead.set(ControlMode.PercentOutput, leftPower);
+    	RobotMap.rightDriveLead.set(ControlMode.PercentOutput, rightPower);
+		if(OI.pilotController.getBumper(Hand.kRight)){
+			RobotMap.drive.setLowGear();
+		}
+		else if(OI.pilotController.getBumper(Hand.kLeft)) {
+			RobotMap.drive.setHighGear();
+		}
+		if(RobotMap.shifters.get() == RobotMap.highGear) {
+				sensitivity =1;
+		}
+		else if(RobotMap.shifters.get() == RobotMap.lowGear) {
+				sensitivity =1;
+    	}
+		if(OI.pilotController.getBButton()){
+			RobotMap.visionRelay1.set(Value.kForward);
+			double power = 0.35;
+			RobotMap.drive.setLowGear();
+			RobotConfig.setDriveMotorsBrake();
+			boolean connected = RobotMap.mainUltrasonicSensor2.isConnected();
+			double distance = RobotMap.mainUltrasonicSensor2.getDistance();
+			if(distance>=1.5&&connected&&distance<7){
+				OI.pilotController.setRumble(RumbleType.kLeftRumble, 0.0);
+				power = Math.pow(distance/15,0.8);
+					
+			
+				rightPower =-power- RobotMap.drive.getAlignmentPIDOutput();
+				leftPower =-power+RobotMap.drive.getAlignmentPIDOutput();
+			}
+			else if(distance<1.5&&connected){
+				power = 0.0;
+				OI.pilotController.setRumble(RumbleType.kLeftRumble, 0.5);
+			}
+			else{
+				rightPower =-power- RobotMap.drive.getAlignmentPIDOutput();
+				leftPower =-power+RobotMap.drive.getAlignmentPIDOutput();
+			}
+		}
+		else{
+			RobotMap.visionRelay1.set(Value.kReverse);	
+			RobotConfig.setDriveMotorsCoast();
+			Robot.changeLightColor.changeLedColor(1, 0, 0);	
+			OI.pilotController.setRumble(RumbleType.kLeftRumble, 0.0);
+		}
+
+	}
+
 	
 	
 	 
